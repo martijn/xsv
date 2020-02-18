@@ -1,8 +1,10 @@
-# Xsv - Excel Separated Values
+# Xsv .xlsx reader
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/xsv`. To experiment with that code, run `bin/console` for an interactive prompt.
+Xsv is a very basic parser for Excel files in the .xlsx format that strives to
+provide feature parity with common CSV readers and nothing more. This should
+allow for fast parsing of large worksheets with minimal RAM and CPU consumption.
 
-TODO: Delete this and the text above, and describe your gem
+Xsv stands for 'Excel Separated Values' because Excel just gets in the way.
 
 ## Installation
 
@@ -22,7 +24,17 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+x = Xsv::File.new("sheet.xlsx")
+
+x.sheets[0].each_row(read_headers: true) do |row|
+  row # => { "header1" => "value1", "header2", "value2" }
+end
+j
+x.sheets[0].each_row do |row|
+  row # => ["header1", "header2"]
+end
+```
 
 ## Development
 
