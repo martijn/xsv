@@ -5,12 +5,34 @@ module Xsv
     def initialize(sheet, xml)
       @sheet = sheet
       @xml = xml
+      @headers = []
     end
 
     def each_row(read_headers: false)
+      if read_headers
+        @headers = parse_row(@xml.css("sheetData row").first)
+      end
+
       @xml.css("sheetData row").each do |row_xml|
-        yield(row_xml.css("c").map do |c_xml|
-          case c_xml["t"]
+        yield(parse_row(row_xml))
+      end
+
+      true
+    end
+
+    private
+
+    def parse_row(xml)
+      if @headers.any?
+        row = {}
+      else
+        row = []
+      end
+
+      xml.css("c").each_with_index do |c_xml, i|
+        next if @headers.any? && i == 0
+
+        value = case c_xml["t"]
           when "s"
             @sheet.shared_strings[c_xml.css("v").inner_text.to_i]
           when "str"
@@ -22,10 +44,15 @@ module Xsv
           else
             raise Xsv::Error, "Encountered unknown column type #{c_xml["t"]}"
           end
-        end)
+
+        if @headers.any?
+          row[@headers[i]] = value
+        else
+          row << value
+        end
       end
 
-      true
+      row
     end
   end
 end
