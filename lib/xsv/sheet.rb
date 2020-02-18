@@ -2,16 +2,20 @@ module Xsv
   class Sheet
     attr_reader :xml
 
-    def initialize(sheet, xml)
-      @sheet = sheet
+    def initialize(workbook, xml)
+      @workbook = workbook
       @xml = xml
       @headers = []
     end
 
+    def inspect
+      "#<#{self.class.name}:#{self.object_id}>"
+    end
+
+    # Iterate over rows. Returns an array if read_headers is false, or a hash
+    # with first row values as keys if read_headers is true
     def each_row(read_headers: false)
-      if read_headers
-        @headers = parse_row(@xml.css("sheetData row").first)
-      end
+      @parse_headers if read_headers
 
       @xml.css("sheetData row").each do |row_xml|
         yield(parse_row(row_xml))
@@ -20,7 +24,24 @@ module Xsv
       true
     end
 
+    # Get row by number, starting at 0
+    def [](number)
+      parse_row(@xml.css("sheetData row:nth-child(#{number + 1})").first)
+    end
+
+    # Load headers in the top row of the worksheet. After parsing of headers
+    # all methods return hashes instead of arrays
+    def parse_headers!
+      parse_headers
+
+      true
+    end
+
     private
+
+    def parse_headers
+      @headers = parse_row(@xml.css("sheetData row").first)
+    end
 
     def parse_row(xml)
       if @headers.any?
@@ -34,7 +55,7 @@ module Xsv
 
         value = case c_xml["t"]
           when "s"
-            @sheet.shared_strings[c_xml.css("v").inner_text.to_i]
+            @workbook.shared_strings[c_xml.css("v").inner_text.to_i]
           when "str"
             c_xml.css("v").inner_text
           when "e" # N/A
