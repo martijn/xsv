@@ -19,7 +19,9 @@ module Xsv
     def each_row(read_headers: false)
       @parse_headers if read_headers
 
-      @xml.css("sheetData row").each do |row_xml|
+      @xml.css("sheetData row").each_with_index do |row_xml, i|
+        next if i == 0 && @headers.any?
+
         yield(parse_row(row_xml))
       end
 
@@ -54,14 +56,12 @@ module Xsv
 
       next_index = 0
 
-      xml.css("c").each_with_index do |c_xml, i|
-        next if @headers.any? && i == 0
-
+      xml.css("c").each do |c_xml|
         value = case c_xml["t"]
           when "s"
             @workbook.shared_strings[c_xml.css("v").inner_text.to_i]
           when "str"
-            c_xml.css("v").inner_text
+            c_xml.css("v").inner_text.to_s
           when "e" # N/A
             nil
           when nil
