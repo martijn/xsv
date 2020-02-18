@@ -1,4 +1,5 @@
 require "xsv/file"
+require "xsv/helpers"
 require "xsv/sheet"
 require "xsv/version"
 

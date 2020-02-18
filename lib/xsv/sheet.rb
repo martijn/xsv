@@ -1,5 +1,7 @@
 module Xsv
   class Sheet
+    include Xsv::Helpers
+
     attr_reader :xml
 
     def initialize(workbook, xml)
@@ -50,6 +52,8 @@ module Xsv
         row = []
       end
 
+      next_index = 0
+
       xml.css("c").each_with_index do |c_xml, i|
         next if @headers.any? && i == 0
 
@@ -66,11 +70,25 @@ module Xsv
             raise Xsv::Error, "Encountered unknown column type #{c_xml["t"]}"
           end
 
+        # Determine column position and pad row with nil values
+        col_index = column_index(c_xml["r"].scan(/^[A-Z]+/).first)
+
+        (col_index - next_index).times do
+          if @headers.any?
+            row[@headers[next_index]] = nil
+          else
+            row << nil
+          end
+          next_index += 1
+        end
+
         if @headers.any?
-          row[@headers[i]] = value
+          row[@headers[next_index]] = value
         else
           row << value
         end
+
+        next_index += 1
       end
 
       row
