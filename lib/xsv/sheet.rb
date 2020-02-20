@@ -77,6 +77,8 @@ module Xsv
               else
                 value
               end
+            else
+              value
             end
           else
             raise Xsv::Error, "Encountered unknown column type #{c_xml["t"]}"
