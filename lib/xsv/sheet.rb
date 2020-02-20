@@ -14,7 +14,7 @@ module Xsv
       @mode = :array
       @row_skip = 0
 
-      dimension = xml.css("dimension").first
+      dimension = xml.at_css("dimension")
 
       if dimension
         _firstCell, lastCell = dimension["ref"].split(":")
@@ -31,7 +31,7 @@ module Xsv
       end
 
       # Find the last row that contains actual values
-      @last_row = @xml.xpath("//xmlns:row[*[xmlns:v]][last()]").first["r"].to_i
+      @last_row = @xml.at_xpath("//xmlns:row[*[xmlns:v]][last()]")["r"].to_i
     end
 
     def inspect
@@ -69,7 +69,7 @@ module Xsv
 
     # Get row by number, starting at 0
     def [](number)
-      row_xml = xml.css("sheetData row[r=#{number + @row_skip + 1}]").first
+      row_xml = xml.at_css("sheetData row[r=#{number + @row_skip + 1}]")
 
       if row_xml
         parse_row(row_xml)
@@ -116,7 +116,7 @@ module Xsv
           when "e" # N/A
             nil
           when nil
-            v = c_xml.css("v").first
+            v = c_xml.at_css("v")
 
             if v.nil?
               nil

@@ -33,7 +33,7 @@ module Xsv
     def fetch_shared_strings
       stream = @zip.glob("xl/sharedStrings.xml").first.get_input_stream
       xml = Nokogiri::XML(stream)
-      expected_count = xml.css("sst").first["uniqueCount"].to_i
+      expected_count = xml.at_css("sst")["uniqueCount"].to_i
       @shared_strings = xml.css("sst si t").map(&:inner_text)
 
       if @shared_strings.count != expected_count
@@ -58,7 +58,7 @@ module Xsv
 
     def fetch_sheets
       @zip.glob("xl/worksheets/sheet*.xml").sort do |a, b|
-        a.name.scan(/\d+/).first.to_i <=> b.name.scan(/\d+/).first.to_i
+        a.name[/\d+/].to_i <=> b.name[/\d+/].to_i
       end.each do |entry|
         @sheets << Xsv::Sheet.new(self, Nokogiri::XML(entry.get_input_stream))
       end

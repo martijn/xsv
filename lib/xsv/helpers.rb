@@ -39,7 +39,7 @@ module Xsv
 
     # Return the index number for the given Excel column name
     def column_index(col)
-      col = col.scan(/^[A-Z]+/).first
+      col = col[/^[A-Z]+/]
 
       val = 0
       while col.length > 0
