@@ -34,8 +34,13 @@ module Xsv
       49 => "@",
     }
 
+    MINUTE = 60
+    HOUR = 3600
+
     # Return the index number for the given Excel column name
     def column_index(col)
+      col = col.scan(/^[A-Z]+/).first
+
       val = 0
       while col.length > 0
         val *= 26
@@ -60,12 +65,29 @@ module Xsv
       "%02d:%02d" % [base, minutes.round]
     end
 
+    def parse_datetime(number)
+      date_base = number.truncate
+      time = parse_date(date_base).to_time
+
+      time_base = (number - date_base) * 24
+
+      hours = time_base.truncate
+      minutes = (time_base - hours) * 60
+
+      time + hours * HOUR + minutes.round * MINUTE
+    end
+
     def parse_number(string)
       if string.include? "."
         string.to_f
       else
         string.to_i
       end
+    end
+
+    # Tests if the given format string includes both date and time
+    def is_datetime_format?(format)
+      is_date_format?(format) && is_time_format?(format)
     end
 
     # Tests if the given format string is a date

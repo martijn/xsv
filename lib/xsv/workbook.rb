@@ -57,8 +57,8 @@ module Xsv
     end
 
     def fetch_sheets
-      @zip.glob("xl/worksheets/sheet*.xml").sort do |entry|
-        entry.name.scan(/\d+/).first.to_i
+      @zip.glob("xl/worksheets/sheet*.xml").sort do |a, b|
+        a.name.scan(/\d+/).first.to_i <=> b.name.scan(/\d+/).first.to_i
       end.each do |entry|
         @sheets << Xsv::Sheet.new(self, Nokogiri::XML(entry.get_input_stream))
       end

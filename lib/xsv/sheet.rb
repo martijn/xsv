@@ -8,12 +8,11 @@ module Xsv
       @workbook = workbook
       @xml = xml
       @headers = []
-
-      # Determine number of columns
-      bounds = @xml.css("cols col").map { |c| [c["min"].to_i, c["max"].to_i] }.flatten
-      @column_count = (bounds.max - bounds.min) + 1
-
       @mode = :array
+
+      _firstCell, lastCell = xml.css("dimension").first["ref"].split(":")
+
+      @column_count = column_index(lastCell) + 1
     end
 
     def inspect
@@ -55,7 +54,7 @@ module Xsv
     # all methods return hashes instead of arrays
     def parse_headers!
       @mode = :array
-      parse_headers
+      @headers = parse_headers
 
       @mode = :hash
 
@@ -65,7 +64,7 @@ module Xsv
     private
 
     def parse_headers
-      @headers = parse_row(@xml.css("sheetData row").first)
+      parse_row(@xml.css("sheetData row").first)
     end
 
     def empty_row
@@ -94,11 +93,14 @@ module Xsv
             if c_xml["s"]
               style = @workbook.xfs[c_xml["s"].to_i]
               numFmtId = style[:numFmtId].to_i
+              numFmt = @workbook.numFmts[numFmtId]
               if numFmtId == 0
                 value
-              elsif is_date_format?(@workbook.numFmts[numFmtId])
+              elsif is_datetime_format?(numFmt)
+                parse_datetime(value)
+              elsif is_date_format?(numFmt)
                 parse_date(value)
-              elsif is_time_format?(@workbook.numFmts[numFmtId])
+              elsif is_time_format?(numFmt)
                 parse_time(value)
               else
                 value
@@ -111,7 +113,7 @@ module Xsv
           end
 
         # Determine column position and pad row with nil values
-        col_index = column_index(c_xml["r"].scan(/^[A-Z]+/).first)
+        col_index = column_index(c_xml["r"])
 
         case @mode
         when :array
