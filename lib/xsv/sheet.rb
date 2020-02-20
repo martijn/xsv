@@ -65,15 +65,17 @@ module Xsv
           when "e" # N/A
             nil
           when nil
-            value = c_xml.css("v").inner_text.to_i
+            value = parse_number(c_xml.css("v").inner_text)
 
             if c_xml["s"]
               style = @workbook.xfs[c_xml["s"].to_i]
               numFmtId = style[:numFmtId].to_i
               if numFmtId == 0
                 value
-              elsif is_date_format?(BUILT_IN_NUMBER_FORMATS[numFmtId])
+              elsif is_date_format?(@workbook.numFmts[numFmtId])
                 parse_date(value)
+              elsif is_time_format?(@workbook.numFmts[numFmtId])
+                parse_time(value)
               else
                 value
               end

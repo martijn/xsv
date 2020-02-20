@@ -4,12 +4,14 @@ require 'zip'
 module Xsv
   class File
 
-    attr_reader :sheets, :shared_strings, :xfs
+    attr_reader :sheets, :shared_strings, :xfs, :numFmts
 
     def initialize(file)
       @zip = Zip::File.open(file)
       @sheets = []
       @xfs = []
+      @numFmts = Xsv::Helpers::BUILT_IN_NUMBER_FORMATS
+
       fetch_shared_strings
       fetch_styles
       fetch_sheets
@@ -40,6 +42,10 @@ module Xsv
 
       xml.css("cellXfs xf").each do |xf|
         @xfs << xf.attributes.map { |k, v| [k.to_sym, v.value] }.to_h
+      end
+
+      xml.css("numFmts numFmt").each do |numFmt|
+        @numFmts[numFmt["numFmtId"].to_i] = numFmt["formatCode"]
       end
     end
 

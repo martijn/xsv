@@ -1,5 +1,3 @@
-require 'date'
-
 module Xsv
   module Helpers
     BUILT_IN_NUMBER_FORMATS = {
@@ -52,10 +50,36 @@ module Xsv
       Date.new(1899, 12, 30) + number
     end
 
+    # Return a time as a string for the given Excel time value
+    def parse_time(number)
+      base = number * 24
+
+      hours = base.truncate
+      minutes = (base - hours) * 60
+
+      "%02d:%02d" % [base, minutes.round]
+    end
+
+    def parse_number(string)
+      if string.include? "."
+        string.to_f
+      else
+        string.to_i
+      end
+    end
+
     # Tests if the given format string is a date
     def is_date_format?(format)
+      return false if format.nil?
       # If it contains at least 2 sequences of d's, m's or y's it's a date!
       format.scan(/[dmy]+/).length > 1
+    end
+
+    # Tests if the given format string is a time
+    def is_time_format?(format)
+      return false if format.nil?
+      # If it contains at least 2 sequences of h's, m's or s's it's a time!
+      format.scan(/[hms]+/).length > 1
     end
   end
 end

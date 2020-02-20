@@ -15,17 +15,9 @@ class Excel2016Test < Minitest::Test
   end
 
   def test_value_types
-    row = @file.sheets[0][1]
-
-    assert_equal row[0], "Foo"
-    assert_equal row[1], 2
-    assert_nil row[2]
-    assert_equal row[3], Date.new(2020, 2, 20)
-    skip do
-      # TODO issue #3
-      assert_equal row[4], "10:00"
-    end
-    assert_equal row[5], 4
+    assert_equal [
+      "Foo", 2, 2.5, nil, Date.new(2020,2,20), "10:00", 4, 1.25
+    ], @file.sheets[0][1]
   end
 
   def test_fetch_all_columns
@@ -34,10 +26,11 @@ class Excel2016Test < Minitest::Test
 
   def test_fetch_all_rows
     rows = 0
+
     @file.sheets[1].each_row do |row|
       rows += 1
     end
 
-    assert_equal rows, 3
+    assert_equal 3, rows
   end
 end
