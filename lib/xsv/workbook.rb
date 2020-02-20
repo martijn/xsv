@@ -17,7 +17,7 @@ module Xsv
 
       @sheets = []
       @xfs = []
-      @numFmts = Xsv::Helpers::BUILT_IN_NUMBER_FORMATS
+      @numFmts = Xsv::Helpers::BUILT_IN_NUMBER_FORMATS.dup
 
       fetch_shared_strings
       fetch_styles
@@ -34,10 +34,10 @@ module Xsv
       stream = @zip.glob("xl/sharedStrings.xml").first.get_input_stream
       xml = Nokogiri::XML(stream)
       expected_count = xml.at_css("sst")["uniqueCount"].to_i
-      @shared_strings = xml.css("sst si t").map(&:inner_text)
+      @shared_strings = xml.css("sst si").map { |si| si.css("t").map(&:inner_text).join }
 
       if @shared_strings.count != expected_count
-        raise Xsv::Error, "Mismatch in shared strings count! #{expected_count} <> #{@shared_strings.count}"
+        raise Xsv::AssertionFailed, "Mismatch in shared strings count! #{expected_count} <> #{@shared_strings.count}"
       end
 
       stream.close

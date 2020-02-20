@@ -32,10 +32,10 @@ module Xsv
       47 => "mm:ss.0",
       48 => "##0.0E+0",
       49 => "@",
-    }
+    }.freeze
 
-    MINUTE = 60
-    HOUR = 3600
+    MINUTE = 60.freeze
+    HOUR = 3600.freeze
 
     # Return the index number for the given Excel column name
     def column_index(col)
