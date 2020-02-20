@@ -2,12 +2,19 @@ require 'nokogiri'
 require 'zip'
 
 module Xsv
-  class File
+  class Workbook
 
     attr_reader :sheets, :shared_strings, :xfs, :numFmts
 
-    def initialize(file)
-      @zip = Zip::File.open(file)
+    # Open the workbook of the given filename
+    def self.open(file)
+      @workbook = self.new(Zip::File.open(file))
+    end
+
+    # Open a workbook from an instance of Zip::File
+    def initialize(zip)
+      @zip = zip
+
       @sheets = []
       @xfs = []
       @numFmts = Xsv::Helpers::BUILT_IN_NUMBER_FORMATS

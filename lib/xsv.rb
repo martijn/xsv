@@ -1,9 +1,9 @@
 require "date"
 
-require "xsv/file"
 require "xsv/helpers"
 require "xsv/sheet"
 require "xsv/version"
+require "xsv/workbook"
 
 module Xsv
   class Error < StandardError; end

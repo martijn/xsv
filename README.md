@@ -1,8 +1,10 @@
 # Xsv .xlsx reader
 
 Xsv is a very basic parser for Excel files in the .xlsx format that strives to
-provide feature parity with common CSV readers and nothing more. This should
-allow for fast parsing of large worksheets with minimal RAM and CPU consumption.
+provide feature parity with common CSV readers and nothing more. This means
+it only parses values to basic Ruby types and does not deal with formatting
+or more advanced functionality. The goal is to allow for fast parsing of large
+worksheets with minimal RAM and CPU consumption.
 
 Xsv stands for 'Excel Separated Values' because Excel just gets in the way.
 
@@ -25,7 +27,7 @@ Or install it yourself as:
 ## Usage
 
 ```ruby
-x = Xsv::File.new("sheet.xlsx")
+x = Xsv::Workbook.open("sheet.xlsx")
 
 x.sheets[0].each_row(read_headers: true) do |row|
   row # => { "header1" => "value1", "header2", "value2" }
