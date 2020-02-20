@@ -2,25 +2,37 @@ module Xsv
   class Sheet
     include Xsv::Helpers
 
-    attr_reader :xml
+    attr_reader :xml, :mode
 
     def initialize(workbook, xml)
       @workbook = workbook
       @xml = xml
       @headers = []
+
+      # Determine number of columns
+      bounds = @xml.css("cols col").map { |c| [c["min"].to_i, c["max"].to_i] }.flatten
+      @column_count = (bounds.max - bounds.min) + 1
+
+      @mode = :array
     end
 
     def inspect
       "#<#{self.class.name}:#{self.object_id}>"
     end
 
-    # Iterate over rows. Returns an array if read_headers is false, or a hash
-    # with first row values as keys if read_headers is true
-    def each_row(read_headers: false)
-      @parse_headers if read_headers
+    # Iterate over rows
+    def each_row
+      row_index = 0
+      @xml.css("sheetData row").each do |row_xml|
+        row_index += 1
 
-      @xml.css("sheetData row").each_with_index do |row_xml, i|
-        next if i == 0 && @headers.any?
+        next if row_index == 1 && @mode == :hash
+
+        # pad empty rows
+        while row_index < row_xml["r"].to_i do
+          yield(empty_row)
+          row_index += 1
+        end
 
         yield(parse_row(row_xml))
       end
@@ -30,13 +42,22 @@ module Xsv
 
     # Get row by number, starting at 0
     def [](number)
-      parse_row(@xml.css("sheetData row:nth-child(#{number + 1})").first)
+      row_xml = xml.css("sheetData row[r=#{number + 1}]").first
+
+      if row_xml
+        parse_row(row_xml)
+      else
+        empty_row
+      end
     end
 
     # Load headers in the top row of the worksheet. After parsing of headers
     # all methods return hashes instead of arrays
     def parse_headers!
+      @mode = :array
       parse_headers
+
+      @mode = :hash
 
       true
     end
@@ -47,14 +68,17 @@ module Xsv
       @headers = parse_row(@xml.css("sheetData row").first)
     end
 
-    def parse_row(xml)
-      if @headers.any?
-        row = {}
-      else
-        row = []
+    def empty_row
+      case @mode
+      when :array
+        [nil] * @column_count
+      when :hash
+        @headers.zip([]).to_h
       end
+    end
 
-      next_index = 0
+    def parse_row(xml)
+      row = empty_row
 
       xml.css("c").each do |c_xml|
         value = case c_xml["t"]
@@ -89,22 +113,12 @@ module Xsv
         # Determine column position and pad row with nil values
         col_index = column_index(c_xml["r"].scan(/^[A-Z]+/).first)
 
-        (col_index - next_index).times do
-          if @headers.any?
-            row[@headers[next_index]] = nil
-          else
-            row << nil
-          end
-          next_index += 1
+        case @mode
+        when :array
+          row[col_index] = value
+        when :hash
+          row[@headers[col_index]] = value
         end
-
-        if @headers.any?
-          row[@headers[next_index]] = value
-        else
-          row << value
-        end
-
-        next_index += 1
       end
 
       row

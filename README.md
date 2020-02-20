@@ -26,17 +26,47 @@ Or install it yourself as:
 
 ## Usage
 
+Xsv has two modes of operation. By default it returns an array for
+each row in the sheet:
+
 ```ruby
 x = Xsv::Workbook.open("sheet.xlsx")
 
-x.sheets[0].each_row(read_headers: true) do |row|
-  row # => { "header1" => "value1", "header2", "value2" }
+sheet = x.sheets[0]
+
+# Iterate over rows
+sheet.each_row do |row|
+  row # => ["header1", "header2"], etc.
 end
-j
-x.sheets[0].each_row do |row|
-  row # => ["header1", "header2"]
-end
+
+# Access row by index (zero-based)
+sheet[1] # => ["value1", "value2"]
 ```
+
+Alternatively, it can load the headers from the first row and return a hash
+for every row:
+
+```ruby
+x = Xsv::Workbook.open("sheet.xlsx")
+
+sheet = x.sheets[0]
+
+sheet.mode # => :array
+
+# Parse headers and switch to hash mode
+sheet.parse_headers!
+
+sheet.mode # => :hash
+
+sheet.each_row do |row|
+  row # => {"header1" => "value1", "header2" => "value2"}, etc.
+end
+
+sheet[1] # => {"header1" => "value1", "header2" => "value2"}
+```
+
+Be aware that hash mode will lead to unpredictable results if you have multiple
+columns with the same name!
 
 ## Development
 
