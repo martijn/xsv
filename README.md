@@ -68,6 +68,24 @@ sheet[1] # => {"header1" => "value1", "header2" => "value2"}
 Be aware that hash mode will lead to unpredictable results if you have multiple
 columns with the same name!
 
+### Assumptions
+
+Since Xsv treats worksheets like csv files it makes certain assumptions about your
+sheet:
+
+- In array mode, your data starts on the first row
+
+- In has mode the first row of the sheet contains headers, followed by rows of data
+
+If your data or headers does not start on the first row of the sheet you can
+tell Xsv to skip a number of rows:
+
+```ruby
+workbook.sheets[0].row_skip = 1
+```
+
+All operations will honour this offset, making the skipped rows unreachable.
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.

@@ -7,7 +7,7 @@ class Excel2016Test < Minitest::Test
 
   def test_access_sheets_by_index
     refute_equal @file.sheets[0], @file.sheets[1]
-    assert_nil @file.sheets[3]
+    assert_nil @file.sheets[9]
   end
 
   def test_access_row_by_index
@@ -78,5 +78,26 @@ class Excel2016Test < Minitest::Test
     expected = { "Header cell A" => "Row with trailing null", "Header cell B" => "Row with trailing null", nil => nil, "Header cell D" => nil }
 
     assert_equal expected, row
+  end
+
+  def test_sheet_without_cells
+    assert_equal [], @file.sheets[2][0]
+  end
+
+  def test_merged_rows_and_cells
+    sheet = @file.sheets[3]
+
+    assert_equal "Merged B-C", sheet[0][1]
+    assert_nil sheet[0][2]
+    assert_equal "Merged 2-3", sheet[1][0]
+    assert_nil sheet[1][1]
+  end
+
+  def test_hidden_cells
+    sheet = @file.sheets[3]
+
+    assert_equal "Hidden E4", sheet[3][4]
+
+    assert_equal ["A1", "Merged B-C", nil, "D", "Hidden E", "F"], sheet.headers
   end
 end

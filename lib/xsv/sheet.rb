@@ -14,24 +14,14 @@ module Xsv
       @mode = :array
       @row_skip = 0
 
-      dimension = xml.at_css("dimension")
+      @has_cells = !xml.at_css("sheetData c").nil?
 
-      if dimension
-        _firstCell, lastCell = dimension["ref"].split(":")
-      end
-
-      if lastCell
-        # Assume the dimension reflects the content
-        @column_count = column_index(lastCell) + 1
+      if @has_cells
+        @column_count, @last_row = get_sheet_dimensions
       else
-        # Find the last cell in every row that has a value
-        rightmost_cells = @xml.xpath("//xmlns:row/xmlns:c[*[local-name() = 'v']][last()]").map { |c| column_index(c["r"]) }
-        @column_count = rightmost_cells.max + 1
-
+        @column_count = 0
+        @last_row = 0
       end
-
-      # Find the last row that contains actual values
-      @last_row = @xml.at_xpath("//xmlns:row[*[xmlns:v]][last()]")["r"].to_i
     end
 
     def inspect
@@ -163,6 +153,29 @@ module Xsv
       end
 
       row
+    end
+
+    # Read or estimate outer bounds of sheet
+    def get_sheet_dimensions
+      dimension = xml.at_css("dimension")
+
+      if dimension
+        _firstCell, lastCell = dimension["ref"].split(":")
+      end
+
+      if lastCell
+        # Assume the dimension reflects the content
+        column_count = column_index(lastCell) + 1
+      else
+        # Find the last cell in every row that has a value
+        rightmost_cells = @xml.xpath("//xmlns:row/xmlns:c[*[local-name() = 'v']][last()]").map { |c| column_index(c["r"]) }
+        column_count = rightmost_cells.max + 1
+      end
+
+      # Find the last row that contains actual values
+      last_row = @xml.at_xpath("//xmlns:row[*[xmlns:v]][last()]")["r"].to_i
+
+      return [column_count, last_row]
     end
   end
 end

@@ -36,4 +36,18 @@ class Office365Xl7Test < Minitest::Test
     sheet2.parse_headers!
     assert_equal Time.new(2020, 2, 20, 13, 20), sheet2[1]["Date w/ time"]
   end
+
+  def test_unparsed_headers
+    sheet2 = @file.sheets[2]
+
+    assert_equal ["Percentage", "Calculated percentage", "Date w/ time"], sheet2.headers
+  end
+
+  def test_parsed_headers
+    sheet2 = @file.sheets[2]
+
+    sheet2.parse_headers!
+
+    assert_equal ["Percentage", "Calculated percentage", "Date w/ time"], sheet2.headers
+  end
 end
