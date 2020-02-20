@@ -4,12 +4,14 @@ require 'zip'
 module Xsv
   class File
 
-    attr_reader :sheets, :shared_strings
+    attr_reader :sheets, :shared_strings, :xfs
 
     def initialize(file)
       @zip = Zip::File.open(file)
       @sheets = []
+      @xfs = []
       fetch_shared_strings
+      fetch_styles
       fetch_sheets
     end
 
@@ -30,6 +32,15 @@ module Xsv
       end
 
       stream.close
+    end
+
+    def fetch_styles
+      stream = @zip.glob("xl/styles.xml").first.get_input_stream
+      xml = Nokogiri::XML(stream)
+
+      xml.css("cellXfs xf").each do |xf|
+        @xfs << xf.attributes.map { |k, v| [k.to_sym, v.value] }.to_h
+      end
     end
 
     def fetch_sheets

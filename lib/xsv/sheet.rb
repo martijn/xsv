@@ -65,7 +65,19 @@ module Xsv
           when "e" # N/A
             nil
           when nil
-            c_xml.css("v").inner_text.to_i
+            value = c_xml.css("v").inner_text.to_i
+
+            if c_xml["s"]
+              style = @workbook.xfs[c_xml["s"].to_i]
+              numFmtId = style[:numFmtId].to_i
+              if numFmtId == 0
+                value
+              elsif is_date_format?(BUILT_IN_NUMBER_FORMATS[numFmtId])
+                parse_date(value)
+              else
+                value
+              end
+            end
           else
             raise Xsv::Error, "Encountered unknown column type #{c_xml["t"]}"
           end
