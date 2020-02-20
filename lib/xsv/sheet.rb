@@ -81,18 +81,24 @@ module Xsv
     # Load headers in the top row of the worksheet. After parsing of headers
     # all methods return hashes instead of arrays
     def parse_headers!
-      @mode = :array
       @headers = parse_headers
-
       @mode = :hash
 
       true
     end
 
+    def headers
+      if @headers.any?
+        @headers
+      else
+        parse_headers
+      end
+    end
+
     private
 
     def parse_headers
-      parse_row(@xml.css("sheetData row")[@row_skip])
+      parse_row(@xml.css("sheetData row")[@row_skip], :array)
     end
 
     def empty_row
@@ -104,7 +110,8 @@ module Xsv
       end
     end
 
-    def parse_row(xml)
+    def parse_row(xml, mode = nil)
+      mode ||= @mode
       row = empty_row
 
       xml.css("c").first(@column_count).each do |c_xml|
@@ -147,7 +154,7 @@ module Xsv
         # Determine column position and pad row with nil values
         col_index = column_index(c_xml["r"])
 
-        case @mode
+        case mode
         when :array
           row[col_index] = value
         when :hash
