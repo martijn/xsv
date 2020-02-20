@@ -57,12 +57,23 @@ module Xsv
 
     # Return a time as a string for the given Excel time value
     def parse_time(number)
+      # Disregard date part
+      if number > 0
+        number = number - number.truncate
+      end
+
       base = number * 24
 
       hours = base.truncate
-      minutes = (base - hours) * 60
+      minutes = ((base - hours) * 60).round
 
-      "%02d:%02d" % [base, minutes.round]
+      # Compensate for rounding errors
+      if minutes >= 60
+        hours = hours + (minutes / 60)
+        minutes = minutes % 60
+      end
+
+      "%02d:%02d" % [hours, minutes]
     end
 
     def parse_datetime(number)

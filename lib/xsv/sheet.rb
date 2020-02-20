@@ -4,11 +4,15 @@ module Xsv
 
     attr_reader :xml, :mode
 
+    # Set a number of rows to skip at the top of the sheet (header row offset)
+    attr_accessor :row_skip
+
     def initialize(workbook, xml)
       @workbook = workbook
       @xml = xml
       @headers = []
       @mode = :array
+      @row_skip = 0
 
       dimension = xml.css("dimension").first
 
@@ -36,14 +40,20 @@ module Xsv
 
     # Iterate over rows
     def each_row
-      row_index = 0
+      row_index = 0 - @row_skip
+
       @xml.css("sheetData row").each do |row_xml|
+        if row_index < 0
+          row_index += 1
+          next
+        end
+
         row_index += 1
 
         next if row_index == 1 && @mode == :hash
 
         # pad empty rows
-        while row_index < row_xml["r"].to_i do
+        while row_index < row_xml["r"].to_i - @row_skip do
           yield(empty_row)
           row_index += 1
         end
@@ -51,7 +61,7 @@ module Xsv
         yield(parse_row(row_xml))
 
         # Do not return empty trailing rows
-        break if row_index == @last_row
+        break if row_index == @last_row - @row_skip
       end
 
       true
@@ -59,7 +69,7 @@ module Xsv
 
     # Get row by number, starting at 0
     def [](number)
-      row_xml = xml.css("sheetData row[r=#{number + 1}]").first
+      row_xml = xml.css("sheetData row[r=#{number + @row_skip + 1}]").first
 
       if row_xml
         parse_row(row_xml)
@@ -82,7 +92,7 @@ module Xsv
     private
 
     def parse_headers
-      parse_row(@xml.css("sheetData row").first)
+      parse_row(@xml.css("sheetData row")[@row_skip])
     end
 
     def empty_row
