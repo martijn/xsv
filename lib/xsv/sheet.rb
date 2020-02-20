@@ -10,9 +10,24 @@ module Xsv
       @headers = []
       @mode = :array
 
-      _firstCell, lastCell = xml.css("dimension").first["ref"].split(":")
+      dimension = xml.css("dimension").first
 
-      @column_count = column_index(lastCell) + 1
+      if dimension
+        _firstCell, lastCell = dimension["ref"].split(":")
+      end
+
+      if lastCell
+        # Assume the dimension reflects the content
+        @column_count = column_index(lastCell) + 1
+      else
+        # Find the last cell in every row that has a value
+        rightmost_cells = @xml.xpath("//xmlns:row/xmlns:c[*[local-name() = 'v']][last()]").map { |c| column_index(c["r"]) }
+        @column_count = rightmost_cells.max + 1
+
+      end
+
+      # Find the last row that contains actual values
+      @last_row = @xml.xpath("//xmlns:row[*[xmlns:v]][last()]").first["r"].to_i
     end
 
     def inspect
@@ -34,6 +49,9 @@ module Xsv
         end
 
         yield(parse_row(row_xml))
+
+        # Do not return empty trailing rows
+        break if row_index == @last_row
       end
 
       true
@@ -79,7 +97,7 @@ module Xsv
     def parse_row(xml)
       row = empty_row
 
-      xml.css("c").each do |c_xml|
+      xml.css("c").first(@column_count).each do |c_xml|
         value = case c_xml["t"]
           when "s"
             @workbook.shared_strings[c_xml.css("v").inner_text.to_i]
@@ -88,9 +106,13 @@ module Xsv
           when "e" # N/A
             nil
           when nil
-            value = parse_number(c_xml.css("v").inner_text)
+            v = c_xml.css("v").first
 
-            if c_xml["s"]
+            if v.nil?
+              nil
+            elsif c_xml["s"]
+              value = parse_number(v.inner_text)
+
               style = @workbook.xfs[c_xml["s"].to_i]
               numFmtId = style[:numFmtId].to_i
               numFmt = @workbook.numFmts[numFmtId]
@@ -106,7 +128,7 @@ module Xsv
                 value
               end
             else
-              value
+              parse_number(v.inner_text)
             end
           else
             raise Xsv::Error, "Encountered unknown column type #{c_xml["t"]}"

@@ -6,3 +6,9 @@
 /pkg/
 /spec/reports/
 /tmp/
+
+.DS_Store
+
+/inspect*
+/dump*
+/*.gem
