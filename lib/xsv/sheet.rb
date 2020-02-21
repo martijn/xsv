@@ -1,5 +1,6 @@
 module Xsv
   class Sheet
+    include Enumerable
     include Xsv::Helpers
 
     attr_reader :xml, :mode
@@ -56,6 +57,8 @@ module Xsv
 
       true
     end
+
+    alias each each_row
 
     # Get row by number, starting at 0
     def [](number)

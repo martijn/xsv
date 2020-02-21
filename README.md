@@ -68,6 +68,11 @@ sheet[1] # => {"header1" => "value1", "header2" => "value2"}
 Be aware that hash mode will lead to unpredictable results if you have multiple
 columns with the same name!
 
+`Xsv::Workbook.open` accepts a filename, or a IO or String containing a workbook.
+
+`Xsv::Sheet` implements `Enumerable` so you can call methods like `#first`,
+`#filter` and `#map` on it.
+
 ### Assumptions
 
 Since Xsv treats worksheets like csv files it makes certain assumptions about your
