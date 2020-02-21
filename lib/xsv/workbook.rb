@@ -6,9 +6,15 @@ module Xsv
 
     attr_reader :sheets, :shared_strings, :xfs, :numFmts
 
-    # Open the workbook of the given filename
-    def self.open(file)
-      @workbook = self.new(Zip::File.open(file))
+    # Open the workbook of the given filename, string or buffer
+    def self.open(data)
+      if data.is_a?(IO)
+        @workbook = self.new(Zip::File.open_buffer(data))
+      elsif data.start_with?("PK\x03\x04")
+        @workbook = self.new(Zip::File.open_buffer(data))
+      else
+        @workbook = self.new(Zip::File.open(data))
+      end
     end
 
     # Open a workbook from an instance of Zip::File
