@@ -96,6 +96,20 @@ module Xsv
       end
     end
 
+    def parse_number_format(number, format)
+      number = parse_number(number) if number.is_a?(String)
+
+      if is_datetime_format?(format)
+        parse_datetime(number)
+      elsif is_date_format?(format)
+        parse_date(number)
+      elsif is_time_format?(format)
+        parse_time(number)
+      else
+        number
+      end
+    end
+
     # Tests if the given format string includes both date and time
     def is_datetime_format?(format)
       is_date_format?(format) && is_time_format?(format)
