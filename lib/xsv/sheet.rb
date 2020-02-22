@@ -8,9 +8,10 @@ module Xsv
     # Set a number of rows to skip at the top of the sheet (header row offset)
     attr_accessor :row_skip
 
-    def initialize(workbook, xml)
+    def initialize(workbook, xml, io)
       @workbook = workbook
       @xml = xml
+      @io = io
       @headers = []
       @mode = :array
       @row_skip = 0
@@ -31,29 +32,13 @@ module Xsv
 
     # Iterate over rows
     def each_row
-      row_index = 0 - @row_skip
+      @io.rewind
 
-      @xml.css("sheetData row").each do |row_xml|
-        if row_index < 0
-          row_index += 1
-          next
-        end
-
-        row_index += 1
-
-        next if row_index == 1 && @mode == :hash
-
-        # pad empty rows
-        while row_index < row_xml["r"].to_i - @row_skip do
-          yield(empty_row)
-          row_index += 1
-        end
-
-        yield(parse_row(row_xml))
-
-        # Do not return empty trailing rows
-        break if row_index == @last_row - @row_skip
+      handler = SheetRowsHandler.new(@mode, empty_row, @workbook, @row_skip, @last_row) do |row|
+        yield(row)
       end
+
+      Ox.sax_parse(handler, @io)
 
       true
     end
