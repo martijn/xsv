@@ -3,14 +3,13 @@ module Xsv
     include Enumerable
     include Xsv::Helpers
 
-    attr_reader :xml, :mode
+    attr_reader :mode
 
     # Set a number of rows to skip at the top of the sheet (header row offset)
     attr_accessor :row_skip
 
-    def initialize(workbook, xml, io)
+    def initialize(workbook, io)
       @workbook = workbook
-      @xml = xml
       @io = io
       @headers = []
       @mode = :array
@@ -67,7 +66,12 @@ module Xsv
     private
 
     def parse_headers
-      parse_row(@xml.css("sheetData row")[@row_skip], :array)
+      if @mode == :array
+        first
+      elsif @mode == :hash
+        @mode == :array
+        headers.tap { @mode = :hash }
+      end
     end
 
     def empty_row
@@ -77,49 +81,6 @@ module Xsv
       when :hash
         @headers.zip([]).to_h
       end
-    end
-
-    def parse_row(xml, mode = nil)
-      mode ||= @mode
-      row = empty_row
-
-      xml.css("c").first(@column_count).each do |c_xml|
-        value = case c_xml["t"]
-          when "s"
-            @workbook.shared_strings[c_xml.css("v").inner_text.to_i]
-          when "str"
-            c_xml.css("v").inner_text.to_s
-          when "e" # N/A
-            nil
-          when nil
-            v = c_xml.at_css("v")
-
-            if v.nil?
-              nil
-            elsif c_xml["s"]
-              style = @workbook.xfs[c_xml["s"].to_i]
-              numFmt = @workbook.numFmts[style[:numFmtId].to_i]
-
-              parse_number_format(v.inner_text, numFmt)
-            else
-              parse_number(v.inner_text)
-            end
-          else
-            raise Xsv::Error, "Encountered unknown column type #{c_xml["t"]}"
-          end
-
-        # Determine column position and pad row with nil values
-        col_index = column_index(c_xml["r"])
-
-        case mode
-        when :array
-          row[col_index] = value
-        when :hash
-          row[@headers[col_index]] = value
-        end
-      end
-
-      row
     end
   end
 end

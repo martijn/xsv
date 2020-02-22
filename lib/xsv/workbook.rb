@@ -60,7 +60,7 @@ module Xsv
       @zip.glob("xl/worksheets/sheet*.xml").sort do |a, b|
         a.name[/\d+/].to_i <=> b.name[/\d+/].to_i
       end.each do |entry|
-        @sheets << Xsv::Sheet.new(self, Nokogiri::XML(entry.get_input_stream), entry.get_input_stream)
+        @sheets << Xsv::Sheet.new(self, entry.get_input_stream)
       end
     end
   end
