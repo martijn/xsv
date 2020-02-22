@@ -30,18 +30,19 @@ module Xsv
     end
 
     def start_element(name)
-      if name == :dimension
+      case name
+      when :c
         @state = name
-      elsif name == :row
-        @state = name
-        @row = {}
-      elsif name == :c
-        @state = name
-        @cell = {}
-      elsif name == :v
+        @cell = nil
+      when :v
         col = column_index(@cell)
         @maxColumn = col if col > @maxColumn
         @maxRow = @row if @row > @maxRow
+      when :row
+        @state = name
+        @row = nil
+      when :dimension
+        @state = name
       end
     end
 
@@ -52,7 +53,11 @@ module Xsv
     end
 
     def attr(name, value)
-      if @state == :dimension && name == :ref
+      if @state == :c && name == :r
+        @cell = value
+      elsif @state == :row && name == :r
+        @row = value.to_i
+      elsif @state == :dimension && name == :ref
         _firstCell, lastCell = value.split(":")
 
         if lastCell
@@ -60,10 +65,6 @@ module Xsv
           # if the values are exceeded
           @maxColumn = column_index(lastCell)
         end
-      elsif @state == :c && name == :r
-        @cell = value
-      elsif @state == :row && name == :r
-        @row = value.to_i
       end
     end
   end
