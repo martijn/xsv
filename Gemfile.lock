@@ -1,9 +1,10 @@
 PATH
   remote: .
   specs:
-    xsv (0.1.0)
-      nokogiri (~> 1.10.8)
-      rubyzip (~> 2.2.0)
+    xsv (0.2.3)
+      nokogiri (~> 1.10)
+      ox (~> 2.13)
+      rubyzip (~> 2.2)
 
 GEM
   remote: https://rubygems.org/
@@ -12,6 +13,7 @@ GEM
     minitest (5.14.0)
     nokogiri (1.10.8)
       mini_portile2 (~> 2.4.0)
+    ox (2.13.2)
     rake (10.5.0)
     rubyzip (2.2.0)
 

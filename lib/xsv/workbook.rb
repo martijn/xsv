@@ -38,13 +38,7 @@ module Xsv
 
     def fetch_shared_strings
       stream = @zip.glob("xl/sharedStrings.xml").first.get_input_stream
-      xml = Nokogiri::XML(stream)
-      expected_count = xml.at_css("sst")["uniqueCount"].to_i
-      @shared_strings = xml.css("sst si").map { |si| si.css("t").map(&:inner_text).join }
-
-      if @shared_strings.count != expected_count
-        raise Xsv::AssertionFailed, "Mismatch in shared strings count! #{expected_count} <> #{@shared_strings.count}"
-      end
+      @shared_strings = SharedStringsParser.parse(stream)
 
       stream.close
     end
