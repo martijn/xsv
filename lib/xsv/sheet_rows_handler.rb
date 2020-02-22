@@ -55,16 +55,16 @@ module Xsv
 
     def start_element(name)
       case name
-      when :row
-        @state = name
-        @current_row = @empty_row.dup
-        @current_row_attrs = {}
       when :c
         @state = name
         @current_cell = {}
         @current_value = ""
       when :v
         @state = name
+      when :row
+        @state = name
+        @current_row = @empty_row.dup
+        @current_row_attrs = {}
       else
         @state = nil
       end
@@ -87,6 +87,18 @@ module Xsv
 
     def end_element(name)
       case name
+      when :c
+        col_index = column_index(@current_cell[:r])
+
+        case @mode
+        when :array
+          @current_row[col_index] = format_cell
+        when :hash
+          @current_row[@headers[col_index]] = format_cell
+        end
+        @state = :row
+      when :v
+        @state = :c
       when :row
         if @row_index < 0
           @row_index += 1
@@ -109,18 +121,6 @@ module Xsv
         @block.call(@current_row) unless @row_index > @last_row - @row_skip
 
         @state = nil
-      when :c
-        col_index = column_index(@current_cell[:r])
-
-        case @mode
-        when :array
-          @current_row[col_index] = format_cell
-        when :hash
-          @current_row[@headers[col_index]] = format_cell
-        end
-        @state = :row
-      when :v
-        @state = :c
       end
     end
   end
