@@ -41,7 +41,7 @@ class Numbers6Test < Minitest::Test
 
     expected = { "Text" => "Hi there", "Number" => 1234, nil => nil, "Date" => Date.new(2020, 2, 20), "Time" => "13:00", "DateTime" => Time.new(2020, 2, 20, 13, 00) }
 
-    assert_equal expected, sheet[1]
+    assert_equal expected, sheet[0]
   end
 
   def test_row_skip

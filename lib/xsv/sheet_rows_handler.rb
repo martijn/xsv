@@ -3,27 +3,27 @@ module Xsv
     include Xsv::Helpers
 
     def format_cell
-        case @current_cell[:t]
-          when "s"
-            @workbook.shared_strings[@current_value.to_i]
-          when "str"
-            @current_value
-          when "e" # N/A
-            nil
-          when nil
-            if @current_value == ""
-              nil
-            elsif @current_cell[:s]
-              style = @workbook.xfs[@current_cell[:s].to_i]
-              numFmt = @workbook.numFmts[style[:numFmtId].to_i]
+      case @current_cell[:t]
+      when "s"
+        @workbook.shared_strings[@current_value.to_i]
+      when "str"
+        @current_value
+      when "e" # N/A
+        nil
+      when nil
+        if @current_value == ""
+          nil
+        elsif @current_cell[:s]
+          style = @workbook.xfs[@current_cell[:s].to_i]
+          numFmt = @workbook.numFmts[style[:numFmtId].to_i]
 
-              parse_number_format(@current_value, numFmt)
-            else
-              parse_number(@current_value)
-            end
-          else
-            raise Xsv::Error, "Encountered unknown column type #{@current_cell[:t]}"
-          end
+          parse_number_format(@current_value, numFmt)
+        else
+          parse_number(@current_value)
+        end
+      else
+        raise Xsv::Error, "Encountered unknown column type #{@current_cell[:t]}"
+      end
     end
 
     # Ox::Sax implementation below
@@ -60,15 +60,11 @@ module Xsv
         @current_row = @empty_row.dup
         @current_row_attrs = {}
       when :c
-        if @state == :row
-          @state = name
-          @current_cell = {}
-        end
+        @state = name
+        @current_cell = {}
+        @current_value = ""
       when :v
-        if @state == :c
-          @state = name
-          @current_value = ""
-        end
+        @state = name
       else
         @state = nil
       end
@@ -104,7 +100,7 @@ module Xsv
         return if @row_index == 1 && @mode == :hash
 
         # Pad empty rows
-        while @row_index < @current_row_attrs[:r].to_i - @row_skip do
+        while @row_index < @current_row_attrs[:r].to_i - @row_skip
           @block.call(@empty_row)
           @row_index += 1
         end

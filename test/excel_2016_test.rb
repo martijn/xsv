@@ -25,7 +25,7 @@ class Excel2016Test < Minitest::Test
 
     expected = { "Some strings" => "Foo", "Some integer numbers" => 2, "Some decimal numbers" => 2.5, "Some empty values" => nil, "Some dates" => Date.new(2020, 2, 20), "Some times" => "10:00", "Some integer calculations" => 4, "Some decimal calculations" => 1.25 }
 
-    assert_equal expected, @file.sheets[0][1]
+    assert_equal expected, @file.sheets[0][0]
   end
 
   def test_fetch_all_columns
@@ -57,7 +57,7 @@ class Excel2016Test < Minitest::Test
   def test_hash_fetch_leading_null
     @file.sheets[1].parse_headers!
 
-    row = @file.sheets[1][4]
+    row = @file.sheets[1][3]
 
     expected = { "Header cell A" => nil, "Header cell B" => "Row with leading null", nil => nil, "Header cell D" => "Row with leading null" }
 
@@ -73,7 +73,7 @@ class Excel2016Test < Minitest::Test
   def test_hash_fetch_trailing_null
     @file.sheets[1].parse_headers!
 
-    row = @file.sheets[1][5]
+    row = @file.sheets[1][4]
 
     expected = { "Header cell A" => "Row with trailing null", "Header cell B" => "Row with trailing null", nil => nil, "Header cell D" => nil }
 

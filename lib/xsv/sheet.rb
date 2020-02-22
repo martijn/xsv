@@ -16,14 +16,7 @@ module Xsv
       @mode = :array
       @row_skip = 0
 
-      @has_cells = true # !xml.at_css("sheetData c").nil?
-
-      if @has_cells
-        @last_row, @column_count = SheetBoundsHandler.get_bounds(@io)
-      else
-        @last_row = 0
-        @column_count = 0
-      end
+      @last_row, @column_count = SheetBoundsHandler.get_bounds(@io)
     end
 
     def inspect
