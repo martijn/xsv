@@ -16,13 +16,13 @@ module Xsv
       @mode = :array
       @row_skip = 0
 
-      @has_cells = !xml.at_css("sheetData c").nil?
+      @has_cells = true # !xml.at_css("sheetData c").nil?
 
       if @has_cells
-        @column_count, @last_row = get_sheet_dimensions
+        @last_row, @column_count = SheetBoundsHandler.get_bounds(@io)
       else
-        @column_count = 0
         @last_row = 0
+        @column_count = 0
       end
     end
 
@@ -47,13 +47,11 @@ module Xsv
 
     # Get row by number, starting at 0
     def [](number)
-      row_xml = xml.at_css("sheetData row[r=#{number + @row_skip + 1}]")
-
-      if row_xml
-        parse_row(row_xml)
-      else
-        empty_row
+      each_with_index do |row, i|
+        return row if i == number
       end
+
+      return empty_row
     end
 
     # Load headers in the top row of the worksheet. After parsing of headers
@@ -129,29 +127,6 @@ module Xsv
       end
 
       row
-    end
-
-    # Read or estimate outer bounds of sheet
-    def get_sheet_dimensions
-      dimension = xml.at_css("dimension")
-
-      if dimension
-        _firstCell, lastCell = dimension["ref"].split(":")
-      end
-
-      if lastCell
-        # Assume the dimension reflects the content
-        column_count = column_index(lastCell) + 1
-      else
-        # Find the last cell in every row that has a value
-        rightmost_cells = @xml.xpath("//xmlns:row/xmlns:c[*[local-name() = 'v']][last()]").map { |c| column_index(c["r"]) }
-        column_count = rightmost_cells.max + 1
-      end
-
-      # Find the last row that contains actual values
-      last_row = @xml.at_xpath("//xmlns:row[*[xmlns:v]][last()]")["r"].to_i
-
-      return [column_count, last_row]
     end
   end
 end
