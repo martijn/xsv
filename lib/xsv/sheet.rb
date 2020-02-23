@@ -69,7 +69,7 @@ module Xsv
       if @mode == :array
         first
       elsif @mode == :hash
-        @mode == :array
+        @mode = :array
         headers.tap { @mode = :hash }
       end
     end

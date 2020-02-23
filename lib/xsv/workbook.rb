@@ -8,11 +8,11 @@ module Xsv
     # Open the workbook of the given filename, string or buffer
     def self.open(data, **kws)
       if data.is_a?(IO)
-        @workbook = self.new(Zip::File.open_buffer(data), kws)
+        @workbook = self.new(Zip::File.open_buffer(data), **kws)
       elsif data.start_with?("PK\x03\x04")
-        @workbook = self.new(Zip::File.open_buffer(data), kws)
+        @workbook = self.new(Zip::File.open_buffer(data), **kws)
       else
-        @workbook = self.new(Zip::File.open(data), kws)
+        @workbook = self.new(Zip::File.open(data), **kws)
       end
     end
 
