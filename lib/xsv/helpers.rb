@@ -40,11 +40,12 @@ module Xsv
     A_CODEPOINT = 'A'.ord.freeze
     EPOCH = Date.new(1899, 12, 30).freeze
 
-    # Return the index number for the given Excel column name
+    # Return the index number for the given Excel column name (i.e. "A1" => 0)
     def column_index(col)
-      col = col[/^[A-Z]+/]
-
-      col.each_codepoint.reduce(0) { |sum, n| sum * 26 + (n - A_CODEPOINT + 1) } - 1
+      col.each_codepoint.reduce(0) do |sum, n|
+        break sum - 1 if n < A_CODEPOINT  # reached a number
+        sum * 26 + (n - A_CODEPOINT + 1)
+      end
     end
 
     # Return a Date for the given Excel date value
