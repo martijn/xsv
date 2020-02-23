@@ -4,6 +4,8 @@ module Xsv
     include Xsv::Helpers
 
     def format_cell
+      return nil if @current_value.empty?
+
       case @current_cell[:t]
       when "s"
         @workbook.shared_strings[@current_value.to_i]
