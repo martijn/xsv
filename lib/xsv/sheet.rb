@@ -15,7 +15,7 @@ module Xsv
       @mode = :array
       @row_skip = 0
 
-      @last_row, @column_count = SheetBoundsHandler.get_bounds(@io)
+      @last_row, @column_count = SheetBoundsHandler.get_bounds(@io, @workbook)
     end
 
     def inspect

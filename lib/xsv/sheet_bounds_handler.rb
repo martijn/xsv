@@ -3,13 +3,15 @@ module Xsv
   class SheetBoundsHandler < Ox::Sax
     include Xsv::Helpers
 
-    def self.get_bounds(sheet)
+    def self.get_bounds(sheet, workbook)
       rows = 0
       cols = 0
 
-      handler = new do |row, col|
+      handler = new(workbook.trim_empty_rows) do |row, col|
         rows = row
         cols = col == 0 ? 0 : col + 1
+
+        return rows, cols
       end
 
       sheet.rewind
@@ -20,13 +22,14 @@ module Xsv
 
     # Ox::Sax implementation
 
-    def initialize(&block)
+    def initialize(trim_empty_rows, &block)
       @block = block
       @state = nil
       @cell = nil
       @row = nil
       @maxRow = 0
       @maxColumn = 0
+      @trim_empty_rows = trim_empty_rows
     end
 
     def start_element(name)
@@ -61,9 +64,11 @@ module Xsv
         _firstCell, lastCell = value.split(":")
 
         if lastCell
-          # This is probably right, but we'll let the scan continue to see
-          # if the values are exceeded
           @maxColumn = column_index(lastCell)
+          unless @trim_empty_rows
+            @maxRow = lastCell[/\d+$/].to_i
+            @block.call(@maxRow, @maxColumn)
+          end
         end
       end
     end

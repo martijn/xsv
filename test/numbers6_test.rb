@@ -54,7 +54,7 @@ class Numbers6Test < Minitest::Test
   end
 
   def test_fetch_all_rows_with_row_skip
-    @workbook = Xsv::Workbook.open("test/files/numbers6-default.xlsx")
+    @workbook = Xsv::Workbook.open("test/files/numbers6-default.xlsx", trim_empty_rows: true)
 
     rows = 0
 

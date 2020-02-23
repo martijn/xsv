@@ -4,22 +4,28 @@ require 'zip'
 module Xsv
   class Workbook
 
-    attr_reader :sheets, :shared_strings, :xfs, :numFmts
+    attr_reader :sheets, :shared_strings, :xfs, :numFmts, :trim_empty_rows
 
     # Open the workbook of the given filename, string or buffer
-    def self.open(data)
+    def self.open(data, **kws)
       if data.is_a?(IO)
-        @workbook = self.new(Zip::File.open_buffer(data))
+        @workbook = self.new(Zip::File.open_buffer(data), kws)
       elsif data.start_with?("PK\x03\x04")
-        @workbook = self.new(Zip::File.open_buffer(data))
+        @workbook = self.new(Zip::File.open_buffer(data), kws)
       else
-        @workbook = self.new(Zip::File.open(data))
+        @workbook = self.new(Zip::File.open(data), kws)
       end
     end
 
     # Open a workbook from an instance of Zip::File
-    def initialize(zip)
+    #
+    # Options:
+    #
+    #    trim_empty_rows (false) Scan sheet for end of content and don't return trailing rows
+    #
+    def initialize(zip, trim_empty_rows: false)
       @zip = zip
+      @trim_empty_rows = trim_empty_rows
 
       @sheets = []
       @xfs = []
