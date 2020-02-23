@@ -1,7 +1,5 @@
 module Xsv
   class SharedStringsParser < Ox::Sax
-    @state = nil
-
     def self.parse(io)
       strings = []
       handler = new { |s| strings << s }
@@ -11,6 +9,7 @@ module Xsv
 
     def initialize(&block)
       @block = block
+      @state = nil
     end
 
     def start_element(name)

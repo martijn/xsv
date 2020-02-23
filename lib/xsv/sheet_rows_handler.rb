@@ -96,13 +96,9 @@ module Xsv
         when :hash
           @current_row[@headers[col_index]] = format_cell
         end
-        @state = :row
-      when :v
-        @state = :c
       when :row
         if @row_index < 0
           @row_index += 1
-          @state = nil
           return
         end
 
@@ -119,8 +115,6 @@ module Xsv
 
         # Do not return empty trailing rows
         @block.call(@current_row) unless @row_index > @last_row - @row_skip
-
-        @state = nil
       end
     end
   end
