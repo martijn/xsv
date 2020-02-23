@@ -6,6 +6,7 @@ require "xsv/shared_strings_parser"
 require "xsv/sheet"
 require "xsv/sheet_bounds_handler"
 require "xsv/sheet_rows_handler"
+require "xsv/styles_handler"
 require "xsv/version"
 require "xsv/workbook"
 

@@ -51,15 +51,8 @@ module Xsv
 
     def fetch_styles
       stream = @zip.glob("xl/styles.xml").first.get_input_stream
-      xml = Nokogiri::XML(stream)
 
-      xml.css("cellXfs xf").each do |xf|
-        @xfs << xf.attributes.map { |k, v| [k.to_sym, v.value] }.to_h
-      end
-
-      xml.css("numFmts numFmt").each do |numFmt|
-        @numFmts[numFmt["numFmtId"].to_i] = numFmt["formatCode"]
-      end
+      @xfs, @numFmts = StylesHandler.get_styles(stream, @numFmts)
     end
 
     def fetch_sheets
