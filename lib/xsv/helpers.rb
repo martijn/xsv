@@ -36,18 +36,13 @@ module Xsv
 
     MINUTE = 60.freeze
     HOUR = 3600.freeze
+    A_CODEPOINT = 'A'.ord.freeze
 
     # Return the index number for the given Excel column name
     def column_index(col)
       col = col[/^[A-Z]+/]
 
-      val = 0
-      while col.length > 0
-        val *= 26
-        val += (col[0].ord - "A".ord + 1)
-        col = col[1..-1]
-      end
-      return val - 1
+      col.each_codepoint.reduce(0) { |sum, n| sum * 26 + (n - A_CODEPOINT + 1) } - 1
     end
 
     # Return a Date for the given Excel date value
