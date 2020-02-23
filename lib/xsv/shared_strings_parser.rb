@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Xsv
   class SharedStringsParser < Ox::Sax
     def self.parse(io)

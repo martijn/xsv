@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Xsv
   # StylesHandler interprets the relevant parts of styles.xml
   class StylesHandler < Ox::Sax

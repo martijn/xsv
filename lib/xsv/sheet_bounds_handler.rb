@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Xsv
   # SheetBoundsHandler scans a sheet looking for the outer bounds of the content within
   class SheetBoundsHandler < Ox::Sax

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Xsv
   class SheetRowsHandler < Ox::Sax
     include Xsv::Helpers
@@ -58,7 +59,7 @@ module Xsv
       when :c
         @state = name
         @current_cell = {}
-        @current_value = ""
+        @current_value = String.new
       when :v
         @state = name
       when :row
@@ -72,7 +73,7 @@ module Xsv
 
     def text(value)
       if @state == :v
-        @current_value += value
+        @current_value << value
       end
     end
 
