@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 module Xsv
   module Helpers
+    # The default OOXML Spreadheet number formats according to the ECMA standard
+    # User formats are appended from index 174 onward
     BUILT_IN_NUMBER_FORMATS = {
       1 => "0",
       2 => "0.00",
@@ -38,6 +40,7 @@ module Xsv
     MINUTE = 60.freeze
     HOUR = 3600.freeze
     A_CODEPOINT = 'A'.ord.freeze
+    # The epoch for all dates in OOXML Spreadsheet documents
     EPOCH = Date.new(1899, 12, 30).freeze
 
     # Return the index number for the given Excel column name (i.e. "A1" => 0)
@@ -74,6 +77,7 @@ module Xsv
       "%02d:%02d" % [hours, minutes]
     end
 
+    # Returns a time including a date as a {Time} object
     def parse_datetime(number)
       date_base = number.truncate
       time = parse_date(date_base).to_time
@@ -86,6 +90,7 @@ module Xsv
       time + hours * HOUR + minutes.round * MINUTE
     end
 
+    # Returns a number as either Integer or Float
     def parse_number(string)
       if string.include? "."
         string.to_f
@@ -94,6 +99,7 @@ module Xsv
       end
     end
 
+    # Apply date or time number formats, if applicable
     def parse_number_format(number, format)
       number = parse_number(number) if number.is_a?(String)
 

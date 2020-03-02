@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 module Xsv
   # StylesHandler interprets the relevant parts of styles.xml
+  # This is used internally when opening a sheet.
   class StylesHandler < Ox::Sax
     def self.get_styles(io, numFmts)
       @xfs = nil

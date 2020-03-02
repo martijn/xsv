@@ -9,7 +9,13 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Martijn Storck"]
   spec.email         = ["martijn@storck.io"]
 
-  spec.summary       = "Minimal xlsx parser that provides nothing a CSV parser wouldn't"
+  spec.summary       = "A fast and lightweiggt xlsx parser that provides nothing a CSV parser wouldn't"
+  spec.description    = <<-EOF
+                            XSV is a fast, lightweight parser for Office Open XML spreadsheet files
+                            (commonly known as Excel or .xlsx files). It strives to be minimal in the
+                            sense that it provides nothing a CSV reader wouldn't, meaning it only
+                            deals with minimal formatting and cannot create or modify documents.
+                          EOF
   spec.homepage      = "https://github.com/martijn/xsv"
   spec.license       = "MIT"
 

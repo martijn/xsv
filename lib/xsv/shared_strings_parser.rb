@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 module Xsv
+  # Interpret the sharedStrings.xml file from the workbook
+  # This is used internally when opening a sheet.
   class SharedStringsParser < Ox::Sax
     def self.parse(io)
       strings = []

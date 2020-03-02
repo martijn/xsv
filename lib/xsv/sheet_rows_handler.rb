@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 module Xsv
+  # This is the core worksheet parser, implemented as an Ox::Sax handler. This is
+  # used internally to enumerate rows.
   class SheetRowsHandler < Ox::Sax
     include Xsv::Helpers
 

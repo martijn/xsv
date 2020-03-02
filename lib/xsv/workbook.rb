@@ -2,11 +2,18 @@
 require 'zip'
 
 module Xsv
+  # An OOXML Spreadsheet document is called a Workbook. A Workbook consists of
+  # multiple Sheets that are available in the array that's accessible through {#sheets}
   class Workbook
 
-    attr_reader :sheets, :shared_strings, :xfs, :numFmts, :trim_empty_rows
+    # Access the Sheet objects contained in the workbook
+    # @return [Array<Sheet>]
+    attr_reader :sheets
 
-    # Open the workbook of the given filename, string or buffer
+    attr_reader :shared_strings, :xfs, :numFmts, :trim_empty_rows
+
+    # Open the workbook of the given filename, string or buffer. For additional
+    # options see {.initialize}
     def self.open(data, **kws)
       if data.is_a?(IO)
         @workbook = self.new(Zip::File.open_buffer(data), **kws)
@@ -17,7 +24,8 @@ module Xsv
       end
     end
 
-    # Open a workbook from an instance of Zip::File
+    # Open a workbook from an instance of {Zip::File}. Generally it's recommended
+    # to use the {.open} method instead of the constructor.
     #
     # Options:
     #
@@ -36,16 +44,21 @@ module Xsv
       fetch_sheets
     end
 
+    # @return [String]
     def inspect
       "#<#{self.class.name}:#{self.object_id}>"
     end
 
+    # Close the handle to the workbook file and leave all resources for the GC to collect
+    # @return [true]
     def close
       @zip.close
       @sheets = nil
       @xfs = nil
       @numFmts = nil
       @shared_strings = nil
+
+      true
     end
 
     private

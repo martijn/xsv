@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 module Xsv
-  # SheetBoundsHandler scans a sheet looking for the outer bounds of the content within
+  # SheetBoundsHandler scans a sheet looking for the outer bounds of the content within.
+  # This is used internally when opening a sheet to deal with worksheets that do not
+  # have a correct dimension tag.
   class SheetBoundsHandler < Ox::Sax
     include Xsv::Helpers
 
