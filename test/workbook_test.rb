@@ -22,4 +22,11 @@ class WorkbookTest < Minitest::Test
 
     refute_empty @workbook.sheets
   end
+
+  def test_close
+    @workbook = Xsv::Workbook.open("test/files/office365-xl7.xlsx")
+
+    @workbook.close
+    assert_nil @workbook.sheets
+  end
 end

@@ -40,6 +40,14 @@ module Xsv
       "#<#{self.class.name}:#{self.object_id}>"
     end
 
+    def close
+      @zip.close
+      @sheets = nil
+      @xfs = nil
+      @numFmts = nil
+      @shared_strings = nil
+    end
+
     private
 
     def fetch_shared_strings
