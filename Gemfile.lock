@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    xsv (0.3.2)
+    xsv (0.3.3)
       ox (~> 2.13)
       rubyzip (~> 2.2)
 
