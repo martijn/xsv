@@ -45,12 +45,10 @@ module Xsv
     end
 
     # Iterate over rows, returning either hashes or arrays based on the current mode.
-    def each_row
+    def each_row(&block)
       @io.rewind
 
-      handler = SheetRowsHandler.new(@mode, empty_row, @workbook, @row_skip, @last_row) do |row|
-        yield(row)
-      end
+      handler = SheetRowsHandler.new(@mode, empty_row, @workbook, @row_skip, @last_row, &block)
 
       Ox.sax_parse(handler, @io)
 

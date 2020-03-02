@@ -16,9 +16,7 @@ module Xsv
       when "e" # N/A
         nil
       when nil
-        if @current_value == ""
-          nil
-        elsif @current_cell[:s]
+        if @current_cell[:s]
           style = @workbook.xfs[@current_cell[:s].to_i]
           numFmt = @workbook.numFmts[style[:numFmtId].to_i]
 
@@ -50,7 +48,7 @@ module Xsv
       @current_row = {}
       @current_row_attrs = {}
       @current_cell = {}
-      @current_value = nil
+      @current_value = String.new
       @last_row = last_row
 
       if @mode == :hash
@@ -62,14 +60,14 @@ module Xsv
       case name
       when :c
         @state = name
-        @current_cell = {}
-        @current_value = String.new
+        @current_cell.clear
+        @current_value.clear
       when :v
         @state = name
       when :row
         @state = name
         @current_row = @empty_row.dup
-        @current_row_attrs = {}
+        @current_row_attrs.clear
       else
         @state = nil
       end
