@@ -3,13 +3,13 @@
 [![Travis CI](https://img.shields.io/travis/martijn/xsv/master)](https://travis-ci.org/martijn/xsv)
 [![Yard Docs](http://img.shields.io/badge/yard-docs-blue.svg)](https://rubydoc.info/github/martijn/xsv)
 
-XSV is a fast, lightweight parser for Office Open XML spreadsheet files
+Xsv is a fast, lightweight parser for Office Open XML spreadsheet files
 (commonly known as Excel or .xlsx files). It strives to be minimal in the
 sense that it provides nothing a CSV reader wouldn't, meaning it only
 deals with minimal formatting and cannot create or modify documents.
 
 Xsv is designed for worksheets with a single table of data, optionally
-with a header row. It only parses values to basic Ruby types (integer, float,
+with a header row. It only casts values to basic Ruby types (integer, float,
 date and time) and does not deal with most formatting or more advanced
 functionality. The goal is to allow for fast parsing of large worksheets with
 minimal RAM and CPU consumption.
@@ -88,9 +88,9 @@ sheet:
 
 - In array mode, your data starts on the first row
 
-- In has mode the first row of the sheet contains headers, followed by rows of data
+- In hash mode the first row of the sheet contains headers, followed by rows of data
 
-If your data or headers does not start on the first row of the sheet you can
+If your data or headers do not start on the first row of the sheet you can
 tell Xsv to skip a number of rows:
 
 ```ruby
