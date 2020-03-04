@@ -1,10 +1,18 @@
 # Xsv .xlsx reader
 
-Xsv is a very basic parser for Office Open XML spreadsheet files (.xlsx files)
-that aims to provide feature parity with common CSV readers with high
-performance. This means it only parses values to basic Ruby types and does not
-deal with most formatting or more advanced functionality. The goal is to allow
-for fast parsing of large worksheets with minimal RAM and CPU consumption.
+[![Travis CI](https://img.shields.io/travis/martijn/xsv/master)](https://travis-ci.org/martijn/xsv)
+[![Yard Docs](http://img.shields.io/badge/yard-docs-blue.svg)](https://rubydoc.info/github/martijn/xsv)
+
+XSV is a fast, lightweight parser for Office Open XML spreadsheet files
+(commonly known as Excel or .xlsx files). It strives to be minimal in the
+sense that it provides nothing a CSV reader wouldn't, meaning it only
+deals with minimal formatting and cannot create or modify documents.
+
+Xsv is designed for worksheets with a single table of data, optionally
+with a header row. It only parses values to basic Ruby types (integer, float,
+date and time) and does not deal with most formatting or more advanced
+functionality. The goal is to allow for fast parsing of large worksheets with
+minimal RAM and CPU consumption.
 
 Xsv stands for 'Excel Separated Values', because Excel just gets in the way.
 
