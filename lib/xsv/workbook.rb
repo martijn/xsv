@@ -80,7 +80,15 @@ module Xsv
       @zip.glob("xl/worksheets/sheet*.xml").sort do |a, b|
         a.name[/\d+/].to_i <=> b.name[/\d+/].to_i
       end.each do |entry|
-        @sheets << Xsv::Sheet.new(self, entry.get_input_stream)
+        # For smaller sheets, memory performance is a lot better if Ox is
+        # handed a string. For larger sheets this leads to awful performance.
+        # This is probably caused by either something in SheetRowsHandler or
+        # the interaction between Zip::InputStream and Ox
+        if entry.size > 100_000_000
+          @sheets << Xsv::Sheet.new(self, entry.get_input_stream)
+        else
+          @sheets << Xsv::Sheet.new(self, entry.get_input_stream.read)
+        end
       end
     end
   end

@@ -6,7 +6,7 @@ module Xsv
     def self.parse(io)
       strings = []
       handler = new { |s| strings << s }
-      Ox.sax_parse(handler, io)
+      Ox.sax_parse(handler, io.read)
       return strings
     end
 

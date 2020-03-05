@@ -11,7 +11,7 @@ module Xsv
          @numFmts = numFmts
       end
 
-      Ox.sax_parse(handler, io)
+      Ox.sax_parse(handler, io.read)
       return @xfs, @numFmts
     end
 

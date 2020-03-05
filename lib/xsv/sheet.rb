@@ -28,7 +28,7 @@ module Xsv
     # There is no need to create Sheets from application code.
     #
     # @param workbook [Workbook] The Workbook with shared data such as shared strings and styles
-    # @param io [IO] A handle to an open worksheet XML file
+    # @param io [IO] A handle to an open worksheet XML file or a string with the XML contents
     def initialize(workbook, io)
       @workbook = workbook
       @io = io
@@ -46,7 +46,7 @@ module Xsv
 
     # Iterate over rows, returning either hashes or arrays based on the current mode.
     def each_row(&block)
-      @io.rewind
+      @io.rewind if @io.respond_to?(:rewind)
 
       handler = SheetRowsHandler.new(@mode, empty_row, @workbook, @row_skip, @last_row, &block)
 
