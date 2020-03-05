@@ -17,8 +17,8 @@ module Xsv
         return rows, cols
       end
 
-      sheet.rewind if sheet.respond_to?(:rewind)
-      Ox.sax_parse(handler, sheet)
+      sheet.rewind
+      Ox.sax_parse(handler, sheet.read)
 
       return rows, cols
     end

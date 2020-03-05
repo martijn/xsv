@@ -28,10 +28,12 @@ module Xsv
     # There is no need to create Sheets from application code.
     #
     # @param workbook [Workbook] The Workbook with shared data such as shared strings and styles
-    # @param io [IO] A handle to an open worksheet XML file or a string with the XML contents
-    def initialize(workbook, io)
+    # @param io [IO] A handle to an open worksheet XML file
+    # @param size [Number] size of the XML file
+    def initialize(workbook, io, size)
       @workbook = workbook
       @io = io
+      @size = size
       @headers = []
       @mode = :array
       @row_skip = 0
@@ -46,11 +48,19 @@ module Xsv
 
     # Iterate over rows, returning either hashes or arrays based on the current mode.
     def each_row(&block)
-      @io.rewind if @io.respond_to?(:rewind)
+      @io.rewind
 
       handler = SheetRowsHandler.new(@mode, empty_row, @workbook, @row_skip, @last_row, &block)
 
-      Ox.sax_parse(handler, @io)
+      # For smaller sheets, memory performance is a lot better if Ox is
+      # handed a string. For larger sheets this leads to awful performance.
+      # This is probably caused by either something in SheetRowsHandler or
+      # the interaction between Zip::InputStream and Ox
+      if @size > 100_000_000
+        Ox.sax_parse(handler, @io)
+      else
+        Ox.sax_parse(handler, @io.read)
+      end
 
       true
     end
