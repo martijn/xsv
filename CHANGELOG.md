@@ -1,5 +1,11 @@
 # Xsv Changelog
 
+## 0.3.8 - 2020-03-11
+
+- Improve compatibility with files exported from LibreOffice
+
+- Support for boolean type
+
 ## 0.3.7 - 2020-03-05
 
 Reduce retained memory, making Xsv the definite performance king among the
