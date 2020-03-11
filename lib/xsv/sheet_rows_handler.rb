@@ -11,11 +11,11 @@ module Xsv
       case @current_cell[:t]
       when "s"
         @workbook.shared_strings[@current_value.to_i]
-      when "str"
+      when "str", "inlineStr"
         @current_value
       when "e" # N/A
         nil
-      when nil
+      when nil, "n"
         if @current_cell[:s]
           style = @workbook.xfs[@current_cell[:s].to_i]
           numFmt = @workbook.numFmts[style[:numFmtId].to_i]
@@ -24,6 +24,8 @@ module Xsv
         else
           parse_number(@current_value)
         end
+      when "b"
+        @current_value == "1"
       else
         raise Xsv::Error, "Encountered unknown column type #{@current_cell[:t]}"
       end
