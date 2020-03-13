@@ -12,7 +12,7 @@ module Xsv
       when "s"
         @workbook.shared_strings[@current_value.to_i]
       when "str", "inlineStr"
-        @current_value
+        @current_value.dup
       when "e" # N/A
         nil
       when nil, "n"
@@ -46,7 +46,7 @@ module Xsv
       @empty_row = empty_row
       @workbook = workbook
       @row_skip = row_skip
-      @row_index = 0 - @row_skip
+      @row_index = 0
       @current_row = {}
       @current_row_attrs = {}
       @current_cell = {}
@@ -102,20 +102,23 @@ module Xsv
           @current_row[@headers[col_index]] = format_cell
         end
       when :row
-        if @row_index < 0
-          @row_index += 1
+        @real_row_number = @current_row_attrs[:r].to_i
+        @adjusted_row_number = @real_row_number - @row_skip
+
+        if @real_row_number <= @row_skip
           return
         end
 
         @row_index += 1
 
         # Skip first row if we're in hash mode
-        return if @row_index == 1 && @mode == :hash
+        return if @adjusted_row_number == 1 && @mode == :hash
 
         # Pad empty rows
-        while @row_index < @current_row_attrs[:r].to_i - @row_skip
+        while @row_index < @adjusted_row_number
           @block.call(@empty_row)
           @row_index += 1
+          next
         end
 
         # Do not return empty trailing rows

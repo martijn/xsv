@@ -38,4 +38,24 @@ class SheetRowsHandlerTest < Minitest::Test
     assert_equal 2.5, rows[0]["Some decimal numbers"]
     assert_equal "15:25", rows[2]["Some times"]
   end
+
+  # Make sure row skipping works correctly with different types of empty rows
+  def test_skip_empty_rows
+    @sheet = File.read("test/files/empty-row-skip.xml")
+
+    rows = []
+
+    collector = Proc.new do |row|
+      rows << row
+    end
+
+    first_columns = ["0", "1", nil, nil, "2"]
+
+    (0..5).each do |row_skip|
+      rows = []
+      handler = Xsv::SheetRowsHandler.new(:array, ([nil] * 10), @workbook, row_skip, 6, &collector)
+      Ox.sax_parse(handler, @sheet)
+      assert_equal first_columns[row_skip..-1], rows.map(&:first)
+    end
+  end
 end
