@@ -1,5 +1,9 @@
 # Xsv Changelog
 
+## 0.3.9 - 2020-03-16
+
+- Fix an edge case issue with row_skip  and empty rows
+
 ## 0.3.8 - 2020-03-11
 
 - Improve compatibility with files exported from LibreOffice
