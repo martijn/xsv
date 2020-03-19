@@ -32,6 +32,8 @@ Or install it yourself as:
 
     $ gem install xsv
 
+Xsv targets ruby ~> 2.6 and depends on `rubyzip` and `ox`.
+
 ## Usage
 
 Xsv has two modes of operation. By default it returns an array for

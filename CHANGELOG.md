@@ -1,5 +1,9 @@
 # Xsv Changelog
 
+## 0.3.10 - 2020-03-19
+
+- Relax version requirements for dependencies
+
 ## 0.3.9 - 2020-03-16
 
 - Fix an edge case issue with row_skip  and empty rows
