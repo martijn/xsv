@@ -81,7 +81,7 @@ columns with the same name!
 `Xsv::Workbook.open` accepts a filename, or a IO or String containing a workbook.
 
 `Xsv::Sheet` implements `Enumerable` so you can call methods like `#first`,
-`#filter` and `#map` on it.
+`#filter`/`#select` and `#map` on it.
 
 ### Assumptions
 
