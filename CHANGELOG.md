@@ -1,5 +1,9 @@
 # Xsv Changelog
 
+## 0.3.11 - 2020-04-03
+
+- Backward compatibility with Ruby 2.5 (texpert)
+
 ## 0.3.10 - 2020-03-19
 
 - Relax version requirements for dependencies
