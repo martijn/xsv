@@ -10,6 +10,22 @@ class Excel2016Test < Minitest::Test
     assert_nil @file.sheets[9]
   end
 
+  def test_return_sheets_name
+    assert_equal 'Basic types', @file.sheets[0].name
+    assert_equal 'Empty rows and columns', @file.sheets[1].name
+    assert_equal 'A graph', @file.sheets[2].name
+    assert_equal 'Merges and hides', @file.sheets[3].name
+    assert_equal 'Hidden sheet', @file.sheets[4].name
+  end
+
+  def test_access_sheets_by_name
+    assert_equal @file.sheets_by_name('Basic types').first.id, 1
+  end
+
+  def test_access_sheets_by_inexistent_name
+    assert_equal @file.sheets_by_name('Basic type').first, nil
+  end
+
   def test_access_row_by_index
     assert_kind_of Array, @file.sheets[0][0]
   end

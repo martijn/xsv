@@ -17,7 +17,7 @@ module Xsv
 
     # Returns the current mode. Call {#parse_headers!} to switch to `:hash` mode
     # @return [Symbol] `:hash` or `:array`
-    attr_reader :mode
+    attr_reader :id, :mode, :name
 
     # Set a number of rows to skip at the top of the sheet (header row offset).
     # For hash mode, do not skip the header row as this will be automatically
@@ -30,9 +30,11 @@ module Xsv
     # @param workbook [Workbook] The Workbook with shared data such as shared strings and styles
     # @param io [IO] A handle to an open worksheet XML file
     # @param size [Number] size of the XML file
-    def initialize(workbook, io, size)
+    def initialize(workbook, io, size, ids)
       @workbook = workbook
+      @id = ids[:sheetId].to_i
       @io = io
+      @name = ids[:name]
       @size = size
       @headers = []
       @mode = :array
