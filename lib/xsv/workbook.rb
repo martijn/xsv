@@ -88,8 +88,8 @@ module Xsv
       @zip.glob("xl/worksheets/sheet*.xml").sort do |a, b|
         a.name[/\d+/].to_i <=> b.name[/\d+/].to_i
       end.each do |entry|
-        rel = @relationships.select { |r| entry.name.end_with?(r[:Target]) && r[:Type].end_with?('worksheet') }[0]
-        sheet_ids = @sheets_ids.select { |i| i[:r_id] == rel[:Id] }[0]
+        rel = @relationships.detect { |r| entry.name.end_with?(r[:Target]) && r[:Type].end_with?('worksheet') }
+        sheet_ids = @sheets_ids.detect { |i| i[:r_id] == rel[:Id] }
         @sheets << Xsv::Sheet.new(self, entry.get_input_stream, entry.size, sheet_ids)
       end
     end
