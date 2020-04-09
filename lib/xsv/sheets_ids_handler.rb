@@ -20,10 +20,16 @@ module Xsv
     end
 
     def start_element(name)
-      @sheet_ids = {} if name == :sheet
+      return @parsing = true if name == :sheets
+
+      return unless name == :sheet
+
+      @sheet_ids = {}
     end
 
     def attr(name, value)
+      return unless @parsing
+
       case name
         when :name, :sheetId
           @sheet_ids[name] = value
@@ -33,6 +39,8 @@ module Xsv
     end
 
     def end_element(name)
+      return @parsing = false if name == :sheets
+
       return unless name == :sheet
 
       @block.call(@sheet_ids)
