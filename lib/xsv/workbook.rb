@@ -65,6 +65,9 @@ module Xsv
       true
     end
 
+    # Returns an array of sheets for the case of same name sheets.
+    # @param [String] name
+    # @return [Array<Xsv::Sheet>]
     def sheets_by_name(name)
       @sheets.select { |s| s.name == name }
     end
