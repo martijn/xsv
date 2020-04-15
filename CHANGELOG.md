@@ -1,5 +1,9 @@
 # Xsv Changelog
 
+## 0.3.12 - 2020-04-15
+
+- Accessing worksheets by name (texpert)
+
 ## 0.3.11 - 2020-04-03
 
 - Backward compatibility with Ruby 2.5 (texpert)
