@@ -83,6 +83,22 @@ columns with the same name!
 `Xsv::Sheet` implements `Enumerable` so you can call methods like `#first`,
 `#filter`/`#select` and `#map` on it.
 
+The sheets could be accessed by index or by name:
+
+```ruby
+x = Xsv::Workbook.open("sheet.xlsx")
+
+sheet = x.sheets[0] # gets sheet by index
+
+sheet = x.sheets_by_name('Name').first # gets sheet by name
+```
+
+To get all the workbook's sheets names:
+
+```ruby
+sheet_names = x.sheets.map(&:name)
+```
+
 ### Assumptions
 
 Since Xsv treats worksheets like csv files it makes certain assumptions about your

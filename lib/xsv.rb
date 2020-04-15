@@ -3,10 +3,12 @@ require "date"
 require "ox"
 
 require "xsv/helpers"
+require "xsv/relationships_handler"
 require "xsv/shared_strings_parser"
 require "xsv/sheet"
 require "xsv/sheet_bounds_handler"
 require "xsv/sheet_rows_handler"
+require 'xsv/sheets_ids_handler'
 require "xsv/styles_handler"
 require "xsv/version"
 require "xsv/workbook"
