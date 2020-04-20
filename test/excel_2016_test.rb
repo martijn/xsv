@@ -128,4 +128,9 @@ class Excel2016Test < Minitest::Test
 
     assert_equal "This sharedString is split down the middle", sheet[2][0]
   end
+
+  def test_hidden_sheet
+    assert @file.sheets[4].hidden?
+    refute @file.sheets[3].hidden?
+  end
 end

@@ -1,5 +1,11 @@
 # Xsv Changelog
 
+## HEAD
+
+- Add Sheet#hidden?
+
+- Clean up code; get rid of some deprecation warnings
+
 ## 0.3.12 - 2020-04-15
 
 - Accessing worksheets by name (texpert)

@@ -35,7 +35,7 @@ module Xsv
       return unless @parsing
 
       case name
-      when :name, :sheetId
+      when :name, :sheetId, :state
         @sheet_ids[name] = value
       when :'r:id'
         @sheet_ids[:r_id] = value

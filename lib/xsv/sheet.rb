@@ -39,6 +39,7 @@ module Xsv
       @headers = []
       @mode = :array
       @row_skip = 0
+      @hidden = ids[:state] == "hidden"
 
       @last_row, @column_count = SheetBoundsHandler.get_bounds(@io, @workbook)
     end
@@ -46,6 +47,11 @@ module Xsv
     # @return [String]
     def inspect
       "#<#{self.class.name}:#{self.object_id}>"
+    end
+
+    # Returns true if the worksheet is hidden
+    def hidden?
+      @hidden
     end
 
     # Iterate over rows, returning either hashes or arrays based on the current mode.
