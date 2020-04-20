@@ -17,6 +17,7 @@ module Xsv
 
     def initialize(&block)
       @block = block
+      @relationship = {}
     end
 
     def start_element(name)
@@ -25,8 +26,8 @@ module Xsv
 
     def attr(name, value)
       case name
-        when :Id, :Type, :Target
-          @relationship[name] = value
+      when :Id, :Type, :Target
+        @relationship[name] = value
       end
     end
 

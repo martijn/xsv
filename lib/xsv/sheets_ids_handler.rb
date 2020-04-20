@@ -17,10 +17,14 @@ module Xsv
 
     def initialize(&block)
       @block = block
+      @parsing = false
     end
 
     def start_element(name)
-      return @parsing = true if name == :sheets
+      if name == :sheets
+        @parsing = true
+        return
+      end
 
       return unless name == :sheet
 
@@ -31,15 +35,18 @@ module Xsv
       return unless @parsing
 
       case name
-        when :name, :sheetId
-          @sheet_ids[name] = value
-        when :'r:id'
-          @sheet_ids[:r_id] = value
+      when :name, :sheetId
+        @sheet_ids[name] = value
+      when :'r:id'
+        @sheet_ids[:r_id] = value
       end
     end
 
     def end_element(name)
-      return @parsing = false if name == :sheets
+      if name == :sheets
+        @parsing = false
+        return
+      end
 
       return unless name == :sheet
 

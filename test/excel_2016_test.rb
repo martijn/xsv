@@ -23,7 +23,7 @@ class Excel2016Test < Minitest::Test
   end
 
   def test_access_sheets_by_inexistent_name
-    assert_equal @file.sheets_by_name('Basic type').first, nil
+    assert_nil @file.sheets_by_name('Basic type').first
   end
 
   def test_access_row_by_index
