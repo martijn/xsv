@@ -1,11 +1,9 @@
 require "test_helper"
 
 class SharedStringsParserTest < Minitest::Test
-  def setup
-    @file = File.open("test/files/sharedStrings.xml")
-  end
-
   def test_parser
+    @file = File.open("test/files/sharedStrings.xml")
+
     strings = []
 
     strings = Xsv::SharedStringsParser.parse(@file)
@@ -15,5 +13,17 @@ class SharedStringsParserTest < Minitest::Test
     refute_includes strings, nil
 
     assert_equal 33, strings.length
+  end
+
+  def test_whitespace
+    @file = File.open("test/files/sharedStrings-whitespace.xml")
+
+    strings = []
+
+    strings = Xsv::SharedStringsParser.parse(@file)
+
+    assert_includes strings, "A       B"
+    assert_includes strings, "   Leading"
+    assert_includes strings, "Trailing      "
   end
 end
