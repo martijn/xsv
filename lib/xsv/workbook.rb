@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-require 'zip'
+require "zip"
 
 module Xsv
   # An OOXML Spreadsheet document is called a Workbook. A Workbook consists of
@@ -91,7 +91,7 @@ module Xsv
       @zip.glob("xl/worksheets/sheet*.xml").sort do |a, b|
         a.name[/\d+/].to_i <=> b.name[/\d+/].to_i
       end.each do |entry|
-        rel = @relationships.detect { |r| entry.name.end_with?(r[:Target]) && r[:Type].end_with?('worksheet') }
+        rel = @relationships.detect { |r| entry.name.end_with?(r[:Target]) && r[:Type].end_with?("worksheet") }
         sheet_ids = @sheets_ids.detect { |i| i[:r_id] == rel[:Id] }
         @sheets << Xsv::Sheet.new(self, entry.get_input_stream, entry.size, sheet_ids)
       end

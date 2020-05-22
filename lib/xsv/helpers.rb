@@ -39,7 +39,7 @@ module Xsv
 
     MINUTE = 60.freeze
     HOUR = 3600.freeze
-    A_CODEPOINT = 'A'.ord.freeze
+    A_CODEPOINT = "A".ord.freeze
     # The epoch for all dates in OOXML Spreadsheet documents
     EPOCH = Date.new(1899, 12, 30).freeze
 
@@ -53,7 +53,7 @@ module Xsv
 
     # Return a Date for the given Excel date value
     def parse_date(number)
-       EPOCH + number
+      EPOCH + number
     end
 
     # Return a time as a string for the given Excel time value

@@ -7,8 +7,8 @@ module Xsv
       @xfs = nil
       @numFmts = nil
       handler = new(numFmts) do |xfs, numFmts|
-         @xfs = xfs
-         @numFmts = numFmts
+        @xfs = xfs
+        @numFmts = numFmts
       end
 
       Ox.sax_parse(handler, io.read)

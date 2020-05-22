@@ -14,4 +14,3 @@ Rake::TestTask.new(:bench) do |t|
 end
 
 task :default => [:test, :bench]
-
