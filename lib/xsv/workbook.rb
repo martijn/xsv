@@ -15,11 +15,11 @@ module Xsv
     # Open the workbook of the given filename, string or buffer. For additional
     # options see {.initialize}
     def self.open(data, **kws)
-      if data.is_a?(IO)
+      if data.is_a?(IO) || data.respond_to?(:read) # is it a buffer?
         @workbook = self.new(Zip::File.open_buffer(data), **kws)
-      elsif data.start_with?("PK\x03\x04")
+      elsif data.start_with?("PK\x03\x04") # is it a string containing a filename?
         @workbook = self.new(Zip::File.open_buffer(data), **kws)
-      else
+      else # must be a filename
         @workbook = self.new(Zip::File.open(data), **kws)
       end
     end

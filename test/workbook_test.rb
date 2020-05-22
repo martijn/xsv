@@ -23,6 +23,22 @@ class WorkbookTest < Minitest::Test
     refute_empty @workbook.sheets
   end
 
+  def test_open_tempfile
+    t = Tempfile.new
+    t.write(File.read("test/files/office365-xl7.xlsx"))
+    t.rewind
+
+    @workbook = Xsv::Workbook.open(t)
+
+    refute_empty @workbook.sheets
+  end
+
+  def test_open_nonexisting
+    assert_raises Zip::Error do
+      @workbook = Xsv::Workbook.open("does-not-exist.xlsx")
+    end
+  end
+
   def test_close
     @workbook = Xsv::Workbook.open("test/files/office365-xl7.xlsx")
 
