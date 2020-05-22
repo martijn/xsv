@@ -117,7 +117,7 @@ class Excel2016Test < Minitest::Test
     assert_equal ["A1", "Merged B-C", nil, "D", "Hidden E", "F"], sheet.headers
   end
 
-  def test_hidden_sheet
+  def test_hidden_sheet_accessible
     sheet = @file.sheets[4]
 
     assert_equal "I'm secret", sheet[0][0]
@@ -129,7 +129,7 @@ class Excel2016Test < Minitest::Test
     assert_equal "This sharedString is split down the middle", sheet[2][0]
   end
 
-  def test_hidden_sheet
+  def test_hidden_sheet_attribute
     assert @file.sheets[4].hidden?
     refute @file.sheets[3].hidden?
   end
