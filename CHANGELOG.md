@@ -1,6 +1,12 @@
 # Xsv Changelog
 
-## HEAD
+## 0.3.14 2020-05-22
+
+- Allow opening workbooks from Tempfile and anything that responds to #read
+
+- Preserve whitespace in text cells
+
+## 0.3.13 2020-05-12
 
 - Add Sheet#hidden?
 
