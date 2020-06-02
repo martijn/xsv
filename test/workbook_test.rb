@@ -45,4 +45,9 @@ class WorkbookTest < Minitest::Test
     @workbook.close
     assert_nil @workbook.sheets
   end
+
+  def test_open_without_shared_strings
+    @workbook = Xsv::Workbook.open("test/files/no-shared-strings.xlsx")
+    refute_empty @workbook.sheets
+  end
 end

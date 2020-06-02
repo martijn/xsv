@@ -75,7 +75,10 @@ module Xsv
     private
 
     def fetch_shared_strings
-      stream = @zip.glob("xl/sharedStrings.xml").first.get_input_stream
+      handle = @zip.glob("xl/sharedStrings.xml").first
+      return if handle.nil?
+
+      stream = handle.get_input_stream
       @shared_strings = SharedStringsParser.parse(stream)
 
       stream.close
