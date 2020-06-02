@@ -1,5 +1,9 @@
 # Xsv Changelog
 
+## 0.3.15 2020-06-02
+
+- Fix issue with workbooks that don't contain shared strings (#15)
+
 ## 0.3.14 2020-05-22
 
 - Allow opening workbooks from Tempfile and anything that responds to #read
