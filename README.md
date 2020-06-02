@@ -123,6 +123,14 @@ After checking out the repo, run `bin/setup` to install dependencies. Then, run 
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
+## Performance and Benchmarks
+
+Xsv is faster and more memory efficient than other gems because of two things: it only _reads values_ from Excel files and it's based on a SAX-based parser instead of a DOM-based parser. If you want to read some background on this, check out my blog post on
+[Faster Excel Parsing in Ruby](https://storck.io/posts/efficient-xml-parsing-in-ruby/).
+
+Jamie Schembri did a shootout of Xsv against various other Excel reading gems comparing parsing speed, memory usage and allocations.
+Check our his blog post: [Faster Excel parsing in Ruby](https://blog.schembri.me/post/faster-excel-parsing-in-ruby/).
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/martijn/xsv.
