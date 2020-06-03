@@ -1,5 +1,9 @@
 # Xsv Changelog
 
+## 0.3.16 2020-06-03
+
+- Support complex numbers (#16)
+
 ## 0.3.15 2020-06-02
 
 - Fix issue with workbooks that don't contain shared strings (#15)
