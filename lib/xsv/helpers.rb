@@ -94,6 +94,8 @@ module Xsv
     def parse_number(string)
       if string.include? "."
         string.to_f
+      elsif string.include? "E"
+        Complex(string).to_f
       else
         string.to_i
       end
