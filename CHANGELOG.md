@@ -1,5 +1,9 @@
 # Xsv Changelog
 
+## 0.3.17 2020-07-03
+
+- Fix parsing of empty worksheets (#17)
+
 ## 0.3.16 2020-06-03
 
 - Support complex numbers (#16)
