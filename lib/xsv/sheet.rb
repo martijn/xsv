@@ -112,7 +112,7 @@ module Xsv
       elsif @mode == :hash
         @mode = :array
         headers.tap { @mode = :hash }
-      end
+      end || []
     end
 
     def empty_row
