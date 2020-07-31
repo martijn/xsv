@@ -11,8 +11,9 @@ deals with minimal formatting and cannot create or modify documents.
 Xsv is designed for worksheets with a single table of data, optionally
 with a header row. It only casts values to basic Ruby types (integer, float,
 date and time) and does not deal with most formatting or more advanced
-functionality. The goal is to allow for fast parsing of large worksheets with
-minimal RAM and CPU consumption.
+functionality. It strives for fast processing of large worksheets with
+minimal RAM and CPU consumption and has been in production use since the earliest
+versions.
 
 Xsv stands for 'Excel Separated Values', because Excel just gets in the way.
 
@@ -36,7 +37,7 @@ Xsv targets ruby ~> 2.6 and depends on `rubyzip` and `ox`.
 
 ## Usage
 
-Xsv has two modes of operation. By default it returns an array for
+Xsv has two modes of operation. By default, it returns an array for
 each row in the sheet:
 
 ```ruby
