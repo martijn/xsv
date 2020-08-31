@@ -3,7 +3,7 @@ module Xsv
   # SheetBoundsHandler scans a sheet looking for the outer bounds of the content within.
   # This is used internally when opening a sheet to deal with worksheets that do not
   # have a correct dimension tag.
-  class SheetBoundsHandler < Ox::Sax
+  class SheetBoundsHandler < SaxParser
     include Xsv::Helpers
 
     def self.get_bounds(sheet, workbook)
@@ -18,12 +18,11 @@ module Xsv
       end
 
       sheet.rewind
-      Ox.sax_parse(handler, sheet.read)
+
+      handler.parse(sheet)
 
       return rows, cols
     end
-
-    # Ox::Sax implementation
 
     def initialize(trim_empty_rows, &block)
       @block = block
@@ -35,36 +34,22 @@ module Xsv
       @trim_empty_rows = trim_empty_rows
     end
 
-    def start_element(name)
+    def start_element(name, attrs)
       case name
-      when :c
+      when "c"
         @state = name
-        @cell = nil
-      when :v
+        @cell = attrs.to_h["r"]
+      when "v"
         col = column_index(@cell)
         @maxColumn = col if col > @maxColumn
         @maxRow = @row if @row > @maxRow
-      when :row
+      when "row"
         @state = name
-        @row = nil
-      when :dimension
+        @row = attrs.to_h["r"].to_i
+      when "dimension"
         @state = name
-      end
-    end
 
-    def end_element(name)
-      if name == :sheetData
-        @block.call(@maxRow, @maxColumn)
-      end
-    end
-
-    def attr(name, value)
-      if @state == :c && name == :r
-        @cell = value
-      elsif @state == :row && name == :r
-        @row = value.to_i
-      elsif @state == :dimension && name == :ref
-        _firstCell, lastCell = value.split(":")
+        _firstCell, lastCell = attrs.to_h["ref"].split(":")
 
         if lastCell
           @maxColumn = column_index(lastCell)
@@ -73,6 +58,12 @@ module Xsv
             @block.call(@maxRow, @maxColumn)
           end
         end
+      end
+    end
+
+    def end_element(name)
+      if name == "sheetData"
+        @block.call(@maxRow, @maxColumn)
       end
     end
   end

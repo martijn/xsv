@@ -60,15 +60,7 @@ module Xsv
 
       handler = SheetRowsHandler.new(@mode, empty_row, @workbook, @row_skip, @last_row, &block)
 
-      # For smaller sheets, memory performance is a lot better if Ox is
-      # handed a string. For larger sheets this leads to awful performance.
-      # This is probably caused by either something in SheetRowsHandler or
-      # the interaction between Zip::InputStream and Ox
-      if @size > 100_000_000
-        Ox.sax_parse(handler, @io)
-      else
-        Ox.sax_parse(handler, @io.read)
-      end
+      handler.parse(@io)
 
       true
     end

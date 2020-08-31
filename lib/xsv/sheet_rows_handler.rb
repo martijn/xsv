@@ -2,7 +2,7 @@
 module Xsv
   # This is the core worksheet parser, implemented as an Ox::Sax handler. This is
   # used internally to enumerate rows.
-  class SheetRowsHandler < Ox::Sax
+  class SheetRowsHandler < SaxParser
     include Xsv::Helpers
 
     def format_cell
@@ -31,8 +31,6 @@ module Xsv
       end
     end
 
-    # Ox::Sax implementation below
-
     def initialize(mode, empty_row, workbook, row_skip, last_row, &block)
       @block = block
 
@@ -58,43 +56,37 @@ module Xsv
       end
     end
 
-    def start_element(name)
+    def start_element(name, attrs)
       case name
-      when :c
+      when "c"
         @state = name
-        @current_cell.clear
+        @current_cell = attrs.map { |k, v| [k.to_sym, v] }.to_h
         @current_value.clear
-      when :v, :is
+      when "v", "is"
         @state = name
-      when :row
+      when "row"
         @state = name
         @current_row = @empty_row.dup
         @current_row_attrs.clear
-      when :t
+      when "t"
         @state = nil unless @state == :is
+        @current_row_attrs = attrs.map { |k, v| [k.to_sym, v] }.to_h
       else
         @state = nil
       end
     end
 
-    def text(value)
-      if @state == :v || @state == :is
+    def characters(value)
+      if @state == "v" || @state == "is"
         @current_value << value
-      end
-    end
-
-    def attr(name, value)
-      case @state
-      when :c
-        @current_cell[name] = value
-      when :row
-        @current_row_attrs[name] = value
       end
     end
 
     def end_element(name)
       case name
-      when :c
+      when "v"
+        @state = nil
+      when "c"
         col_index = column_index(@current_cell[:r])
 
         case @mode
@@ -103,7 +95,7 @@ module Xsv
         when :hash
           @current_row[@headers[col_index]] = format_cell
         end
-      when :row
+      when "row"
         @real_row_number = @current_row_attrs[:r].to_i
         @adjusted_row_number = @real_row_number - @row_skip
 

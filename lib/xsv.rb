@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 require "date"
-require "ox"
 
 require "xsv/helpers"
+require "xsv/sax_parser"
 require "xsv/relationships_handler"
 require "xsv/shared_strings_parser"
 require "xsv/sheet"

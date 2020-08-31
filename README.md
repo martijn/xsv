@@ -3,6 +3,8 @@
 [![Travis CI](https://img.shields.io/travis/martijn/xsv/master)](https://travis-ci.org/martijn/xsv)
 [![Yard Docs](http://img.shields.io/badge/yard-docs-blue.svg)](https://rubydoc.info/github/martijn/xsv)
 
+**This is an experimental branch with a pure-Ruby XML parser that perform well in any Ruby implementation. Use at your own risk.**
+
 Xsv is a fast, lightweight parser for Office Open XML spreadsheet files
 (commonly known as Excel or .xlsx files). It strives to be minimal in the
 sense that it provides nothing a CSV reader wouldn't, meaning it only
@@ -33,7 +35,7 @@ Or install it yourself as:
 
     $ gem install xsv
 
-Xsv targets ruby ~> 2.6 and depends on `rubyzip` and `ox`.
+Xsv targets ruby ~> 2.6 and depends on `rubyzip`.
 
 ## Usage
 
