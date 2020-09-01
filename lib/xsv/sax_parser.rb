@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Xsv
   class SaxParser
     def parse(io)
@@ -13,38 +15,36 @@ module Xsv
         pbuf = io.dup
         eof_reached = true
       else
-        pbuf = String.new("", capacity: 768)
+        pbuf = String.new('', capacity: 8192)
         eof_reached = false
-        force_read = true
+        must_read = true
       end
 
-      while !eof_reached || !pbuf.empty?
-        # Keep buffer size below 768 bytes, unless we need more to progress to the next state
-        if !eof_reached && (force_read || pbuf.length < 128)
+      loop do
+        if !eof_reached && must_read
           begin
-            pbuf << io.sysread(512)
+            pbuf << io.sysread(4096)
+            must_read = false
           rescue EOFError, TypeError
             # EOFError is thrown by IO
             # When reading from zip no EOFError is thrown, instead sysread returns nil
             eof_reached = true
           end
-          force_read = false
         end
 
         if state == :look_start
-          if o = pbuf.index("<")
+          if o = pbuf.index('<')
             chars = pbuf.slice!(0, o+1).chop
             @callbacks[:characters]&.call(chars) unless chars.empty?
 
-            is_close = pbuf[0] == "/"
             state = :look_end
           else
             if eof_reached
               # Discard anything after the last tag in the document
               break
             else
-              # Break out of loop to read more data into the buffer
-              force_read = true
+              # Continue loop to read more data into the buffer
+              must_read = true
               next
             end
           end
@@ -52,25 +52,24 @@ module Xsv
 
         if state == :look_end
           if o = pbuf.index(">")
-            tag_name, args = pbuf.slice!(0, o+1).chop.split(" ", 2)
-            is_selfclose = args ? args[-1] == "/" : nil
+            tag_name, args = pbuf.slice!(0, o+1).chop.split(' ', 2)
 
-            if is_close
-              @callbacks[:end_element]&.call(tag_name[1..-1])
+            if tag_name.start_with?('/')
+              @callbacks[:end_element]&.call(tag_name[1..])
             else
-              if args
-                @callbacks[:start_element]&.call(tag_name, args.scan(/((\S+)\=\"(.*?)\")/).map { |m| m.last(2) }.to_h)
-              else
+              if args.nil?
                 @callbacks[:start_element]&.call(tag_name, nil)
+              else
+                @callbacks[:start_element]&.call(tag_name, args.scan(/((\S+)\=\"(.*?)\")/m).map { |m| m.last(2) }.to_h)
+                @callbacks[:end_element]&.call(tag_name) if args.end_with?('/')
               end
-              @callbacks[:end_element]&.call(tag_name) if is_selfclose
             end
             state = :look_start
           else
             if eof_reached
-              raise "Malformed XML document, looking for end of tag beyond EOF"
+              raise 'Malformed XML document, looking for end of tag beyond EOF'
             else
-              force_read = true
+              must_read = true
             end
           end
         end
