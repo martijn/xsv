@@ -60,7 +60,7 @@ module Xsv
       case name
       when "c"
         @state = name
-        @current_cell = attrs.map { |k, v| [k.to_sym, v] }.to_h
+        @current_cell = attrs
         @current_value.clear
       when "v", "is"
         @state = name
@@ -70,7 +70,7 @@ module Xsv
         @current_row_attrs.clear
       when "t"
         @state = nil unless @state == :is
-        @current_row_attrs = attrs.map { |k, v| [k.to_sym, v] }.to_h
+        @current_row_attrs = attrs
       else
         @state = nil
       end

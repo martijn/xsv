@@ -38,18 +38,18 @@ module Xsv
       case name
       when "c"
         @state = name
-        @cell = attrs.to_h["r"]
+        @cell = attrs[:r]
       when "v"
         col = column_index(@cell)
         @maxColumn = col if col > @maxColumn
         @maxRow = @row if @row > @maxRow
       when "row"
         @state = name
-        @row = attrs.to_h["r"].to_i
+        @row = attrs[:r].to_i
       when "dimension"
         @state = name
 
-        _firstCell, lastCell = attrs.to_h["ref"].split(":")
+        _firstCell, lastCell = attrs[:ref].split(":")
 
         if lastCell
           @maxColumn = column_index(lastCell)

@@ -16,7 +16,7 @@ module Xsv
     end
 
     def start_element(name, attrs)
-      @block.call(attrs.map { |k, v| [k.to_sym, v] }.to_h.slice(*%i{name sheetId state r:id})) if name == "sheet"
+      @block.call(attrs.slice(*%i{name sheetId state r:id})) if name == "sheet"
     end
   end
 end

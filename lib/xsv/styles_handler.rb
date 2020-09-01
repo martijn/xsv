@@ -28,10 +28,9 @@ module Xsv
       when "cellXfs"
         @state = "cellXfs"
       when "xf"
-        @xfs << attrs.map { |k, v| [k.to_sym, v] }.to_h if @state == "cellXfs"
+        @xfs << attrs if @state == "cellXfs"
       when "numFmt"
-        attr_h = attrs.map { |k, v| [k.to_sym, v] }.to_h
-        @numFmts[attr_h[:numFmtId].to_i] = attr_h[:formatCode]
+        @numFmts[attrs[:numFmtId].to_i] = attrs[:formatCode]
       end
     end
 

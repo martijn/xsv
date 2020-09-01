@@ -16,7 +16,7 @@ module Xsv
     end
 
     def start_element(name, attrs)
-      @block.call(attrs.map { |k, v| [k.to_sym, v] }.to_h.slice(*%i{Id Type Target})) if name == "Relationship"
+      @block.call(attrs.slice(*%i{Id Type Target})) if name == "Relationship"
     end
   end
 end

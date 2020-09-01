@@ -7,29 +7,30 @@ module Xsv
         start_element: respond_to?(:start_element) ? method(:start_element) : nil,
         end_element: respond_to?(:end_element) ? method(:end_element) : nil,
         characters: respond_to?(:characters) ? method(:characters) : nil
-      }
+      }.freeze
 
       state = :look_start
 
       if io.is_a?(String)
         pbuf = io.dup
         eof_reached = true
+        must_read = false
       else
-        pbuf = String.new('', capacity: 8192)
+        pbuf = String.new(capacity: 8192)
         eof_reached = false
         must_read = true
       end
 
       loop do
-        if !eof_reached && must_read
+        if must_read
           begin
             pbuf << io.sysread(4096)
-            must_read = false
           rescue EOFError, TypeError
-            # EOFError is thrown by IO
-            # When reading from zip no EOFError is thrown, instead sysread returns nil
+            # EOFError is thrown by IO, rubyzip returns nil from sysread on EOF
             eof_reached = true
           end
+
+          must_read = false
         end
 
         if state == :look_start
@@ -60,10 +61,11 @@ module Xsv
               if args.nil?
                 @callbacks[:start_element]&.call(tag_name, nil)
               else
-                @callbacks[:start_element]&.call(tag_name, args.scan(/((\S+)\=\"(.*?)\")/m).map { |m| m.last(2) }.to_h)
+                @callbacks[:start_element]&.call(tag_name, args.scan(/((\S+)\=\"(.*?)\")/m).map { |m| [m[1].to_sym, m[2]] }.to_h)
                 @callbacks[:end_element]&.call(tag_name) if args.end_with?('/')
               end
             end
+
             state = :look_start
           else
             if eof_reached
