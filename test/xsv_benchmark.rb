@@ -5,7 +5,7 @@ class XsvBenchmark < Minitest::Benchmark
   def bench_row_access
     zip = File.read("test/files/10k-sheet.xlsx")
     x = Xsv::Workbook.open(zip)
-    assert_performance_linear do |n|
+    assert_performance_linear 0.001 do |n|
       x.sheets[0][n]
     end
   end
@@ -15,7 +15,7 @@ class XsvBenchmark < Minitest::Benchmark
     x = Xsv::Workbook.open(zip)
     x.sheets[0].parse_headers!
 
-    assert_performance_linear do |n|
+    assert_performance_linear 0.001 do |n|
       x.sheets[0].each_with_index do |row, i|
         row["A1"]
         break if i == n

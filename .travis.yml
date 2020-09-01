@@ -7,9 +7,4 @@ rvm:
   - 2.7.1
   - truffleruby
   - jruby
-env:
-  - "rubyzip=1.3.0"
-  - "rubyzip=2.2.0"
-  - "ox=2.9"
-  - "ox=2.13.2"
 before_install: gem install bundler
