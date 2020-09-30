@@ -72,12 +72,6 @@ module Xsv
         @current_row_attrs.clear
       when :t
         @state = nil unless @state == :is
-      when :r, :rPh, :phoneticPr
-        if @state == :is
-          # See https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.inlinestring?redirectedfrom=MSDN&view=openxml-2.8.1
-          raise "Unsupported inlineStr type #{name} encountered. Please report at https://github.com/martijn/xsv"
-        end
-        @state = nil
       else
         @state = nil
       end
