@@ -1,5 +1,9 @@
 # Xsv Changelog
 
+## 0.3.18 2020-09-30
+
+-  Improve inline string support (#18)
+
 ## 0.3.17 2020-07-03
 
 - Fix parsing of empty worksheets (#17)
