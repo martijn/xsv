@@ -64,19 +64,27 @@ module Xsv
         @state = name
         @current_cell.clear
         @current_value.clear
-      when :v
+      when :v, :is
         @state = name
       when :row
         @state = name
         @current_row = @empty_row.dup
         @current_row_attrs.clear
+      when :t
+        @state = nil unless @state == :is
+      when :r, :rPh, :phoneticPr
+        if @state == :is
+          # See https://docs.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.inlinestring?redirectedfrom=MSDN&view=openxml-2.8.1
+          raise "Unsupported inlineStr type #{name} encountered. Please report at https://github.com/martijn/xsv"
+        end
+        @state = nil
       else
         @state = nil
       end
     end
 
     def text(value)
-      if @state == :v
+      if @state == :v || @state == :is
         @current_value << value
       end
     end

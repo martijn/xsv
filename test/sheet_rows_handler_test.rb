@@ -58,4 +58,19 @@ class SheetRowsHandlerTest < Minitest::Test
       assert_equal first_columns[row_skip..-1], rows.map(&:first)
     end
   end
+
+  def test_inlinestr_text
+    @sheet = File.read("test/files/inlineStr.xml")
+
+    rows = []
+
+    collector = Proc.new do |row|
+      rows << row
+    end
+
+    handler = Xsv::SheetRowsHandler.new(:array, ([nil] * 10), @workbook, 0, 6, &collector)
+    Ox.sax_parse(handler, @sheet)
+
+    assert_equal "This is Text", rows[0][0]
+  end
 end
