@@ -4,10 +4,8 @@ module Xsv
   # StylesHandler interprets the relevant parts of styles.xml
   # This is used internally when opening a sheet.
   class StylesHandler < SaxParser
-    def self.get_styles(io, numFmts)
-      @xfs = nil
-      @numFmts = nil
-      handler = new(numFmts) do |xfs, numFmts|
+    def self.get_styles(io)
+      handler = new(Xsv::Helpers::BUILT_IN_NUMBER_FORMATS.dup) do |xfs, numFmts|
         @xfs = xfs
         @numFmts = numFmts
       end
