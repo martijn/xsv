@@ -4,7 +4,7 @@ language: ruby
 cache: bundler
 rvm:
   - 2.5.8
-  - 2.7.1
+  - 3.0
   - truffleruby
   - jruby
 before_install: gem install bundler
