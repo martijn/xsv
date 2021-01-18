@@ -105,11 +105,11 @@ module Xsv
     def parse_number_format(number, format)
       number = parse_number(number) if number.is_a?(String)
 
-      if is_datetime_format?(format)
+      if datetime_format?(format)
         parse_datetime(number)
-      elsif is_date_format?(format)
+      elsif date_format?(format)
         parse_date(number)
-      elsif is_time_format?(format)
+      elsif time_format?(format)
         parse_time(number)
       else
         number
@@ -117,12 +117,12 @@ module Xsv
     end
 
     # Tests if the given format string includes both date and time
-    def is_datetime_format?(format)
-      is_date_format?(format) && is_time_format?(format)
+    def datetime_format?(format)
+      date_format?(format) && time_format?(format)
     end
 
     # Tests if the given format string is a date
-    def is_date_format?(format)
+    def date_format?(format)
       return false if format.nil?
 
       # If it contains at least 2 sequences of d's, m's or y's it's a date!
@@ -130,7 +130,7 @@ module Xsv
     end
 
     # Tests if the given format string is a time
-    def is_time_format?(format)
+    def time_format?(format)
       return false if format.nil?
 
       # If it contains at least 2 sequences of h's, m's or s's it's a time!
