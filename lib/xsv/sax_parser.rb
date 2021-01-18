@@ -1,7 +1,8 @@
 # frozen_string_literal: true
+
 module Xsv
   class SaxParser
-    ATTR_REGEX = /((\S+)\=\"(.*?)\")/m.freeze
+    ATTR_REGEX = /((\S+)="(.*?)")/m.freeze
 
     def parse(io)
       @start_element = respond_to?(:start_element) ? method(:start_element) : nil
@@ -32,26 +33,24 @@ module Xsv
         end
 
         if state == :look_start
-          if o = pbuf.index('<')
-            chars = pbuf.slice!(0, o+1).chop!
+          if (o = pbuf.index('<'))
+            chars = pbuf.slice!(0, o + 1).chop!
             @characters&.call(chars) unless chars.empty?
 
             state = :look_end
+          elsif eof_reached
+            # Discard anything after the last tag in the document
+            break
           else
-            if eof_reached
-              # Discard anything after the last tag in the document
-              break
-            else
-              # Continue loop to read more data into the buffer
-              must_read = true
-              next
-            end
+            # Continue loop to read more data into the buffer
+            must_read = true
+            next
           end
         end
 
         if state == :look_end
           if o = pbuf.index('>')
-            tag_name, args = pbuf.slice!(0, o+1).chop!.split(' ', 2)
+            tag_name, args = pbuf.slice!(0, o + 1).chop!.split(' ', 2)
 
             if tag_name.start_with?('/')
               @end_element&.call(tag_name[1..-1])
@@ -65,12 +64,10 @@ module Xsv
             end
 
             state = :look_start
+          elsif eof_reached
+            raise 'Malformed XML document, looking for end of tag beyond EOF'
           else
-            if eof_reached
-              raise 'Malformed XML document, looking for end of tag beyond EOF'
-            else
-              must_read = true
-            end
+            must_read = true
           end
         end
       end

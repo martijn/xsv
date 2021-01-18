@@ -1,17 +1,18 @@
 # frozen_string_literal: true
-require "date"
 
-require "xsv/helpers"
-require "xsv/sax_parser"
-require "xsv/relationships_handler"
-require "xsv/shared_strings_parser"
-require "xsv/sheet"
-require "xsv/sheet_bounds_handler"
-require "xsv/sheet_rows_handler"
-require "xsv/sheets_ids_handler"
-require "xsv/styles_handler"
-require "xsv/version"
-require "xsv/workbook"
+require 'date'
+
+require 'xsv/helpers'
+require 'xsv/sax_parser'
+require 'xsv/relationships_handler'
+require 'xsv/shared_strings_parser'
+require 'xsv/sheet'
+require 'xsv/sheet_bounds_handler'
+require 'xsv/sheet_rows_handler'
+require 'xsv/sheets_ids_handler'
+require 'xsv/styles_handler'
+require 'xsv/version'
+require 'xsv/workbook'
 
 # XSV is a fast, lightweight parser for Office Open XML spreadsheet files
 # (commonly known as Excel or .xlsx files). It strives to be minimal in the

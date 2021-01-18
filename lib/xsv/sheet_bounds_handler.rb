@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Xsv
   # SheetBoundsHandler scans a sheet looking for the outer bounds of the content within.
   # This is used internally when opening a sheet to deal with worksheets that do not
@@ -21,7 +22,7 @@ module Xsv
 
       handler.parse(sheet)
 
-      return rows, cols
+      [rows, cols]
     end
 
     def initialize(trim_empty_rows, &block)
@@ -36,20 +37,20 @@ module Xsv
 
     def start_element(name, attrs)
       case name
-      when "c"
+      when 'c'
         @state = name
         @cell = attrs[:r]
-      when "v"
+      when 'v'
         col = column_index(@cell)
         @maxColumn = col if col > @maxColumn
         @maxRow = @row if @row > @maxRow
-      when "row"
+      when 'row'
         @state = name
         @row = attrs[:r].to_i
-      when "dimension"
+      when 'dimension'
         @state = name
 
-        _firstCell, lastCell = attrs[:ref].split(":")
+        _firstCell, lastCell = attrs[:ref].split(':')
 
         if lastCell
           @maxColumn = column_index(lastCell)
@@ -62,9 +63,7 @@ module Xsv
     end
 
     def end_element(name)
-      if name == "sheetData"
-        @block.call(@maxRow, @maxColumn)
-      end
+      @block.call(@maxRow, @maxColumn) if name == 'sheetData'
     end
   end
 end

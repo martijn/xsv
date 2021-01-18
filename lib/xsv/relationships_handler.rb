@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Xsv
   # RelationshipsHandler parses the "xl/_rels/workbook.xml.rels" file to get the existing relationships.
   # This is used internally  when opening a workbook.
@@ -8,7 +9,7 @@ module Xsv
 
       new { |relation| relations << relation }.parse(io)
 
-      return relations
+      relations
     end
 
     def initialize(&block)

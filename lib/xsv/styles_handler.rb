@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Xsv
   # StylesHandler interprets the relevant parts of styles.xml
   # This is used internally when opening a sheet.
@@ -13,7 +14,7 @@ module Xsv
 
       handler.parse(io)
 
-      return @xfs, @numFmts
+      [@xfs, @numFmts]
     end
 
     def initialize(numFmts, &block)
@@ -25,19 +26,19 @@ module Xsv
 
     def start_element(name, attrs)
       case name
-      when "cellXfs"
-        @state = "cellXfs"
-      when "xf"
-        @xfs << attrs if @state == "cellXfs"
-      when "numFmt"
+      when 'cellXfs'
+        @state = 'cellXfs'
+      when 'xf'
+        @xfs << attrs if @state == 'cellXfs'
+      when 'numFmt'
         @numFmts[attrs[:numFmtId].to_i] = attrs[:formatCode]
       end
     end
 
     def end_element(name)
-      if name == "styleSheet"
+      if name == 'styleSheet'
         @block.call(@xfs, @numFmts)
-      elsif name == "cellXfs"
+      elsif name == 'cellXfs'
         @state = nil
       end
     end

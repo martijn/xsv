@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Xsv
   # This is the core worksheet parser, implemented as an Ox::Sax handler. This is
   # used internally to enumerate rows.
@@ -9,13 +10,13 @@ module Xsv
       return nil if @current_value.empty?
 
       case @current_cell[:t]
-      when "s"
+      when 's'
         @workbook.shared_strings[@current_value.to_i]
-      when "str", "inlineStr"
+      when 'str', 'inlineStr'
         @current_value.strip
-      when "e" # N/A
+      when 'e' # N/A
         nil
-      when nil, "n"
+      when nil, 'n'
         if @current_cell[:s]
           style = @workbook.xfs[@current_cell[:s].to_i]
           numFmt = @workbook.numFmts[style[:numFmtId].to_i]
@@ -24,8 +25,8 @@ module Xsv
         else
           parse_number(@current_value)
         end
-      when "b"
-        @current_value == "1"
+      when 'b'
+        @current_value == '1'
       else
         raise Xsv::Error, "Encountered unknown column type #{@current_cell[:t]}"
       end
@@ -51,41 +52,37 @@ module Xsv
       @current_value = String.new
       @last_row = last_row
 
-      if @mode == :hash
-        @headers = @empty_row.keys
-      end
+      @headers = @empty_row.keys if @mode == :hash
     end
 
     def start_element(name, attrs)
       case name
-      when "c"
+      when 'c'
         @state = name
         @current_cell = attrs
         @current_value.clear
-      when "v", "is"
+      when 'v', 'is'
         @state = name
-      when "row"
+      when 'row'
         @state = name
         @current_row = @empty_row.dup
         @current_row_attrs = attrs
-      when "t"
-        @state = nil unless @state == "is"
+      when 't'
+        @state = nil unless @state == 'is'
       else
         @state = nil
       end
     end
 
     def characters(value)
-      if @state == "v" || @state == "is"
-        @current_value << value
-      end
+      @current_value << value if @state == 'v' || @state == 'is'
     end
 
     def end_element(name)
       case name
-      when "v"
+      when 'v'
         @state = nil
-      when "c"
+      when 'c'
         col_index = column_index(@current_cell[:r])
 
         case @mode
@@ -94,13 +91,11 @@ module Xsv
         when :hash
           @current_row[@headers[col_index]] = format_cell
         end
-      when "row"
+      when 'row'
         @real_row_number = @current_row_attrs[:r].to_i
         @adjusted_row_number = @real_row_number - @row_skip
 
-        if @real_row_number <= @row_skip
-          return
-        end
+        return if @real_row_number <= @row_skip
 
         @row_index += 1
 

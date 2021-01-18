@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Xsv
   # SheetsIdsHandler interprets the relevant parts of workbook.xml
   # This is used internally to get the sheets ids, relationship_ids, and names when opening a workbook.
@@ -8,7 +9,7 @@ module Xsv
 
       new { |sheet_ids| sheets_ids << sheet_ids }.parse(io)
 
-      return sheets_ids
+      sheets_ids
     end
 
     def initialize(&block)
