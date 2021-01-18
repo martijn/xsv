@@ -1,18 +1,14 @@
 # frozen_string_literal: true
-
 module Xsv
   class SaxParser
     ATTR_REGEX = /((\S+)\=\"(.*?)\")/m.freeze
 
     def parse(io)
-      @callbacks = {
-        start_element: respond_to?(:start_element) ? method(:start_element) : nil,
-        end_element: respond_to?(:end_element) ? method(:end_element) : nil,
-        characters: respond_to?(:characters) ? method(:characters) : nil
-      }.freeze
+      @start_element = respond_to?(:start_element) ? method(:start_element) : nil
+      @end_element = respond_to?(:end_element) ? method(:end_element) : nil
+      @characters = respond_to?(:characters) ? method(:characters) : nil
 
       state = :look_start
-
       if io.is_a?(String)
         pbuf = io.dup
         eof_reached = true
@@ -26,7 +22,7 @@ module Xsv
       loop do
         if must_read
           begin
-            pbuf << io.sysread(4096)
+            pbuf << io.sysread(2048)
           rescue EOFError, TypeError
             # EOFError is thrown by IO, rubyzip returns nil from sysread on EOF
             eof_reached = true
@@ -38,7 +34,7 @@ module Xsv
         if state == :look_start
           if o = pbuf.index('<')
             chars = pbuf.slice!(0, o+1).chop!
-            @callbacks[:characters]&.call(chars) unless chars.empty?
+            @characters&.call(chars) unless chars.empty?
 
             state = :look_end
           else
@@ -58,13 +54,13 @@ module Xsv
             tag_name, args = pbuf.slice!(0, o+1).chop!.split(' ', 2)
 
             if tag_name.start_with?('/')
-              @callbacks[:end_element]&.call(tag_name[1..-1])
+              @end_element&.call(tag_name[1..-1])
             else
               if args.nil?
-                @callbacks[:start_element]&.call(tag_name, nil)
+                @start_element&.call(tag_name, nil)
               else
-                @callbacks[:start_element]&.call(tag_name, args.scan(ATTR_REGEX).each_with_object({}) { |m, h| h[m[1].to_sym] = m[2] })
-                @callbacks[:end_element]&.call(tag_name) if args.end_with?('/')
+                @start_element&.call(tag_name, args.scan(ATTR_REGEX).each_with_object({}) { |m, h| h[m[1].to_sym] = m[2] })
+                @end_element&.call(tag_name) if args.end_with?('/')
               end
             end
 
