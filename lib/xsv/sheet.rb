@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Xsv
   # Sheet represents a single worksheet from a workbook and is normally accessed through {Workbook#sheets}
   #
@@ -39,14 +40,14 @@ module Xsv
       @headers = []
       @mode = :array
       @row_skip = 0
-      @hidden = ids[:state] == "hidden"
+      @hidden = ids[:state] == 'hidden'
 
       @last_row, @column_count = SheetBoundsHandler.get_bounds(@io, @workbook)
     end
 
     # @return [String]
     def inspect
-      "#<#{self.class.name}:#{self.object_id}>"
+      "#<#{self.class.name}:#{object_id}>"
     end
 
     # Returns true if the worksheet is hidden
@@ -60,15 +61,7 @@ module Xsv
 
       handler = SheetRowsHandler.new(@mode, empty_row, @workbook, @row_skip, @last_row, &block)
 
-      # For smaller sheets, memory performance is a lot better if Ox is
-      # handed a string. For larger sheets this leads to awful performance.
-      # This is probably caused by either something in SheetRowsHandler or
-      # the interaction between Zip::InputStream and Ox
-      if @size > 100_000_000
-        Ox.sax_parse(handler, @io)
-      else
-        Ox.sax_parse(handler, @io.read)
-      end
+      handler.parse(@io)
 
       true
     end
@@ -82,7 +75,7 @@ module Xsv
         return row if i == number
       end
 
-      return empty_row
+      empty_row
     end
 
     # Load headers in the top row of the worksheet. After parsing of headers

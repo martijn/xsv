@@ -3,7 +3,7 @@
 [![Travis CI](https://img.shields.io/travis/martijn/xsv/master)](https://travis-ci.org/martijn/xsv)
 [![Yard Docs](http://img.shields.io/badge/yard-docs-blue.svg)](https://rubydoc.info/github/martijn/xsv)
 
-Xsv is a fast, lightweight parser for Office Open XML spreadsheet files
+Xsv is a fast, lightweight, pure Ruby parser for Office Open XML spreadsheet files
 (commonly known as Excel or .xlsx files). It strives to be minimal in the
 sense that it provides nothing a CSV reader wouldn't, meaning it only
 deals with minimal formatting and cannot create or modify documents.
@@ -33,7 +33,10 @@ Or install it yourself as:
 
     $ gem install xsv
 
-Xsv targets ruby ~> 2.6 and depends on `rubyzip` and `ox`.
+Xsv targets ruby >= 2.5 and has a just single dependency, `rubyzip`. It has been
+tested successfully with MRI, JRuby, and TruffleRuby. Due to the lack of
+native extensions should work well in multi-threaded environments or in Ractor
+when that becomes stable.
 
 ## Usage
 
@@ -76,15 +79,15 @@ end
 sheet[1] # => {"header1" => "value1", "header2" => "value2"}
 ```
 
-Be aware that hash mode will lead to unpredictable results if you have multiple
-columns with the same name!
+Be aware that hash mode will lead to unpredictable results if the worksheet
+has multiple columns with the same header.
 
-`Xsv::Workbook.open` accepts a filename, or a IO or String containing a workbook.
+`Xsv::Workbook.open` accepts a filename, or an IO or String containing a workbook.
 
 `Xsv::Sheet` implements `Enumerable` so you can call methods like `#first`,
-`#filter`/`#select` and `#map` on it.
+`#filter`/`#select`, and `#map` on it.
 
-The sheets could be accessed by index or by name:
+The sheets can be accessed by index or by name:
 
 ```ruby
 x = Xsv::Workbook.open("sheet.xlsx")
@@ -94,7 +97,7 @@ sheet = x.sheets[0] # gets sheet by index
 sheet = x.sheets_by_name('Name').first # gets sheet by name
 ```
 
-To get all the workbook's sheets names:
+To get all the sheets names:
 
 ```ruby
 sheet_names = x.sheets.map(&:name)
@@ -129,8 +132,10 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 Xsv is faster and more memory efficient than other gems because of two things: it only _reads values_ from Excel files and it's based on a SAX-based parser instead of a DOM-based parser. If you want to read some background on this, check out my blog post on
 [Efficient XML parsing in Ruby](https://storck.io/posts/efficient-xml-parsing-in-ruby/).
 
-Jamie Schembri did a shootout of Xsv against various other Excel reading gems comparing parsing speed, memory usage and allocations.
+Jamie Schembri did a shootout of Xsv against various other Excel reading gems comparing parsing speed, memory usage, and allocations.
 Check our his blog post: [Faster Excel parsing in Ruby](https://blog.schembri.me/post/faster-excel-parsing-in-ruby/).
+
+Pre-1.0, Xsv used a native extension for XML parsing, which was faster than the native Ruby one (on MRI). But even with the native Ruby version generally Xsv still outperforms other Ruby parsing gems.
 
 ## Contributing
 

@@ -1,59 +1,43 @@
 # frozen_string_literal: true
+
 module Xsv
   # StylesHandler interprets the relevant parts of styles.xml
   # This is used internally when opening a sheet.
-  class StylesHandler < Ox::Sax
-    def self.get_styles(io, numFmts)
-      @xfs = nil
-      @numFmts = nil
-      handler = new(numFmts) do |xfs, numFmts|
+  class StylesHandler < SaxParser
+    def self.get_styles(io)
+      handler = new(Xsv::Helpers::BUILT_IN_NUMBER_FORMATS.dup) do |xfs, numFmts|
         @xfs = xfs
         @numFmts = numFmts
       end
 
-      Ox.sax_parse(handler, io.read)
-      return @xfs, @numFmts
-    end
+      handler.parse(io)
 
-    # Ox::Sax implementation
+      [@xfs, @numFmts]
+    end
 
     def initialize(numFmts, &block)
       @block = block
       @state = nil
       @xfs = []
       @numFmts = numFmts
-
-      @xf = {}
-      @numFmt = {}
     end
 
-    def start_element(name)
+    def start_element(name, attrs)
       case name
-      when :cellXfs, :numFmts
-        @state = name
-      when :xf
-        @xf = {}
-      when :numFmt
-        @numFmt = {}
-      end
-    end
-
-    def attr(name, value)
-      case @state
-      when :cellXfs
-        @xf[name] = value
-      when :numFmts
-        @numFmt[name] = value
+      when 'cellXfs'
+        @state = 'cellXfs'
+      when 'xf'
+        @xfs << attrs if @state == 'cellXfs'
+      when 'numFmt'
+        @numFmts[attrs[:numFmtId].to_i] = attrs[:formatCode]
       end
     end
 
     def end_element(name)
-      if @state == :cellXfs && name == :xf
-        @xfs << @xf
-      elsif @state == :numFmts && name == :numFmt
-        @numFmts[@numFmt[:numFmtId].to_i] = @numFmt[:formatCode]
-      elsif name == :styleSheet
+      if name == 'styleSheet'
         @block.call(@xfs, @numFmts)
+      elsif name == 'cellXfs'
+        @state = nil
       end
     end
   end

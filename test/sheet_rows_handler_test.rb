@@ -15,7 +15,7 @@ class SheetRowsHandlerTest < Minitest::Test
       rows << row
     end
 
-    Ox.sax_parse(handler, @sheet)
+    handler.parse(@sheet)
 
     assert_equal 4, rows.length
     assert_equal "Some strings", rows[0][0]
@@ -31,7 +31,7 @@ class SheetRowsHandlerTest < Minitest::Test
       rows << row
     end
 
-    Ox.sax_parse(handler, @sheet)
+    handler.parse(@sheet)
 
     assert_equal 3, rows.length
     assert_equal "Foo", rows[0]["Some strings"]
@@ -54,7 +54,7 @@ class SheetRowsHandlerTest < Minitest::Test
     (0..5).each do |row_skip|
       rows = []
       handler = Xsv::SheetRowsHandler.new(:array, ([nil] * 10), @workbook, row_skip, 6, &collector)
-      Ox.sax_parse(handler, @sheet)
+      handler.parse(@sheet)
       assert_equal first_columns[row_skip..-1], rows.map(&:first)
     end
   end
@@ -69,7 +69,7 @@ class SheetRowsHandlerTest < Minitest::Test
     end
 
     handler = Xsv::SheetRowsHandler.new(:array, ([nil] * 10), @workbook, 0, 6, &collector)
-    Ox.sax_parse(handler, @sheet)
+    handler.parse(@sheet)
 
     assert_equal "This is Text", rows[0][0]
   end
