@@ -2,6 +2,8 @@
 
 module Xsv
   class SaxParser
+    ATTR_REGEX = /((\S+)\=\"(.*?)\")/m.freeze
+
     def parse(io)
       @callbacks = {
         start_element: respond_to?(:start_element) ? method(:start_element) : nil,
@@ -35,7 +37,7 @@ module Xsv
 
         if state == :look_start
           if o = pbuf.index('<')
-            chars = pbuf.slice!(0, o+1).chop
+            chars = pbuf.slice!(0, o+1).chop!
             @callbacks[:characters]&.call(chars) unless chars.empty?
 
             state = :look_end
@@ -53,7 +55,7 @@ module Xsv
 
         if state == :look_end
           if o = pbuf.index('>')
-            tag_name, args = pbuf.slice!(0, o+1).chop.split(' ', 2)
+            tag_name, args = pbuf.slice!(0, o+1).chop!.split(' ', 2)
 
             if tag_name.start_with?('/')
               @callbacks[:end_element]&.call(tag_name[1..-1])
@@ -61,7 +63,7 @@ module Xsv
               if args.nil?
                 @callbacks[:start_element]&.call(tag_name, nil)
               else
-                @callbacks[:start_element]&.call(tag_name, args.scan(/((\S+)\=\"(.*?)\")/m).map { |m| [m[1].to_sym, m[2]] }.to_h)
+                @callbacks[:start_element]&.call(tag_name, args.scan(ATTR_REGEX).each_with_object({}) { |m, h| h[m[1].to_sym] = m[2] })
                 @callbacks[:end_element]&.call(tag_name) if args.end_with?('/')
               end
             end
