@@ -5,10 +5,6 @@ module Xsv
     ATTR_REGEX = /((\S+)="(.*?)")/m.freeze
 
     def parse(io)
-      @start_element = respond_to?(:start_element) ? method(:start_element) : nil
-      @end_element = respond_to?(:end_element) ? method(:end_element) : nil
-      @characters = respond_to?(:characters) ? method(:characters) : nil
-
       state = :look_start
       if io.is_a?(String)
         pbuf = io.dup
@@ -35,7 +31,7 @@ module Xsv
         if state == :look_start
           if (o = pbuf.index('<'))
             chars = pbuf.slice!(0, o + 1).chop!
-            @characters&.call(chars) unless chars.empty?
+            characters(chars) unless chars.empty? || !respond_to?(:characters)
 
             state = :look_end
           elsif eof_reached
@@ -52,14 +48,14 @@ module Xsv
           if o = pbuf.index('>')
             tag_name, args = pbuf.slice!(0, o + 1).chop!.split(' ', 2)
 
-            if tag_name.start_with?('/')
-              @end_element&.call(tag_name[1..-1])
+            if tag_name.start_with?('/') && respond_to?(:end_element)
+              end_element(tag_name[1..-1])
             else
               if args.nil?
-                @start_element&.call(tag_name, nil)
+                start_element(tag_name, nil)
               else
-                @start_element&.call(tag_name, args.scan(ATTR_REGEX).each_with_object({}) { |m, h| h[m[1].to_sym] = m[2] })
-                @end_element&.call(tag_name) if args.end_with?('/')
+                start_element(tag_name, args.scan(ATTR_REGEX).each_with_object({}) { |m, h| h[m[1].to_sym] = m[2] })
+                end_element(tag_name) if args.end_with?('/') && respond_to?(:end_element)
               end
             end
 
