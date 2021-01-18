@@ -69,7 +69,7 @@ class SheetRowsHandlerTest < Minitest::Test
     end
 
     handler = Xsv::SheetRowsHandler.new(:array, ([nil] * 10), @workbook, 0, 6, &collector)
-    Ox.sax_parse(handler, @sheet)
+    handler.parse(@sheet)
 
     assert_equal "This is Text", rows[0][0]
   end

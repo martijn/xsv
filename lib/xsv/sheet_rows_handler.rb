@@ -12,7 +12,7 @@ module Xsv
       when "s"
         @workbook.shared_strings[@current_value.to_i]
       when "str", "inlineStr"
-        @current_value.dup
+        @current_value.strip
       when "e" # N/A
         nil
       when nil, "n"
@@ -67,10 +67,9 @@ module Xsv
       when "row"
         @state = name
         @current_row = @empty_row.dup
-        @current_row_attrs.clear
-      when "t"
-        @state = nil unless @state == :is
         @current_row_attrs = attrs
+      when "t"
+        @state = nil unless @state == "is"
       else
         @state = nil
       end
