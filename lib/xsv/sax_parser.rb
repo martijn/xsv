@@ -45,11 +45,11 @@ module Xsv
         end
 
         if state == :look_end
-          if o = pbuf.index('>')
+          if (o = pbuf.index('>'))
             tag_name, args = pbuf.slice!(0, o + 1).chop!.split(' ', 2)
 
-            if tag_name.start_with?('/') && respond_to?(:end_element)
-              end_element(tag_name[1..-1])
+            if tag_name.start_with?('/')
+              end_element(tag_name[1..-1]) if respond_to?(:end_element)
             else
               if args.nil?
                 start_element(tag_name, nil)
