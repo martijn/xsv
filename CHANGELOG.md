@@ -1,5 +1,12 @@
 # Xsv Changelog
 
+## 1.0.0.pre 2021-01-18
+
+-  Switch to a minimalistic XML parser in native Ruby (#21)
+-  Ruby 3.0 compatibility
+-  Various internal cleanup and optimization
+-  API is backwards compatible with 0.3.x
+
 ## 0.3.18 2020-09-30
 
 -  Improve inline string support (#18)
