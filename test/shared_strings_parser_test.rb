@@ -26,4 +26,12 @@ class SharedStringsParserTest < Minitest::Test
     assert_includes strings, "   Leading"
     assert_includes strings, "Trailing      "
   end
+
+  def test_utf8
+    @workbook = Xsv::Workbook.open("test/files/utf8.xlsx")
+
+    utf8 = @workbook.sheets[0][0][0]
+
+    assert_equal Encoding::UTF_8, utf8.encoding
+  end
 end
