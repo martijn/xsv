@@ -34,9 +34,11 @@ module Xsv
 
             if respond_to?(:characters) && !chars.empty?
               if chars.index('&')
-                chars.gsub!('&amp;', '&')
-                chars.gsub!('&lt;', '<')
-                chars.gsub!('&gt;', '>')
+                chars.gsub!('&amp;', %q{&})
+                chars.gsub!('&apos;', %q{'})
+                chars.gsub!('&gt;', %q{>})
+                chars.gsub!('&lt;', %q{<})
+                chars.gsub!('&quot;', %q{"})
               end
               characters(chars)
             end
