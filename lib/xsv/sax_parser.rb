@@ -30,8 +30,16 @@ module Xsv
 
         if state == :look_start
           if (o = pbuf.index('<'))
-            chars = pbuf.slice!(0, o + 1).chop!
-            characters(chars.force_encoding("utf-8")) unless chars.empty? || !respond_to?(:characters)
+            chars = pbuf.slice!(0, o + 1).chop!.force_encoding('utf-8')
+
+            if respond_to?(:characters) && !chars.empty?
+              if chars.index('&')
+                chars.gsub!('&amp;', '&')
+                chars.gsub!('&lt;', '<')
+                chars.gsub!('&gt;', '>')
+              end
+              characters(chars)
+            end
 
             state = :look_end
           elsif eof_reached
