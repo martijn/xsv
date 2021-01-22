@@ -1,5 +1,11 @@
 # Xsv Changelog
 
+## 1.0.0.pre.2 2021-01-22
+
+- Reduce allocations in XML parser
+- Return strings with the correct encoding
+- Handle XML entities
+
 ## 1.0.0.pre 2021-01-18
 
 -  Switch to a minimalistic XML parser in native Ruby (#21)
