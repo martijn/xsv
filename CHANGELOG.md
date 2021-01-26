@@ -1,5 +1,9 @@
 # Xsv Changelog
 
+## 1.0.0 2021-01-26
+
+- Xsv no longer depends on native extensions, thanks to a pure-Ruby XML parser
+
 ## 1.0.0.pre.2 2021-01-22
 
 - Reduce allocations in XML parser
