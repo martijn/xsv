@@ -13,7 +13,7 @@ module Xsv
 
       handler = new(workbook.trim_empty_rows) do |row, col|
         rows = row
-        cols = col == 0 ? 0 : col + 1
+        cols = col.zero? ? 0 : col + 1
 
         return rows, cols
       end

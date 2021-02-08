@@ -100,9 +100,10 @@ module Xsv
     private
 
     def parse_headers
-      if @mode == :array
+      case @mode
+      when :array
         first
-      elsif @mode == :hash
+      when :hash
         @mode = :array
         headers.tap { @mode = :hash }
       end || []

@@ -34,9 +34,10 @@ module Xsv
     end
 
     def end_element(name)
-      if name == 'styleSheet'
+      case name
+      when 'styleSheet'
         @block.call(@xfs, @numFmts)
-      elsif name == 'cellXfs'
+      when 'cellXfs'
         @state = nil
       end
     end

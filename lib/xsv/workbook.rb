@@ -89,7 +89,7 @@ module Xsv
       stream = handle.get_input_stream
       SharedStringsParser.parse(stream)
     ensure
-      stream.close if stream
+      stream&.close
     end
 
     def fetch_styles
