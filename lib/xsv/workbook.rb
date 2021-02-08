@@ -62,6 +62,7 @@ module Xsv
     # @return [true]
     def close
       @zip.close
+      @zip = nil
       @sheets = nil
       @xfs = nil
       @numFmts = nil
