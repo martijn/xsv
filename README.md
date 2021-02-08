@@ -83,7 +83,8 @@ sheet[1] # => {"header1" => "value1", "header2" => "value2"}
 Be aware that hash mode will lead to unpredictable results if the worksheet
 has multiple columns with the same header.
 
-`Xsv::Workbook.open` accepts a filename, or an IO or String containing a workbook.
+`Xsv::Workbook.open` accepts a filename, or an IO or String containing a workbook. Optionally, you can pass a block
+which will be called with the workbook as parameter, like `File#open`.
 
 `Xsv::Sheet` implements `Enumerable` so you can call methods like `#first`,
 `#filter`/`#select`, and `#map` on it.

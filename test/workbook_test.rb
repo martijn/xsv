@@ -33,6 +33,14 @@ class WorkbookTest < Minitest::Test
     refute_empty @workbook.sheets
   end
 
+  def test_open_block_syntax
+    ret = Xsv::Workbook.open(File.open("test/files/office365-xl7.xlsx")) do |workbook|
+      workbook.sheets.count
+    end
+
+    assert_equal 3, ret
+  end
+
   def test_open_nonexisting
     assert_raises Zip::Error do
       @workbook = Xsv::Workbook.open("does-not-exist.xlsx")

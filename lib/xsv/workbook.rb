@@ -22,6 +22,16 @@ module Xsv
                   else # must be a filename
                     new(Zip::File.open(data), **kws)
                   end
+
+      if block_given?
+        begin
+          yield(@workbook)
+        ensure
+          @workbook.close
+        end
+      else
+        @workbook
+      end
     end
 
     # Open a workbook from an instance of {Zip::File}. Generally it's recommended
