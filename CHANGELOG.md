@@ -1,5 +1,10 @@
 # Xsv Changelog
 
+## 1.0.1 2021-03-18
+
+- Allow passing a block to Workbook.open
+- `parse_headers!` returns self to allow chaining (thanks @senhalil)
+
 ## 1.0.0 2021-01-26
 
 - Xsv no longer depends on native extensions, thanks to a pure-Ruby XML parser
