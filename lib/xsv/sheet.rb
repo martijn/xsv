@@ -80,12 +80,12 @@ module Xsv
 
     # Load headers in the top row of the worksheet. After parsing of headers
     # all methods return hashes instead of arrays
-    # @return [true]
+    # @return [self]
     def parse_headers!
       @headers = parse_headers
       @mode = :hash
 
-      true
+      self
     end
 
     # Return the headers of the sheet as an array
