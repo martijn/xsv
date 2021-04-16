@@ -42,6 +42,8 @@ module Xsv
     #    trim_empty_rows (false) Scan sheet for end of content and don't return trailing rows
     #
     def initialize(zip, trim_empty_rows: false)
+      raise ArgumentError, "Passed argument is not an instance of Zip::File. Did you mean to use Workbook.open?" unless zip.is_a?(Zip::File)
+
       @zip = zip
       @trim_empty_rows = trim_empty_rows
 

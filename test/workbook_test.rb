@@ -58,4 +58,10 @@ class WorkbookTest < Minitest::Test
     @workbook = Xsv::Workbook.open("test/files/no-shared-strings.xlsx")
     refute_empty @workbook.sheets
   end
+
+  def test_new_instead_of_open
+    assert_raises ArgumentError do
+      Xsv::Workbook.new "not a Zip::File instance"
+    end
+  end
 end
