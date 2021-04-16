@@ -1,4 +1,4 @@
-require "test_helper"
+require "./test/test_helper"
 
 class WorkbookTest < Minitest::Test
   def test_open_filename

@@ -1,4 +1,4 @@
-require "test_helper"
+require "./test/test_helper"
 
 class Office365Xl7Test < Minitest::Test
   def setup

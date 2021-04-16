@@ -1,4 +1,4 @@
-require "test_helper"
+require "./test/test_helper"
 require "minitest/benchmark"
 
 class XsvBenchmark < Minitest::Benchmark

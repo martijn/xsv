@@ -1,4 +1,4 @@
-require "test_helper"
+require "./test/test_helper"
 
 class Numbers6Test < Minitest::Test
   def test_detect_sheet_bounds

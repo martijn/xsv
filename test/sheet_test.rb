@@ -1,4 +1,4 @@
-require "test_helper"
+require "./test/test_helper"
 
 class SheetTest < Minitest::Test
   # Note: Many tests for the sheet class live in the test cases for various file formats

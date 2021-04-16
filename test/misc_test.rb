@@ -1,4 +1,4 @@
-require "test_helper"
+require "./test/test_helper"
 
 # Test for miscellaneous files found in the wild
 

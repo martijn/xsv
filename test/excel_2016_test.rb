@@ -1,4 +1,4 @@
-require "test_helper"
+require "./test/test_helper"
 
 class Excel2016Test < Minitest::Test
   def setup
