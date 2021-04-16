@@ -103,38 +103,20 @@ module Xsv
 
     # Apply date or time number formats, if applicable
     def parse_number_format(number, format)
-      number = parse_number(number) if number.is_a?(String)
+      number = parse_number(number) # number is always a string since it comes out of the Sax Parser
 
-      if datetime_format?(format)
-        parse_datetime(number)
-      elsif date_format?(format)
-        parse_date(number)
-      elsif time_format?(format)
-        parse_time(number)
-      else
+      is_date_format = format.scan(/[dmy]+/).length > 1
+      is_time_format = format.scan(/[hms]+/).length > 1
+
+      if !is_date_format && !is_time_format
         number
+      elsif is_date_format && is_time_format
+        parse_datetime(number)
+      elsif is_date_format
+        parse_date(number)
+      elsif is_time_format
+        parse_time(number)
       end
-    end
-
-    # Tests if the given format string includes both date and time
-    def datetime_format?(format)
-      date_format?(format) && time_format?(format)
-    end
-
-    # Tests if the given format string is a date
-    def date_format?(format)
-      return false if format.nil?
-
-      # If it contains at least 2 sequences of d's, m's or y's it's a date!
-      format.scan(/[dmy]+/).length > 1
-    end
-
-    # Tests if the given format string is a time
-    def time_format?(format)
-      return false if format.nil?
-
-      # If it contains at least 2 sequences of h's, m's or s's it's a time!
-      format.scan(/[hms]+/).length > 1
     end
   end
 end
