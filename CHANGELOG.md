@@ -1,5 +1,10 @@
 # Xsv Changelog
 
+## 1.0.2 2021-05-01
+
+- Ignore phonetic shared string data (thanks @sinoue-1003)
+- Throw ArgumentError when `Workbook.new` is called unintentionally
+
 ## 1.0.1 2021-03-18
 
 - Allow passing a block to Workbook.open
