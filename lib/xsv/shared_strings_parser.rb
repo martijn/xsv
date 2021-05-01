@@ -13,25 +13,33 @@ module Xsv
     def initialize(&block)
       @block = block
       @state = nil
+      @skip = false
     end
 
     def start_element(name, _attrs)
       case name
       when 'si'
         @current_string = ''
+        @skip = false
+      when 'rPh'
+        @skip = true
       when 't'
         @state = name
       end
     end
 
     def characters(value)
-      @current_string += value if @state == 't'
+      if @state == 't' && !@skip
+        @current_string += value
+      end
     end
 
     def end_element(name)
       case name
       when 'si'
         @block.call(@current_string)
+      when 'rPh'
+        @skip = false
       when 't'
         @state = nil
       end
