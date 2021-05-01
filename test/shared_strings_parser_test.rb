@@ -35,4 +35,13 @@ class SharedStringsParserTest < Minitest::Test
     assert_equal %q{entities "&'<>}, sheet[1][0]
     assert_equal "euro €", sheet[5][0]
   end
+
+  def test_phonetic
+    @file = File.open("test/files/phonetic.xml")
+
+    strings = []
+
+    strings = Xsv::SharedStringsParser.parse(@file)
+    assert_equal ['Some strings'], strings
+  end
 end
