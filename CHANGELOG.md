@@ -1,5 +1,8 @@
 # Xsv Changelog
 
+## HEAD
+
+- Handle nil number formats correctly (regression in Xsv 1.0.2, #29)
 ## 1.0.2 2021-05-01
 
 - Ignore phonetic shared string data (thanks @sinoue-1003)

@@ -105,6 +105,8 @@ module Xsv
     def parse_number_format(number, format)
       number = parse_number(number) # number is always a string since it comes out of the Sax Parser
 
+      return number if format.nil?
+
       is_date_format = format.scan(/[dmy]+/).length > 1
       is_time_format = format.scan(/[hms]+/).length > 1
 

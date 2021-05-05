@@ -12,4 +12,12 @@ class MiscTest < Minitest::Test
     assert_equal 0.01, row[2]
     assert_equal 0.1, row[3]
   end
+
+  def test_nil_number_format
+    @file = Xsv::Workbook.open("test/files/caxlsx.xlsx")
+
+    row = @file.sheets[0][0]
+
+    assert_equal [1], row
+  end
 end
