@@ -102,11 +102,11 @@ module Xsv
     end
 
     # Apply date or time number formats, if applicable
-    def parse_number_format(number, format)
+    def parse_number_format(number, format = nil)
       number = parse_number(number) # number is always a string since it comes out of the Sax Parser
 
-      is_date_format = format.scan(/[dmy]+/).length > 1
-      is_time_format = format.scan(/[hms]+/).length > 1
+      is_date_format = format && format.scan(/[dmy]+/).length > 1
+      is_time_format = format && format.scan(/[hms]+/).length > 1
 
       if !is_date_format && !is_time_format
         number
