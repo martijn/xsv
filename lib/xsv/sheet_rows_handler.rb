@@ -107,6 +107,8 @@ module Xsv
         end
       when 'b'
         @current_value == '1'
+      when 'd'
+        DateTime.parse(@current_value)
       else
         raise Xsv::Error, "Encountered unknown column type #{@current_cell[:t]}"
       end

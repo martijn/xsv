@@ -4,7 +4,7 @@
 [![Yard Docs](http://img.shields.io/badge/yard-docs-blue.svg)](https://rubydoc.info/github/martijn/xsv)
 [![Gem Version](https://badge.fury.io/rb/xsv.svg)](https://badge.fury.io/rb/xsv)
 
-Xsv is a fast, lightweight, pure Ruby parser for Office Open XML spreadsheet files
+Xsv is a fast, lightweight, pure Ruby parser for ISO/IEC 29500 Office Open XML spreadsheet files
 (commonly known as Excel or .xlsx files). It strives to be minimal in the
 sense that it provides nothing a CSV reader wouldn't, meaning it only
 deals with minimal formatting and cannot create or modify documents.

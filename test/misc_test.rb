@@ -20,4 +20,13 @@ class MiscTest < Minitest::Test
 
     assert_equal [1], row
   end
+
+  def test_iso8601
+    @file = Xsv::Workbook.open("test/files/iso8601.xlsx")
+
+    date = @file.sheets[0][1][13]
+
+    assert_kind_of DateTime, date
+    assert_equal DateTime.new(2021, 7, 1, 5, 11, 26).to_s, date.to_s
+  end
 end

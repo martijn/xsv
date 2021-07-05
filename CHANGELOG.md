@@ -1,5 +1,9 @@
 # Xsv Changelog
 
+## 1.0.4 2021-07-05
+
+- Support for custom date/time columns
+
 ## 1.0.3 2021-05-06
 
 - Handle nil number formats correctly (regression in Xsv 1.0.2, #29)
