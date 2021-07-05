@@ -1,6 +1,6 @@
 # Xsv .xlsx reader
 
-[![Travis CI](https://img.shields.io/travis/martijn/xsv/master)](https://travis-ci.org/martijn/xsv)
+[![Tests](https://github.com/martijn/xsv/actions/workflows/tests.yml/badge.svg)](https://github.com/martijn/xsv/actions/workflows/tests.yml)
 [![Yard Docs](http://img.shields.io/badge/yard-docs-blue.svg)](https://rubydoc.info/github/martijn/xsv)
 [![Gem Version](https://badge.fury.io/rb/xsv.svg)](https://badge.fury.io/rb/xsv)
 
