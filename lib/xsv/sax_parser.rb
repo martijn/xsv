@@ -2,7 +2,7 @@
 
 module Xsv
   class SaxParser
-    ATTR_REGEX = /((\S+)="(.*?)")/m
+    ATTR_REGEX = /((\S+)="(.*?)")/m.freeze
 
     def parse(io)
       state = :look_start

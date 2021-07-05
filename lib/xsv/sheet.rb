@@ -10,8 +10,8 @@ module Xsv
   # will be parsed and Sheet will switch to hash mode, returning each row as a hash with the values from the first
   # row as keys.
   #
-  # If the sheet contains leading data before the first row of data or the header row, this can be skipped by setting the
-  # {row_skip} attribute.
+  # If the sheet contains leading data before the first row of data or the header row, this can be skipped by setting
+  # the # {row_skip} attribute.
   class Sheet
     include Enumerable
     include Xsv::Helpers

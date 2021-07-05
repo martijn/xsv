@@ -30,8 +30,8 @@ module Xsv
       @state = nil
       @cell = nil
       @row = nil
-      @maxRow = 0
-      @maxColumn = 0
+      @max_row = 0
+      @max_column = 0
       @trim_empty_rows = trim_empty_rows
     end
 
@@ -42,28 +42,28 @@ module Xsv
         @cell = attrs[:r]
       when 'v'
         col = column_index(@cell)
-        @maxColumn = col if col > @maxColumn
-        @maxRow = @row if @row > @maxRow
+        @max_column = col if col > @max_column
+        @max_row = @row if @row > @max_row
       when 'row'
         @state = name
         @row = attrs[:r].to_i
       when 'dimension'
         @state = name
 
-        _firstCell, lastCell = attrs[:ref].split(':')
+        _first_cell, last_cell = attrs[:ref].split(':')
 
-        if lastCell
-          @maxColumn = column_index(lastCell)
+        if last_cell
+          @max_column = column_index(last_cell)
           unless @trim_empty_rows
-            @maxRow = lastCell[/\d+$/].to_i
-            @block.call(@maxRow, @maxColumn)
+            @max_row = last_cell[/\d+$/].to_i
+            @block.call(@max_row, @max_column)
           end
         end
       end
     end
 
     def end_element(name)
-      @block.call(@maxRow, @maxColumn) if name == 'sheetData'
+      @block.call(@max_row, @max_column) if name == 'sheetData'
     end
   end
 end

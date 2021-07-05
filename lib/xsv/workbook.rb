@@ -10,7 +10,7 @@ module Xsv
     # @return [Array<Sheet>]
     attr_reader :sheets
 
-    attr_reader :shared_strings, :xfs, :numFmts, :trim_empty_rows
+    attr_reader :shared_strings, :xfs, :num_fmts, :trim_empty_rows
 
     # Open the workbook of the given filename, string or buffer. For additional
     # options see {.initialize}
@@ -51,7 +51,7 @@ module Xsv
       @trim_empty_rows = trim_empty_rows
 
       @sheets = []
-      @xfs, @numFmts = fetch_styles
+      @xfs, @num_fmts = fetch_styles
       @sheet_ids = fetch_sheet_ids
       @relationships = fetch_relationships
       @shared_strings = fetch_shared_strings
@@ -70,7 +70,7 @@ module Xsv
       @zip = nil
       @sheets = nil
       @xfs = nil
-      @numFmts = nil
+      @num_fmts = nil
       @relationships = nil
       @shared_strings = nil
       @sheet_ids = nil

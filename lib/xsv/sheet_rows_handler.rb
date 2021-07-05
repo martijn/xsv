@@ -99,9 +99,9 @@ module Xsv
       when nil, 'n'
         if @current_cell[:s]
           style = @workbook.xfs[@current_cell[:s].to_i]
-          numFmt = @workbook.numFmts[style[:numFmtId].to_i]
+          num_fmt = @workbook.num_fmts[style[:numFmtId].to_i]
 
-          parse_number_format(@current_value, numFmt)
+          parse_number_format(@current_value, num_fmt)
         else
           parse_number(@current_value)
         end
