@@ -1,0 +1,6 @@
+AllCops:
+  Exclude:
+    - Gemfile
+    - Rakefile
+    - xsv.gemspec
+  TargetRubyVersion: 2.6

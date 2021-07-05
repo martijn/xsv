@@ -29,9 +29,7 @@ module Xsv
     end
 
     def characters(value)
-      if @state == 't' && !@skip
-        @current_string += value
-      end
+      @current_string += value if @state == 't' && !@skip
     end
 
     def end_element(name)

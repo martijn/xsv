@@ -65,7 +65,7 @@ module Xsv
             end
 
             if tag_name.start_with?('/')
-              end_element(tag_name[1..-1]) if respond_to?(:end_element)
+              end_element(tag_name[1..]) if respond_to?(:end_element)
             elsif args.nil?
               start_element(tag_name, nil)
             else

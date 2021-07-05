@@ -34,7 +34,7 @@ Or install it yourself as:
 
     $ gem install xsv
 
-Xsv targets ruby >= 2.5 and has a just single dependency, `rubyzip`. It has been
+Xsv targets ruby >= 2.6 and has a just single dependency, `rubyzip`. It has been
 tested successfully with MRI, JRuby, and TruffleRuby. Due to the lack of
 native extensions should work well in multi-threaded environments or in Ractor
 when that becomes stable.
