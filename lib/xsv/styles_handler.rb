@@ -27,7 +27,7 @@ module Xsv
       when 'cellXfs'
         @state = 'cellXfs'
       when 'xf'
-        @xfs << attrs if @state == 'cellXfs'
+        @xfs << attrs.transform_values(&:to_i) if @state == 'cellXfs'
       when 'numFmt'
         @num_fmts[attrs[:numFmtId].to_i] = attrs[:formatCode]
       end

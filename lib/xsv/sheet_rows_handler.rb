@@ -14,11 +14,11 @@ module Xsv
       @last_row = last_row - @row_skip
       @block = block
 
-      @state = nil
+      @store_characters = false
 
       @row_index = 0
       @current_row = {}
-      @current_row_attrs = {}
+      @current_row_number = 0
       @current_cell = {}
       @current_value = String.new
 
@@ -28,44 +28,36 @@ module Xsv
     def start_element(name, attrs)
       case name
       when 'c'
-        @state = name
         @current_cell = attrs
         @current_value.clear
-      when 'v', 'is'
-        @state = name
+      when 'v', 'is', 't'
+        @store_characters = true
       when 'row'
-        @state = name
         @current_row = @empty_row.dup
-        @current_row_attrs = attrs
-      when 't'
-        @state = nil unless @state == 'is'
-      else
-        @state = nil
+        @current_row_number = attrs[:r].to_i
       end
     end
 
     def characters(value)
-      @current_value << value if @state == 'v' || @state == 'is'
+      @current_value << value if @store_characters
     end
 
     def end_element(name)
       case name
-      when 'v'
-        @state = nil
+      when 'v', 'is', 't'
+        @store_characters = nil
       when 'c'
         col_index = column_index(@current_cell[:r])
 
-        case @mode
-        when :array
+        if @mode == :array
           @current_row[col_index] = format_cell
-        when :hash
+        else
           @current_row[@headers[col_index]] = format_cell
         end
       when 'row'
-        real_row_number = @current_row_attrs[:r].to_i
-        adjusted_row_number = real_row_number - @row_skip
+        return if @current_row_number <= @row_skip
 
-        return if real_row_number <= @row_skip
+        adjusted_row_number = @current_row_number - @row_skip
 
         @row_index += 1
 
@@ -98,10 +90,7 @@ module Xsv
         nil
       when nil, 'n'
         if @current_cell[:s]
-          style = @workbook.xfs[@current_cell[:s].to_i]
-          num_fmt = @workbook.num_fmts[style[:numFmtId].to_i]
-
-          parse_number_format(@current_value, num_fmt)
+          parse_number_format(@current_value, @workbook.get_num_fmt(@current_cell[:s].to_i))
         else
           parse_number(@current_value)
         end
