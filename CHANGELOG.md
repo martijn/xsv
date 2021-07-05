@@ -1,5 +1,10 @@
 # Xsv Changelog
 
+## HEAD (will become Xsv 1.1.0)
+
+- Drop support for Ruby 2.5, which is now EOL. Supported Ruby versions are MRI 2.6 and up, latest JRuby, latest TruffeRuby
+- Some internal cleanup
+
 ## 1.0.4 2021-07-05
 
 - Support for custom date/time columns

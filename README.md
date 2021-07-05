@@ -1,6 +1,6 @@
 # Xsv .xlsx reader
 
-[![Travis CI](https://img.shields.io/travis/martijn/xsv/master)](https://travis-ci.org/martijn/xsv)
+[![Tests](https://github.com/martijn/xsv/actions/workflows/tests.yml/badge.svg)](https://github.com/martijn/xsv/actions/workflows/tests.yml)
 [![Yard Docs](http://img.shields.io/badge/yard-docs-blue.svg)](https://rubydoc.info/github/martijn/xsv)
 [![Gem Version](https://badge.fury.io/rb/xsv.svg)](https://badge.fury.io/rb/xsv)
 
@@ -34,7 +34,7 @@ Or install it yourself as:
 
     $ gem install xsv
 
-Xsv targets ruby >= 2.5 and has a just single dependency, `rubyzip`. It has been
+Xsv targets ruby >= 2.6 and has a just single dependency, `rubyzip`. It has been
 tested successfully with MRI, JRuby, and TruffleRuby. Due to the lack of
 native extensions should work well in multi-threaded environments or in Ractor
 when that becomes stable.
