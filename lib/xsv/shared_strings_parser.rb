@@ -18,29 +18,29 @@ module Xsv
 
     def start_element(name, _attrs)
       case name
-      when 'si'
-        @current_string = ''
+      when "si"
+        @current_string = ""
         @skip = false
-      when 'rPh'
+      when "rPh"
         @skip = true
-      when 't'
+      when "t"
         @state = name
       end
     end
 
     def characters(value)
-      if @state == 't' && !@skip
+      if @state == "t" && !@skip
         @current_string += value
       end
     end
 
     def end_element(name)
       case name
-      when 'si'
+      when "si"
         @block.call(@current_string)
-      when 'rPh'
+      when "rPh"
         @skip = false
-      when 't'
+      when "t"
         @state = nil
       end
     end

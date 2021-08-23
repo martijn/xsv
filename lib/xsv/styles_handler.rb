@@ -24,20 +24,20 @@ module Xsv
 
     def start_element(name, attrs)
       case name
-      when 'cellXfs'
-        @state = 'cellXfs'
-      when 'xf'
-        @xfs << attrs if @state == 'cellXfs'
-      when 'numFmt'
+      when "cellXfs"
+        @state = "cellXfs"
+      when "xf"
+        @xfs << attrs if @state == "cellXfs"
+      when "numFmt"
         @numFmts[attrs[:numFmtId].to_i] = attrs[:formatCode]
       end
     end
 
     def end_element(name)
       case name
-      when 'styleSheet'
+      when "styleSheet"
         @block.call(@xfs, @numFmts)
-      when 'cellXfs'
+      when "cellXfs"
         @state = nil
       end
     end

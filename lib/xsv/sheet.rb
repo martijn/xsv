@@ -40,7 +40,7 @@ module Xsv
       @headers = []
       @mode = :array
       @row_skip = 0
-      @hidden = ids[:state] == 'hidden'
+      @hidden = ids[:state] == "hidden"
 
       @last_row, @column_count = SheetBoundsHandler.get_bounds(@io, @workbook)
     end
@@ -66,7 +66,7 @@ module Xsv
       true
     end
 
-    alias each each_row
+    alias_method :each, :each_row
 
     # Get row by number, starting at 0. Returns either a hash or an array based on the current row.
     # If the specified index is out of bounds an empty row is returned.

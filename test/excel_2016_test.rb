@@ -32,14 +32,14 @@ class Excel2016Test < Minitest::Test
 
   def test_value_types
     assert_equal [
-      "Foo", 2, 2.5, nil, Date.new(2020, 2, 20), "10:00", 4, 1.25,
+      "Foo", 2, 2.5, nil, Date.new(2020, 2, 20), "10:00", 4, 1.25
     ], @file.sheets[0][1]
   end
 
   def test_hash_value_types
     @file.sheets[0].parse_headers!
 
-    expected = { "Some strings" => "Foo", "Some integer numbers" => 2, "Some decimal numbers" => 2.5, "Some empty values" => nil, "Some dates" => Date.new(2020, 2, 20), "Some times" => "10:00", "Some integer calculations" => 4, "Some decimal calculations" => 1.25 }
+    expected = {"Some strings" => "Foo", "Some integer numbers" => 2, "Some decimal numbers" => 2.5, "Some empty values" => nil, "Some dates" => Date.new(2020, 2, 20), "Some times" => "10:00", "Some integer calculations" => 4, "Some decimal calculations" => 1.25}
 
     assert_equal expected, @file.sheets[0][0]
   end
@@ -75,7 +75,7 @@ class Excel2016Test < Minitest::Test
 
     row = @file.sheets[1][3]
 
-    expected = { "Header cell A" => nil, "Header cell B" => "Row with leading null", nil => nil, "Header cell D" => "Row with leading null" }
+    expected = {"Header cell A" => nil, "Header cell B" => "Row with leading null", nil => nil, "Header cell D" => "Row with leading null"}
 
     assert_equal expected, row
   end
@@ -91,7 +91,7 @@ class Excel2016Test < Minitest::Test
 
     row = @file.sheets[1][4]
 
-    expected = { "Header cell A" => "Row with trailing null", "Header cell B" => "Row with trailing null", nil => nil, "Header cell D" => nil }
+    expected = {"Header cell A" => "Row with trailing null", "Header cell B" => "Row with trailing null", nil => nil, "Header cell D" => nil}
 
     assert_equal expected, row
   end

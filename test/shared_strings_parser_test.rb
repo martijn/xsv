@@ -4,8 +4,6 @@ class SharedStringsParserTest < Minitest::Test
   def test_parser
     @file = File.open("test/files/sharedStrings.xml")
 
-    strings = []
-
     strings = Xsv::SharedStringsParser.parse(@file)
 
     assert_includes strings, "This sharedString is split down the middle"
@@ -17,8 +15,6 @@ class SharedStringsParserTest < Minitest::Test
 
   def test_whitespace
     @file = File.open("test/files/sharedStrings-whitespace.xml")
-
-    strings = []
 
     strings = Xsv::SharedStringsParser.parse(@file)
 
@@ -32,16 +28,14 @@ class SharedStringsParserTest < Minitest::Test
 
     assert_equal Encoding::UTF_8, sheet[0][0].encoding
     assert_equal "Zé", sheet[0][0]
-    assert_equal %q{entities "&'<>}, sheet[1][0]
+    assert_equal %q(entities "&'<>), sheet[1][0]
     assert_equal "euro €", sheet[5][0]
   end
 
   def test_phonetic
     @file = File.open("test/files/phonetic.xml")
 
-    strings = []
-
     strings = Xsv::SharedStringsParser.parse(@file)
-    assert_equal ['Some strings'], strings
+    assert_equal ["Some strings"], strings
   end
 end

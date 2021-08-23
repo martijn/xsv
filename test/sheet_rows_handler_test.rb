@@ -24,7 +24,7 @@ class SheetRowsHandlerTest < Minitest::Test
   end
 
   def test_parser_hash_mode
-    empty_row = { "Some strings" => nil, "Some integer numbers" => nil, "Some decimal numbers" => nil, "Some empty values" => nil, "Some dates" => nil, "Some times" => nil, "Some integer calculations" => nil, "Some decimal calculations" => nil }
+    empty_row = {"Some strings" => nil, "Some integer numbers" => nil, "Some decimal numbers" => nil, "Some empty values" => nil, "Some dates" => nil, "Some times" => nil, "Some integer calculations" => nil, "Some decimal calculations" => nil}
 
     rows = []
     handler = Xsv::SheetRowsHandler.new(:hash, empty_row, @workbook, 0, 99999) do |row|
@@ -45,7 +45,7 @@ class SheetRowsHandlerTest < Minitest::Test
 
     rows = []
 
-    collector = Proc.new do |row|
+    collector = proc do |row|
       rows << row
     end
 
@@ -64,7 +64,7 @@ class SheetRowsHandlerTest < Minitest::Test
 
     rows = []
 
-    collector = Proc.new do |row|
+    collector = proc do |row|
       rows << row
     end
 

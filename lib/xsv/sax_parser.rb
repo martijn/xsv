@@ -29,16 +29,16 @@ module Xsv
         end
 
         if state == :look_start
-          if (o = pbuf.index('<'))
-            chars = pbuf.slice!(0, o + 1).chop!.force_encoding('utf-8')
+          if (o = pbuf.index("<"))
+            chars = pbuf.slice!(0, o + 1).chop!.force_encoding("utf-8")
 
             if respond_to?(:characters) && !chars.empty?
-              if chars.index('&')
-                chars.gsub!('&amp;', '&')
-                chars.gsub!('&apos;', "'")
-                chars.gsub!('&gt;', '>')
-                chars.gsub!('&lt;', '<')
-                chars.gsub!('&quot;', '"')
+              if chars.index("&")
+                chars.gsub!("&amp;", "&")
+                chars.gsub!("&apos;", "'")
+                chars.gsub!("&gt;", ">")
+                chars.gsub!("&lt;", "<")
+                chars.gsub!("&quot;", '"')
               end
               characters(chars)
             end
@@ -55,8 +55,8 @@ module Xsv
         end
 
         if state == :look_end
-          if (o = pbuf.index('>'))
-            if (s = pbuf.index(' ')) && s < o
+          if (o = pbuf.index(">"))
+            if (s = pbuf.index(" ")) && s < o
               tag_name = pbuf.slice!(0, s + 1).chop!
               args = pbuf.slice!(0, o - s)
             else
@@ -64,18 +64,18 @@ module Xsv
               args = nil
             end
 
-            if tag_name.start_with?('/')
+            if tag_name.start_with?("/")
               end_element(tag_name[1..-1]) if respond_to?(:end_element)
             elsif args.nil?
               start_element(tag_name, nil)
             else
               start_element(tag_name, args.scan(ATTR_REGEX).each_with_object({}) { |m, h| h[m[1].to_sym] = m[2] })
-              end_element(tag_name) if args.end_with?('/') && respond_to?(:end_element)
+              end_element(tag_name) if args.end_with?("/") && respond_to?(:end_element)
             end
 
             state = :look_start
           elsif eof_reached
-            raise 'Malformed XML document, looking for end of tag beyond EOF'
+            raise "Malformed XML document, looking for end of tag beyond EOF"
           else
             must_read = true
           end
