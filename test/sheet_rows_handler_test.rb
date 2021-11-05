@@ -1,10 +1,10 @@
-require './test/test_helper'
+require "./test/test_helper"
 
 class SheetRowsHandlerTest < Minitest::Test
   def setup
     # NOTE: sheet1.xml comes from excel2016.xlsx
-    @workbook = Xsv::Workbook.open('test/files/excel2016.xlsx')
-    @sheet = File.open('test/files/sheet1.xml')
+    @workbook = Xsv::Workbook.open("test/files/excel2016.xlsx")
+    @sheet = File.open("test/files/sheet1.xml")
   end
 
   def test_parser_array_mode
@@ -18,14 +18,14 @@ class SheetRowsHandlerTest < Minitest::Test
     handler.parse(@sheet)
 
     assert_equal 4, rows.length
-    assert_equal 'Some strings', rows[0][0]
+    assert_equal "Some strings", rows[0][0]
     assert_equal 2.5, rows[1][2]
-    assert_equal '15:25', rows[3][5]
+    assert_equal "15:25", rows[3][5]
   end
 
   def test_parser_hash_mode
-    empty_row = { 'Some strings' => nil, 'Some integer numbers' => nil, 'Some decimal numbers' => nil,
-                  'Some empty values' => nil, 'Some dates' => nil, 'Some times' => nil, 'Some integer calculations' => nil, 'Some decimal calculations' => nil }
+    empty_row = {"Some strings" => nil, "Some integer numbers" => nil, "Some decimal numbers" => nil,
+                 "Some empty values" => nil, "Some dates" => nil, "Some times" => nil, "Some integer calculations" => nil, "Some decimal calculations" => nil}
 
     rows = []
     handler = Xsv::SheetRowsHandler.new(:hash, empty_row, @workbook, 0, 99_999) do |row|
@@ -35,14 +35,14 @@ class SheetRowsHandlerTest < Minitest::Test
     handler.parse(@sheet)
 
     assert_equal 3, rows.length
-    assert_equal 'Foo', rows[0]['Some strings']
-    assert_equal 2.5, rows[0]['Some decimal numbers']
-    assert_equal '15:25', rows[2]['Some times']
+    assert_equal "Foo", rows[0]["Some strings"]
+    assert_equal 2.5, rows[0]["Some decimal numbers"]
+    assert_equal "15:25", rows[2]["Some times"]
   end
 
   # Make sure row skipping works correctly with different types of empty rows
   def test_skip_empty_rows
-    @sheet = File.read('test/files/empty-row-skip.xml')
+    @sheet = File.read("test/files/empty-row-skip.xml")
 
     rows = []
 
@@ -50,7 +50,7 @@ class SheetRowsHandlerTest < Minitest::Test
       rows << row
     end
 
-    first_columns = ['0', '1', nil, nil, '2']
+    first_columns = ["0", "1", nil, nil, "2"]
 
     (0..5).each do |row_skip|
       rows = []
@@ -61,7 +61,7 @@ class SheetRowsHandlerTest < Minitest::Test
   end
 
   def test_inlinestr_text
-    @sheet = File.read('test/files/inlineStr.xml')
+    @sheet = File.read("test/files/inlineStr.xml")
 
     rows = []
 
@@ -72,6 +72,6 @@ class SheetRowsHandlerTest < Minitest::Test
     handler = Xsv::SheetRowsHandler.new(:array, ([nil] * 10), @workbook, 0, 6, &collector)
     handler.parse(@sheet)
 
-    assert_equal 'This is Text', rows[0][0]
+    assert_equal "This is Text", rows[0][0]
   end
 end

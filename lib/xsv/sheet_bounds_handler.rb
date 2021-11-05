@@ -37,20 +37,20 @@ module Xsv
 
     def start_element(name, attrs)
       case name
-      when 'c'
+      when "c"
         @state = name
         @cell = attrs[:r]
-      when 'v'
+      when "v"
         col = column_index(@cell)
         @max_column = col if col > @max_column
         @max_row = @row if @row > @max_row
-      when 'row'
+      when "row"
         @state = name
         @row = attrs[:r].to_i
-      when 'dimension'
+      when "dimension"
         @state = name
 
-        _first_cell, last_cell = attrs[:ref].split(':')
+        _first_cell, last_cell = attrs[:ref].split(":")
 
         if last_cell
           @max_column = column_index(last_cell)
@@ -63,7 +63,7 @@ module Xsv
     end
 
     def end_element(name)
-      @block.call(@max_row, @max_column) if name == 'sheetData'
+      @block.call(@max_row, @max_column) if name == "sheetData"
     end
   end
 end

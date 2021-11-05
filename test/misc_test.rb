@@ -1,10 +1,10 @@
-require './test/test_helper'
+require "./test/test_helper"
 
 # Test for miscellaneous files found in the wild
 
 class MiscTest < Minitest::Test
   def test_complex_number
-    @file = Xsv::Workbook.open('test/files/complex.xlsx')
+    @file = Xsv::Workbook.open("test/files/complex.xlsx")
 
     row = @file.sheets[0][1]
 
@@ -14,7 +14,7 @@ class MiscTest < Minitest::Test
   end
 
   def test_nil_number_format
-    @file = Xsv::Workbook.open('test/files/caxlsx.xlsx')
+    @file = Xsv::Workbook.open("test/files/caxlsx.xlsx")
 
     row = @file.sheets[0][0]
 
@@ -22,7 +22,7 @@ class MiscTest < Minitest::Test
   end
 
   def test_iso8601
-    @file = Xsv::Workbook.open('test/files/iso8601.xlsx')
+    @file = Xsv::Workbook.open("test/files/iso8601.xlsx")
 
     date = @file.sheets[0][1][13]
 

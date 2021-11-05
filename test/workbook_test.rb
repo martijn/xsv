@@ -1,14 +1,14 @@
-require './test/test_helper'
+require "./test/test_helper"
 
 class WorkbookTest < Minitest::Test
   def test_open_filename
-    @workbook = Xsv::Workbook.open('test/files/office365-xl7.xlsx')
+    @workbook = Xsv::Workbook.open("test/files/office365-xl7.xlsx")
 
     refute_empty @workbook.sheets
   end
 
   def test_open_buffer
-    file = File.open('test/files/office365-xl7.xlsx')
+    file = File.open("test/files/office365-xl7.xlsx")
 
     @workbook = Xsv::Workbook.open(file)
 
@@ -16,7 +16,7 @@ class WorkbookTest < Minitest::Test
   end
 
   def test_open_string
-    string = File.read('test/files/office365-xl7.xlsx')
+    string = File.read("test/files/office365-xl7.xlsx")
 
     @workbook = Xsv::Workbook.open(string)
 
@@ -25,7 +25,7 @@ class WorkbookTest < Minitest::Test
 
   def test_open_tempfile
     t = Tempfile.new
-    t.write(File.read('test/files/office365-xl7.xlsx'))
+    t.write(File.read("test/files/office365-xl7.xlsx"))
     t.rewind
 
     @workbook = Xsv::Workbook.open(t)
@@ -34,7 +34,7 @@ class WorkbookTest < Minitest::Test
   end
 
   def test_open_block_syntax
-    ret = Xsv::Workbook.open(File.open('test/files/office365-xl7.xlsx')) do |workbook|
+    ret = Xsv::Workbook.open(File.open("test/files/office365-xl7.xlsx")) do |workbook|
       workbook.sheets.count
     end
 
@@ -43,25 +43,25 @@ class WorkbookTest < Minitest::Test
 
   def test_open_nonexisting
     assert_raises Zip::Error do
-      @workbook = Xsv::Workbook.open('does-not-exist.xlsx')
+      @workbook = Xsv::Workbook.open("does-not-exist.xlsx")
     end
   end
 
   def test_close
-    @workbook = Xsv::Workbook.open('test/files/office365-xl7.xlsx')
+    @workbook = Xsv::Workbook.open("test/files/office365-xl7.xlsx")
 
     @workbook.close
     assert_nil @workbook.sheets
   end
 
   def test_open_without_shared_strings
-    @workbook = Xsv::Workbook.open('test/files/no-shared-strings.xlsx')
+    @workbook = Xsv::Workbook.open("test/files/no-shared-strings.xlsx")
     refute_empty @workbook.sheets
   end
 
   def test_new_instead_of_open
     assert_raises ArgumentError do
-      Xsv::Workbook.new 'not a Zip::File instance'
+      Xsv::Workbook.new "not a Zip::File instance"
     end
   end
 end

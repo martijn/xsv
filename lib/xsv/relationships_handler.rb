@@ -17,7 +17,7 @@ module Xsv
     end
 
     def start_element(name, attrs)
-      @block.call(attrs.slice(:Id, :Type, :Target)) if name == 'Relationship'
+      @block.call(attrs.slice(:Id, :Type, :Target)) if name == "Relationship"
     end
   end
 end

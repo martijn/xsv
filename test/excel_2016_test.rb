@@ -1,8 +1,8 @@
-require './test/test_helper'
+require "./test/test_helper"
 
 class Excel2016Test < Minitest::Test
   def setup
-    @file = Xsv::Workbook.open('test/files/excel2016.xlsx')
+    @file = Xsv::Workbook.open("test/files/excel2016.xlsx")
   end
 
   def test_access_sheets_by_index
@@ -11,19 +11,19 @@ class Excel2016Test < Minitest::Test
   end
 
   def test_return_sheets_name
-    assert_equal 'Basic types', @file.sheets[0].name
-    assert_equal 'Empty rows and columns', @file.sheets[1].name
-    assert_equal 'A graph', @file.sheets[2].name
-    assert_equal 'Merges and hides', @file.sheets[3].name
-    assert_equal 'Hidden sheet', @file.sheets[4].name
+    assert_equal "Basic types", @file.sheets[0].name
+    assert_equal "Empty rows and columns", @file.sheets[1].name
+    assert_equal "A graph", @file.sheets[2].name
+    assert_equal "Merges and hides", @file.sheets[3].name
+    assert_equal "Hidden sheet", @file.sheets[4].name
   end
 
   def test_access_sheets_by_name
-    assert_equal @file.sheets_by_name('Basic types').first.id, 1
+    assert_equal @file.sheets_by_name("Basic types").first.id, 1
   end
 
   def test_access_sheets_by_inexistent_name
-    assert_nil @file.sheets_by_name('Basic type').first
+    assert_nil @file.sheets_by_name("Basic type").first
   end
 
   def test_access_row_by_index
@@ -32,15 +32,15 @@ class Excel2016Test < Minitest::Test
 
   def test_value_types
     assert_equal [
-      'Foo', 2, 2.5, nil, Date.new(2020, 2, 20), '10:00', 4, 1.25
+      "Foo", 2, 2.5, nil, Date.new(2020, 2, 20), "10:00", 4, 1.25
     ], @file.sheets[0][1]
   end
 
   def test_hash_value_types
     @file.sheets[0].parse_headers!
 
-    expected = { 'Some strings' => 'Foo', 'Some integer numbers' => 2, 'Some decimal numbers' => 2.5,
-                 'Some empty values' => nil, 'Some dates' => Date.new(2020, 2, 20), 'Some times' => '10:00', 'Some integer calculations' => 4, 'Some decimal calculations' => 1.25 }
+    expected = {"Some strings" => "Foo", "Some integer numbers" => 2, "Some decimal numbers" => 2.5,
+                "Some empty values" => nil, "Some dates" => Date.new(2020, 2, 20), "Some times" => "10:00", "Some integer calculations" => 4, "Some decimal calculations" => 1.25}
 
     assert_equal expected, @file.sheets[0][0]
   end
@@ -68,7 +68,7 @@ class Excel2016Test < Minitest::Test
   def test_fetch_leading_null
     row = @file.sheets[1][4]
 
-    assert_equal [nil, 'Row with leading null'], row.first(2)
+    assert_equal [nil, "Row with leading null"], row.first(2)
   end
 
   def test_hash_fetch_leading_null
@@ -76,8 +76,8 @@ class Excel2016Test < Minitest::Test
 
     row = @file.sheets[1][3]
 
-    expected = { 'Header cell A' => nil, 'Header cell B' => 'Row with leading null', nil => nil,
-                 'Header cell D' => 'Row with leading null' }
+    expected = {"Header cell A" => nil, "Header cell B" => "Row with leading null", nil => nil,
+                "Header cell D" => "Row with leading null"}
 
     assert_equal expected, row
   end
@@ -85,7 +85,7 @@ class Excel2016Test < Minitest::Test
   def test_fetch_trailing_null
     row = @file.sheets[1][5]
 
-    assert_equal ['Row with trailing null', nil, nil], row.last(3)
+    assert_equal ["Row with trailing null", nil, nil], row.last(3)
   end
 
   def test_hash_fetch_trailing_null
@@ -93,8 +93,8 @@ class Excel2016Test < Minitest::Test
 
     row = @file.sheets[1][4]
 
-    expected = { 'Header cell A' => 'Row with trailing null', 'Header cell B' => 'Row with trailing null', nil => nil,
-                 'Header cell D' => nil }
+    expected = {"Header cell A" => "Row with trailing null", "Header cell B" => "Row with trailing null", nil => nil,
+                "Header cell D" => nil}
 
     assert_equal expected, row
   end
@@ -106,18 +106,18 @@ class Excel2016Test < Minitest::Test
   def test_merged_rows_and_cells
     sheet = @file.sheets[3]
 
-    assert_equal 'Merged B-C', sheet[0][1]
+    assert_equal "Merged B-C", sheet[0][1]
     assert_nil sheet[0][2]
-    assert_equal 'Merged 2-3', sheet[1][0]
+    assert_equal "Merged 2-3", sheet[1][0]
     assert_nil sheet[1][1]
   end
 
   def test_hidden_cells
     sheet = @file.sheets[3]
 
-    assert_equal 'Hidden E4', sheet[3][4]
+    assert_equal "Hidden E4", sheet[3][4]
 
-    assert_equal ['A1', 'Merged B-C', nil, 'D', 'Hidden E', 'F'], sheet.headers
+    assert_equal ["A1", "Merged B-C", nil, "D", "Hidden E", "F"], sheet.headers
   end
 
   def test_hidden_sheet_accessible
@@ -129,7 +129,7 @@ class Excel2016Test < Minitest::Test
   def test_inline_formats
     sheet = @file.sheets[4]
 
-    assert_equal 'This sharedString is split down the middle', sheet[2][0]
+    assert_equal "This sharedString is split down the middle", sheet[2][0]
   end
 
   def test_hidden_sheet_attribute

@@ -1,4 +1,4 @@
-$LOAD_PATH.unshift File.expand_path('../lib', __dir__)
-require 'xsv'
+$LOAD_PATH.unshift File.expand_path("../lib", __dir__)
+require "xsv"
 
-require 'minitest/autorun'
+require "minitest/autorun"
