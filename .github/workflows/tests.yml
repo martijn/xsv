@@ -8,7 +8,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby-version: ['2.6', '2.7', '3.0', 'jruby-head', 'truffleruby']
+        ruby-version: ['2.6', '2.7', '3.0', 'jruby', 'truffleruby']
     steps:
     - uses: actions/checkout@v2
     - name: Set up Ruby
