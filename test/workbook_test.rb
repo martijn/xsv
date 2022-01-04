@@ -64,4 +64,20 @@ class WorkbookTest < Minitest::Test
       Xsv::Workbook.new "not a Zip::File instance"
     end
   end
+
+  def test_open_empty_file_from_buffer
+    tempfile = Tempfile.new
+
+    assert_raises Xsv::Error do
+      @workbook = Xsv::Workbook.open(tempfile)
+    end
+  end
+
+  def test_open_empty_file_by_filename
+    tempfile = Tempfile.new
+
+    assert_raises Zip::Error do
+      Xsv::Workbook.open(tempfile.path)
+    end
+  end
 end

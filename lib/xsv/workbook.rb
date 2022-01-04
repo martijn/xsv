@@ -43,6 +43,7 @@ module Xsv
     #
     def initialize(zip, trim_empty_rows: false)
       raise ArgumentError, "Passed argument is not an instance of Zip::File. Did you mean to use Workbook.open?" unless zip.is_a?(Zip::File)
+      raise Xsv::Error, "Zip::File is empty" if zip.size.zero?
 
       @zip = zip
       @trim_empty_rows = trim_empty_rows
