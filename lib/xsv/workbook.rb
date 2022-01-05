@@ -83,6 +83,11 @@ module Xsv
       @sheets.select { |s| s.name == name }
     end
 
+    # Get number format for given style index
+    def get_num_fmt(style)
+      @numFmts[@xfs[style][:numFmtId]]
+    end
+
     private
 
     def fetch_shared_strings
