@@ -5,6 +5,9 @@ module Xsv
     ATTR_REGEX = /((\S+)="(.*?)")/m
 
     def parse(io)
+      responds_to_end_element = respond_to?(:end_element)
+      responds_to_characters = respond_to?(:characters)
+
       state = :look_start
       if io.is_a?(String)
         pbuf = io.dup
@@ -32,7 +35,7 @@ module Xsv
           if (o = pbuf.index("<"))
             chars = pbuf.slice!(0, o + 1).chop!.force_encoding("utf-8")
 
-            if respond_to?(:characters) && !chars.empty?
+            if responds_to_characters && !chars.empty?
               if chars.index("&")
                 chars.gsub!("&amp;", "&")
                 chars.gsub!("&apos;", "'")
@@ -65,12 +68,12 @@ module Xsv
             end
 
             if tag_name.start_with?("/")
-              end_element(tag_name[1..-1]) if respond_to?(:end_element)
+              end_element(tag_name[1..-1]) if responds_to_end_element
             elsif args.nil?
               start_element(tag_name, nil)
             else
               start_element(tag_name, args.scan(ATTR_REGEX).each_with_object({}) { |m, h| h[m[1].to_sym] = m[2] })
-              end_element(tag_name) if args.end_with?("/") && respond_to?(:end_element)
+              end_element(tag_name) if responds_to_end_element && args.end_with?("/")
             end
 
             state = :look_start

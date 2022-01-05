@@ -2,13 +2,6 @@ require "./test/test_helper"
 require "minitest/benchmark"
 
 class XsvBenchmark < Minitest::Benchmark
-  def setup
-    return true if defined? $warmed_up
-    zip = File.read("test/files/10k-sheet.xlsx")
-    5.times { Xsv::Workbook.open(zip).sheets[0].each { nil } }
-    $warmed_up = true
-  end
-
   def bench_row_access
     zip = File.read("test/files/10k-sheet.xlsx")
     x = Xsv::Workbook.open(zip)

@@ -5,21 +5,21 @@ module Xsv
   # This is used internally when opening a sheet.
   class StylesHandler < SaxParser
     def self.get_styles(io)
-      handler = new(Xsv::Helpers::BUILT_IN_NUMBER_FORMATS.dup) do |xfs, numFmts|
+      handler = new(Xsv::Helpers::BUILT_IN_NUMBER_FORMATS.dup) do |xfs, num_fmts|
         @xfs = xfs
-        @numFmts = numFmts
+        @num_fmts = num_fmts
       end
 
       handler.parse(io)
 
-      [@xfs, @numFmts]
+      [@xfs, @num_fmts]
     end
 
-    def initialize(numFmts, &block)
+    def initialize(num_fmts, &block)
       @block = block
       @state = nil
       @xfs = []
-      @numFmts = numFmts
+      @num_fmts = num_fmts
     end
 
     def start_element(name, attrs)
@@ -27,16 +27,16 @@ module Xsv
       when "cellXfs"
         @state = "cellXfs"
       when "xf"
-        @xfs << attrs if @state == "cellXfs"
+        @xfs << attrs.transform_values(&:to_i) if @state == "cellXfs"
       when "numFmt"
-        @numFmts[attrs[:numFmtId].to_i] = attrs[:formatCode]
+        @num_fmts[attrs[:numFmtId].to_i] = attrs[:formatCode]
       end
     end
 
     def end_element(name)
       case name
       when "styleSheet"
-        @block.call(@xfs, @numFmts)
+        @block.call(@xfs, @num_fmts)
       when "cellXfs"
         @state = nil
       end
