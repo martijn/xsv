@@ -1,5 +1,9 @@
 # Xsv Changelog
 
+## 1.0.5 2022-01-05
+
+- Raise exception if given an empty buffer when opening workbook (thanks @kevin-j-m)
+
 ## 1.0.4 2021-07-05
 
 - Support for custom date/time columns
