@@ -1,5 +1,9 @@
 # Xsv Changelog
 
+## 1.0.6 2022-01-07
+
+- Code cleanup, small performance improvements
+
 ## 1.0.5 2022-01-05
 
 - Raise exception if given an empty buffer when opening workbook (thanks @kevin-j-m)
