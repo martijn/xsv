@@ -58,7 +58,7 @@ module Xsv
 
     # @return [String]
     def inspect
-      "#<#{self.class.name}:#{object_id}>"
+      "#<#{self.class.name}:#{object_id} sheets=#{sheets.count}>"
     end
 
     # Close the handle to the workbook file and leave all resources for the GC to collect

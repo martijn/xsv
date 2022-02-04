@@ -78,7 +78,7 @@ module Xsv
 
             state = :look_start
           elsif eof_reached
-            raise "Malformed XML document, looking for end of tag beyond EOF"
+            raise Xsv::Error, "Malformed XML document, looking for end of tag beyond EOF"
           else
             must_read = true
           end

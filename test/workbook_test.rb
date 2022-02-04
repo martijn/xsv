@@ -80,4 +80,10 @@ class WorkbookTest < Minitest::Test
       Xsv::Workbook.open(tempfile.path)
     end
   end
+
+  def test_inspect
+    @workbook = Xsv::Workbook.open("test/files/office365-xl7.xlsx")
+
+    assert_match(/Xsv::Workbook/, @workbook.inspect)
+  end
 end
