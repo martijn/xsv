@@ -17,7 +17,7 @@ class SheetRowsHandlerTest < Minitest::Test
 
     handler.parse(@sheet)
 
-    assert_equal 4, rows.length
+    assert_equal 5, rows.length
     assert_equal "Some strings", rows[0][0]
     assert_equal 2.5, rows[1][2]
     assert_equal "15:25", rows[3][5]
@@ -33,7 +33,7 @@ class SheetRowsHandlerTest < Minitest::Test
 
     handler.parse(@sheet)
 
-    assert_equal 3, rows.length
+    assert_equal 4, rows.length
     assert_equal "Foo", rows[0]["Some strings"]
     assert_equal 2.5, rows[0]["Some decimal numbers"]
     assert_equal "15:25", rows[2]["Some times"]
@@ -72,5 +72,34 @@ class SheetRowsHandlerTest < Minitest::Test
     handler.parse(@sheet)
 
     assert_equal "This is Text", rows[0][0]
+  end
+
+  def test_special_types
+    rows = []
+    handler = Xsv::SheetRowsHandler.new(:array, [], @workbook, 0, 99999) do |row|
+      rows << row
+    end
+
+    handler.parse(@sheet)
+
+    # B4 = N/A
+    assert_nil rows[3][1]
+    # E4 = formatted number
+    assert_equal 4.999, rows[3][2]
+    # A5 = true
+    assert rows[4][0]
+    # B5 = false
+    refute rows[4][1]
+  end
+
+  def test_unknown_type
+    handler = Xsv::SheetRowsHandler.new(:array, [], @workbook, 0, 99999) { }
+
+    data = @sheet.read
+    data.gsub! "t=\"s\"", "t=\"xyz\""
+
+    assert_raises Xsv::Error, /unknown column type/ do
+      handler.parse(data)
+    end
   end
 end

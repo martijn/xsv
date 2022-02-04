@@ -1,2 +1,135 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x14ac" xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac"><dimension ref="A1:H4"/><sheetViews><sheetView workbookViewId="0"><selection sqref="A1:B4"/></sheetView></sheetViews><sheetFormatPr defaultRowHeight="15" x14ac:dyDescent="0.25"/><cols><col min="1" max="1" width="12.28515625" bestFit="1" customWidth="1"/><col min="2" max="2" width="21.5703125" bestFit="1" customWidth="1"/><col min="3" max="3" width="22.140625" bestFit="1" customWidth="1"/><col min="4" max="4" width="18.5703125" bestFit="1" customWidth="1"/><col min="5" max="5" width="11.28515625" bestFit="1" customWidth="1"/><col min="6" max="6" width="16" bestFit="1" customWidth="1"/><col min="7" max="7" width="23.7109375" bestFit="1" customWidth="1"/><col min="8" max="8" width="24.7109375" bestFit="1" customWidth="1"/></cols><sheetData><row r="1" spans="1:8" x14ac:dyDescent="0.25"><c r="A1" s="3" t="s"><v>0</v></c><c r="B1" s="3" t="s"><v>16</v></c><c r="C1" s="3" t="s"><v>17</v></c><c r="D1" s="3" t="s"><v>4</v></c><c r="E1" s="3" t="s"><v>5</v></c><c r="F1" s="3" t="s"><v>6</v></c><c r="G1" s="3" t="s"><v>19</v></c><c r="H1" s="3" t="s"><v>18</v></c></row><row r="2" spans="1:8" x14ac:dyDescent="0.25"><c r="A2" t="s"><v>1</v></c><c r="B2"><v>2</v></c><c r="C2"><v>2.5</v></c><c r="E2" s="1"><v>43881</v></c><c r="F2" s="4"><v>0.41666666666666669</v></c><c r="G2"><f>B2*2</f><v>4</v></c><c r="H2"><f>C2/2</f><v>1.25</v></c></row><row r="3" spans="1:8" x14ac:dyDescent="0.25"><c r="A3" t="s"><v>2</v></c><c r="B3"><v>3</v></c><c r="C3"><v>3.75</v></c><c r="E3" s="1"><v>43882</v></c><c r="F3" s="2"><v>0.625</v></c><c r="G3"><f t="shared" ref="G3:G4" si="0">B3*2</f><v>6</v></c><c r="H3"><f>C3/2</f><v>1.875</v></c></row><row r="4" spans="1:8" x14ac:dyDescent="0.25"><c r="A4" t="s"><v>3</v></c><c r="B4"><v>4</v></c><c r="C4" s="5"><v>4.9989999999999997</v></c><c r="E4" s="1"><v>43883</v></c><c r="F4" s="2"><v>0.64236111111111105</v></c><c r="G4"><f t="shared" si="0"/><v>8</v></c><c r="H4"><f>C4/2</f><v>2.4994999999999998</v></c></row></sheetData><pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/><pageSetup paperSize="9" orientation="portrait" r:id="rId1"/></worksheet>
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"
+           xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x14ac"
+           xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac">
+  <dimension ref="A1:H4"/>
+  <sheetViews>
+    <sheetView workbookViewId="0">
+      <selection sqref="A1:B4"/>
+    </sheetView>
+  </sheetViews>
+  <sheetFormatPr defaultRowHeight="15" x14ac:dyDescent="0.25"/>
+  <cols>
+    <col min="1" max="1" width="12.28515625" bestFit="1" customWidth="1"/>
+    <col min="2" max="2" width="21.5703125" bestFit="1" customWidth="1"/>
+    <col min="3" max="3" width="22.140625" bestFit="1" customWidth="1"/>
+    <col min="4" max="4" width="18.5703125" bestFit="1" customWidth="1"/>
+    <col min="5" max="5" width="11.28515625" bestFit="1" customWidth="1"/>
+    <col min="6" max="6" width="16" bestFit="1" customWidth="1"/>
+    <col min="7" max="7" width="23.7109375" bestFit="1" customWidth="1"/>
+    <col min="8" max="8" width="24.7109375" bestFit="1" customWidth="1"/>
+  </cols>
+  <sheetData>
+    <row r="1" spans="1:8" x14ac:dyDescent="0.25">
+      <c r="A1" s="3" t="s">
+        <v>0</v>
+      </c>
+      <c r="B1" s="3" t="s">
+        <v>16</v>
+      </c>
+      <c r="C1" s="3" t="s">
+        <v>17</v>
+      </c>
+      <c r="D1" s="3" t="s">
+        <v>4</v>
+      </c>
+      <c r="E1" s="3" t="s">
+        <v>5</v>
+      </c>
+      <c r="F1" s="3" t="s">
+        <v>6</v>
+      </c>
+      <c r="G1" s="3" t="s">
+        <v>19</v>
+      </c>
+      <c r="H1" s="3" t="s">
+        <v>18</v>
+      </c>
+    </row>
+    <row r="2" spans="1:8" x14ac:dyDescent="0.25">
+      <c r="A2" t="s">
+        <v>1</v>
+      </c>
+      <c r="B2">
+        <v>2</v>
+      </c>
+      <c r="C2">
+        <v>2.5</v>
+      </c>
+      <c r="E2" s="1">
+        <v>43881</v>
+      </c>
+      <c r="F2" s="4">
+        <v>0.41666666666666669</v>
+      </c>
+      <c r="G2">
+        <f>B2*2</f>
+        <v>4</v>
+      </c>
+      <c r="H2">
+        <f>C2/2</f>
+        <v>1.25</v>
+      </c>
+    </row>
+    <row r="3" spans="1:8" x14ac:dyDescent="0.25">
+      <c r="A3" t="s">
+        <v>2</v>
+      </c>
+      <c r="B3">
+        <v>3</v>
+      </c>
+      <c r="C3">
+        <v>3.75</v>
+      </c>
+      <c r="E3" s="1">
+        <v>43882</v>
+      </c>
+      <c r="F3" s="2">
+        <v>0.625</v>
+      </c>
+      <c r="G3">
+        <f t="shared" ref="G3:G4" si="0">B3*2</f>
+        <v>6</v>
+      </c>
+      <c r="H3">
+        <f>C3/2</f>
+        <v>1.875</v>
+      </c>
+    </row>
+    <row r="4" spans="1:8" x14ac:dyDescent="0.25">
+      <c r="A4" t="s">
+        <v>3</v>
+      </c>
+      <c r="B4" t="e" />
+      <c r="C4" s="5">
+        <v>4.9989999999999997</v>
+      </c>
+      <c r="E4" t="n" s="1">
+        <v>43883</v>
+      </c>
+      <c r="F4" s="2">
+        <v>0.64236111111111105</v>
+      </c>
+      <c r="G4">
+        <f t="shared" si="0"/>
+        <v>8</v>
+      </c>
+      <c r="H4">
+        <f>C4/2</f>
+        <v>2.4994999999999998</v>
+      </c>
+    </row>
+    <row r="5" spans="1:2">
+      <c r="A5" t="b">
+        <v>1</v>
+      </c>
+
+      <c r="B5" t="b">
+        <v>0</v>
+      </c>
+    </row>
+  </sheetData>
+  <pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/>
+  <pageSetup paperSize="9" orientation="portrait" r:id="rId1"/>
+</worksheet>
