@@ -44,4 +44,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake", "~> 13.0"
   spec.add_development_dependency "minitest", "~> 5.14.2"
   spec.add_development_dependency "standard", "~> 1.6.0"
+  spec.add_development_dependency "codecov", ">= 0.6.0"
 end
