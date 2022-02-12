@@ -27,4 +27,12 @@ class SheetTest < Minitest::Test
 
     assert_match /mode=array/, @workbook.sheets[0].inspect
   end
+
+  def test_default_mode
+    @hash_workbook = Xsv.open("test/files/excel2016.xlsx", default_mode: :hash)
+    assert_kind_of Hash, @hash_workbook.sheets[0][0]
+
+    @array_workbook = Xsv.open("test/files/excel2016.xlsx", default_mode: :array)
+    assert_kind_of Array, @array_workbook.sheets[0][0]
+  end
 end

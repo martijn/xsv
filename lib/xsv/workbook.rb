@@ -20,11 +20,9 @@ module Xsv
     # Open a workbook from an instance of {Zip::File}. Generally it's recommended
     # to use the {.open} method instead of the constructor.
     #
-    # Options:
-    #
-    #    trim_empty_rows (false) Scan sheet for end of content and don't return trailing rows
-    #
-    def initialize(zip, trim_empty_rows: false)
+    # @param trim_empty_rows [Boolean] Scan sheet for end of content and don't return trailing rows
+    # @param default_mode [Symbol] Set to :hash to call `parse_headers!` on all sheets on load
+    def initialize(zip, trim_empty_rows: false, default_mode: :array)
       raise ArgumentError, "Passed argument is not an instance of Zip::File. Did you mean to use Workbook.open?" unless zip.is_a?(Zip::File)
       raise Xsv::Error, "Zip::File is empty" if zip.size.zero?
 
@@ -36,7 +34,7 @@ module Xsv
       @sheet_ids = fetch_sheet_ids
       @relationships = fetch_relationships
       @shared_strings = fetch_shared_strings
-      @sheets = fetch_sheets
+      @sheets = fetch_sheets(default_mode)
     end
 
     # @return [String]
@@ -91,13 +89,15 @@ module Xsv
       stream.close
     end
 
-    def fetch_sheets
+    def fetch_sheets(mode)
       @zip.glob("xl/worksheets/sheet*.xml").sort do |a, b|
         a.name[/\d+/].to_i <=> b.name[/\d+/].to_i
       end.map do |entry|
         rel = @relationships.detect { |r| entry.name.end_with?(r[:Target]) && r[:Type].end_with?("worksheet") }
         sheet_ids = @sheet_ids.detect { |i| i[:"r:id"] == rel[:Id] }
-        Xsv::Sheet.new(self, entry.get_input_stream, entry.size, sheet_ids)
+        Xsv::Sheet.new(self, entry.get_input_stream, entry.size, sheet_ids).tap do |sheet|
+          sheet.parse_headers! if mode == :hash
+        end
       end
     end
 
