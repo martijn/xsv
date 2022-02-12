@@ -3,7 +3,7 @@ require "./test/test_helper"
 class SheetRowsHandlerTest < Minitest::Test
   def setup
     # Note: sheet1.xml comes from excel2016.xlsx
-    @workbook = Xsv::Workbook.open("test/files/excel2016.xlsx")
+    @workbook = Xsv.open("test/files/excel2016.xlsx")
     @sheet = File.open("test/files/sheet1.xml")
   end
 
@@ -55,7 +55,7 @@ class SheetRowsHandlerTest < Minitest::Test
       rows = []
       handler = Xsv::SheetRowsHandler.new(:array, ([nil] * 10), @workbook, row_skip, 6, &collector)
       handler.parse(@sheet)
-      assert_equal first_columns[row_skip..-1], rows.map(&:first)
+      assert_equal first_columns[row_skip..], rows.map(&:first)
     end
   end
 

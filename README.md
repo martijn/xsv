@@ -85,7 +85,7 @@ Be aware that hash mode will lead to unpredictable results if the worksheet
 has multiple columns with the same header.
 
 `Xsv.open` accepts a filename, or an IO or String containing a workbook. Optionally, you can pass a block
-which will be called with the workbook as parameter, like `File#open`. Prior to Xsv 1.1.0, `Xsv::Workbook.open`
+which will be called with the workbook as parameter, like `File#open`. Prior to Xsv 1.1.0, `Xsv.open`
 was used to open workbooks. The parameters are identical.
 
 `Xsv::Sheet` implements `Enumerable` so you can call methods like `#first`,

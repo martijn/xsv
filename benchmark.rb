@@ -36,7 +36,7 @@ end
 
 file = File.read("test/files/10k-sheet.xlsx")
 
-workbook = Xsv::Workbook.open(file)
+workbook = Xsv.open(file)
 
 puts "--- ARRAY MODE ---"
 
