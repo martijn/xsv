@@ -46,7 +46,7 @@ Xsv has two modes of operation. By default, it returns an array for
 each row in the sheet:
 
 ```ruby
-x = Xsv::Workbook.open("sheet.xlsx")
+x = Xsv.open("sheet.xlsx") # => #<Xsv::Workbook sheets=1>
 
 sheet = x.sheets[0]
 
@@ -63,7 +63,7 @@ Alternatively, it can load the headers from the first row and return a hash
 for every row:
 
 ```ruby
-x = Xsv::Workbook.open("sheet.xlsx")
+x = Xsv.open("sheet.xlsx")
 
 sheet = x.sheets[0]
 
@@ -84,8 +84,9 @@ sheet[1] # => {"header1" => "value1", "header2" => "value2"}
 Be aware that hash mode will lead to unpredictable results if the worksheet
 has multiple columns with the same header.
 
-`Xsv::Workbook.open` accepts a filename, or an IO or String containing a workbook. Optionally, you can pass a block
-which will be called with the workbook as parameter, like `File#open`.
+`Xsv.open` accepts a filename, or an IO or String containing a workbook. Optionally, you can pass a block
+which will be called with the workbook as parameter, like `File#open`. Prior to Xsv 1.1.0, `Xsv::Workbook.open`
+was used to open workbooks. The parameters are identical.
 
 `Xsv::Sheet` implements `Enumerable` so you can call methods like `#first`,
 `#filter`/`#select`, and `#map` on it.
@@ -93,7 +94,7 @@ which will be called with the workbook as parameter, like `File#open`.
 The sheets can be accessed by index or by name:
 
 ```ruby
-x = Xsv::Workbook.open("sheet.xlsx")
+x = Xsv.open("sheet.xlsx")
 
 sheet = x.sheets[0] # gets sheet by index
 

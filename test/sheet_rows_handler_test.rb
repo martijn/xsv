@@ -93,7 +93,7 @@ class SheetRowsHandlerTest < Minitest::Test
   end
 
   def test_unknown_type
-    handler = Xsv::SheetRowsHandler.new(:array, [], @workbook, 0, 99999) { }
+    handler = Xsv::SheetRowsHandler.new(:array, [], @workbook, 0, 99999) {}
 
     data = @sheet.read
     data.gsub! "t=\"s\"", "t=\"xyz\""

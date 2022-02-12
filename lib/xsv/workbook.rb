@@ -12,26 +12,9 @@ module Xsv
 
     attr_reader :shared_strings, :xfs, :num_fmts, :trim_empty_rows
 
-    # Open the workbook of the given filename, string or buffer. For additional
-    # options see {.initialize}
-    def self.open(data, **kws)
-      @workbook = if data.is_a?(IO) || data.respond_to?(:read) # is it a buffer?
-        new(Zip::File.open_buffer(data), **kws)
-      elsif data.start_with?("PK\x03\x04") # is it a string containing a file?
-        new(Zip::File.open_buffer(data), **kws)
-      else # must be a filename
-        new(Zip::File.open(data), **kws)
-      end
-
-      if block_given?
-        begin
-          yield(@workbook)
-        ensure
-          @workbook.close
-        end
-      else
-        @workbook
-      end
+    # @deprecated Use {Xsv.open} instead
+    def self.open(data, **kws, &block)
+      Xsv.open(data, **kws, &block)
     end
 
     # Open a workbook from an instance of {Zip::File}. Generally it's recommended
@@ -58,7 +41,7 @@ module Xsv
 
     # @return [String]
     def inspect
-      "#<#{self.class.name}:#{object_id} sheets=#{sheets.count}>"
+      "#<#{self.class.name}:#{object_id} sheets=#{sheets.count} trim_empty_rows=#{@trim_empty_rows}>"
     end
 
     # Close the handle to the workbook file and leave all resources for the GC to collect
