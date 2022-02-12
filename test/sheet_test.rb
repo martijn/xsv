@@ -25,7 +25,7 @@ class SheetTest < Minitest::Test
   def test_inspect
     @workbook = Xsv.open("test/files/empty.xlsx")
 
-    assert_match /mode=array/, @workbook.sheets[0].inspect
+    assert_match(/mode=array/, @workbook.sheets[0].inspect)
   end
 
   def test_default_mode
