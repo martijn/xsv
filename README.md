@@ -61,7 +61,7 @@ sheet[1] # => ["value1", "value2"]
 ```
 
 Alternatively, it can load the headers from the first row and return a hash
-for every row by calling `parse_headers!` on th sheet or setting the `default_mode`
+for every row by calling `parse_headers!` on the sheet or setting the `default_mode`
 option:
 
 ```ruby
