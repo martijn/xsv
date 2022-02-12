@@ -21,4 +21,10 @@ class SheetTest < Minitest::Test
     assert_equal([], sheet.headers)
     assert_equal({}, sheet[0])
   end
+
+  def test_inspect
+    @workbook = Xsv.open("test/files/empty.xlsx")
+
+    assert_match /mode=array/, @workbook.sheets[0].inspect
+  end
 end
