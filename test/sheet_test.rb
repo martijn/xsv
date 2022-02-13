@@ -28,11 +28,11 @@ class SheetTest < Minitest::Test
     assert_match(/mode=array/, @workbook.sheets[0].inspect)
   end
 
-  def test_default_mode
-    @hash_workbook = Xsv.open("test/files/excel2016.xlsx", default_mode: :hash)
+  def test_open_parse_headers
+    @hash_workbook = Xsv.open("test/files/excel2016.xlsx", parse_headers: true)
     assert_kind_of Hash, @hash_workbook.sheets[0][0]
 
-    @array_workbook = Xsv.open("test/files/excel2016.xlsx", default_mode: :array)
+    @array_workbook = Xsv.open("test/files/excel2016.xlsx", parse_headers: false)
     assert_kind_of Array, @array_workbook.sheets[0][0]
   end
 end

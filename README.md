@@ -61,13 +61,13 @@ sheet[1] # => ["value1", "value2"]
 ```
 
 Alternatively, it can load the headers from the first row and return a hash
-for every row by calling `parse_headers!` on the sheet or setting the `default_mode`
-option:
+for every row by calling `parse_headers!` on the sheet or setting the `parse_headers`
+option on open:
 
 ```ruby
 # Parse headers for all sheets on open
 
-x = Xsv.open("sheet.xlsx", default_mode: :hash)
+x = Xsv.open("sheet.xlsx", parse_headers: true)
 
 x.sheets[0][1]   # => {"header1" => "value1", "header2" => "value2"}
 

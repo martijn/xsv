@@ -28,9 +28,9 @@ module Xsv
   # Open the workbook of the given filename, string or buffer.
   # @param filename_or_string [String, IO] the contents or filename of a workbook
   # @param trim_empty_rows [Boolean] Scan sheet for end of content and don't return trailing rows
-  # @param default_mode [Symbol] Set to :hash to call `parse_headers!` on all sheets on load
+  # @param parse_headers [Boolean] Call `parse_headers!` on all sheets on load
   # @return [Xsv::Workbook] The workbook instance
-  def self.open(filename_or_string, trim_empty_rows: false, default_mode: :array)
+  def self.open(filename_or_string, trim_empty_rows: false, parse_headers: false)
     zip = if filename_or_string.is_a?(IO) || filename_or_string.respond_to?(:read) # is it a buffer?
       Zip::File.open_buffer(filename_or_string)
     elsif filename_or_string.start_with?("PK\x03\x04") # is it a string containing a file?
@@ -39,7 +39,7 @@ module Xsv
       Zip::File.open(filename_or_string)
     end
 
-    workbook = Xsv::Workbook.new(zip, trim_empty_rows: trim_empty_rows, default_mode: default_mode)
+    workbook = Xsv::Workbook.new(zip, trim_empty_rows: trim_empty_rows, parse_headers: parse_headers)
 
     if block_given?
       begin

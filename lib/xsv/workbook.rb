@@ -21,8 +21,8 @@ module Xsv
     # to use the {.open} method instead of the constructor.
     #
     # @param trim_empty_rows [Boolean] Scan sheet for end of content and don't return trailing rows
-    # @param default_mode [Symbol] Set to :hash to call `parse_headers!` on all sheets on load
-    def initialize(zip, trim_empty_rows: false, default_mode: :array)
+    # @param parse_headers [Boolean] Call `parse_headers!` on all sheets on load
+    def initialize(zip, trim_empty_rows: false, parse_headers: false)
       raise ArgumentError, "Passed argument is not an instance of Zip::File. Did you mean to use Workbook.open?" unless zip.is_a?(Zip::File)
       raise Xsv::Error, "Zip::File is empty" if zip.size.zero?
 
@@ -34,7 +34,7 @@ module Xsv
       @sheet_ids = fetch_sheet_ids
       @relationships = fetch_relationships
       @shared_strings = fetch_shared_strings
-      @sheets = fetch_sheets(default_mode)
+      @sheets = fetch_sheets(parse_headers ? :hash : :array)
     end
 
     # @return [String]
