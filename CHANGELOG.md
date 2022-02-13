@@ -1,5 +1,12 @@
 # Xsv Changelog
 
+## 1.1.0 2022-02-13
+
+- New, shorter `Xsv.open` syntax as a drop-in replacement for `Xsv::Workbook.open`, which is still supported
+- Enable parsing of headers for all sheets by passing `parse_headers: true` to `Xsv.open`
+- Improvements in performance and test coverage
+- Dropped support for Ruby 2.5, which is EOL. Xsv 1.1.0 supports Ruby 2.6+, latest JRuby, latest TruffleRuby
+
 ## 1.0.6 2022-01-07
 
 - Code cleanup, small performance improvements

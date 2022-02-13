@@ -47,7 +47,7 @@ module Xsv
 
     # @return [String]
     def inspect
-      "#<#{self.class.name}:#{object_id}>"
+      "#<#{self.class.name}:#{object_id} mode=#{@mode}>"
     end
 
     # Returns true if the worksheet is hidden

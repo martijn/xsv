@@ -2,7 +2,7 @@ require "./test/test_helper"
 
 class Numbers6Test < Minitest::Test
   def test_detect_sheet_bounds
-    @workbook = Xsv::Workbook.open("test/files/numbers6-default.xlsx")
+    @workbook = Xsv.open("test/files/numbers6-default.xlsx")
 
     sheet = @workbook.sheets[0]
 
@@ -10,7 +10,7 @@ class Numbers6Test < Minitest::Test
   end
 
   def test_fetch_all_rows
-    @workbook = Xsv::Workbook.open("test/files/numbers6-default.xlsx")
+    @workbook = Xsv.open("test/files/numbers6-default.xlsx")
 
     rows = 0
 
@@ -22,7 +22,7 @@ class Numbers6Test < Minitest::Test
   end
 
   def test_numbers_sheet0
-    @workbook = Xsv::Workbook.open("test/files/numbers6-worksheets.xlsx")
+    @workbook = Xsv.open("test/files/numbers6-worksheets.xlsx")
 
     sheet = @workbook.sheets[0]
 
@@ -30,7 +30,7 @@ class Numbers6Test < Minitest::Test
   end
 
   def test_numbers_types
-    @workbook = Xsv::Workbook.open("test/files/numbers6-worksheets.xlsx")
+    @workbook = Xsv.open("test/files/numbers6-worksheets.xlsx")
 
     sheet = @workbook.sheets[1]
     sheet.row_skip = 1
@@ -45,7 +45,7 @@ class Numbers6Test < Minitest::Test
   end
 
   def test_row_skip
-    @workbook = Xsv::Workbook.open("test/files/numbers6-worksheets.xlsx")
+    @workbook = Xsv.open("test/files/numbers6-worksheets.xlsx")
 
     sheet = @workbook.sheets[1]
     sheet.row_skip = 1
@@ -54,7 +54,7 @@ class Numbers6Test < Minitest::Test
   end
 
   def test_fetch_all_rows_with_row_skip
-    @workbook = Xsv::Workbook.open("test/files/numbers6-default.xlsx", trim_empty_rows: true)
+    @workbook = Xsv.open("test/files/numbers6-default.xlsx", trim_empty_rows: true)
 
     rows = 0
 

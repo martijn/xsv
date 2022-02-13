@@ -2,7 +2,7 @@ require "./test/test_helper"
 
 class Excel2016Test < Minitest::Test
   def setup
-    @file = Xsv::Workbook.open("test/files/excel2016.xlsx")
+    @file = Xsv.open("test/files/excel2016.xlsx")
   end
 
   def test_access_sheets_by_index

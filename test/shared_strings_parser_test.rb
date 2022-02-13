@@ -24,7 +24,7 @@ class SharedStringsParserTest < Minitest::Test
   end
 
   def test_utf8_and_entities
-    sheet = Xsv::Workbook.open("test/files/utf8.xlsx").sheets[0]
+    sheet = Xsv.open("test/files/utf8.xlsx").sheets[0]
 
     assert_equal Encoding::UTF_8, sheet[0][0].encoding
     assert_equal "Zé", sheet[0][0]

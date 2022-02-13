@@ -2,7 +2,7 @@ require "./test/test_helper"
 
 class Office365Xl7Test < Minitest::Test
   def setup
-    @file = Xsv::Workbook.open("test/files/office365-xl7.xlsx")
+    @file = Xsv.open("test/files/office365-xl7.xlsx")
   end
 
   def test_sheet_order

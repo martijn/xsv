@@ -4,7 +4,7 @@ class SheetTest < Minitest::Test
   # Note: Many tests for the sheet class live in the test cases for various file formats
 
   def test_enumerable
-    @workbook = Xsv::Workbook.open("test/files/excel2016.xlsx")
+    @workbook = Xsv.open("test/files/excel2016.xlsx")
 
     first_row = @workbook.sheets[0].first
     assert_equal @workbook.sheets[0][0], first_row
@@ -14,11 +14,25 @@ class SheetTest < Minitest::Test
   end
 
   def test_empty
-    @workbook = Xsv::Workbook.open("test/files/empty.xlsx")
+    @workbook = Xsv.open("test/files/empty.xlsx")
     sheet = @workbook.sheets[0]
     sheet.parse_headers!
 
     assert_equal([], sheet.headers)
     assert_equal({}, sheet[0])
+  end
+
+  def test_inspect
+    @workbook = Xsv.open("test/files/empty.xlsx")
+
+    assert_match(/mode=array/, @workbook.sheets[0].inspect)
+  end
+
+  def test_open_parse_headers
+    @hash_workbook = Xsv.open("test/files/excel2016.xlsx", parse_headers: true)
+    assert_kind_of Hash, @hash_workbook.sheets[0][0]
+
+    @array_workbook = Xsv.open("test/files/excel2016.xlsx", parse_headers: false)
+    assert_kind_of Array, @array_workbook.sheets[0][0]
   end
 end
