@@ -1,9 +1,10 @@
 # Xsv .xlsx reader
 
-[![Travis CI](https://img.shields.io/travis/martijn/xsv/master)](https://travis-ci.org/martijn/xsv)
-[![Codecov](https://img.shields.io/codecov/c/github/martijn/xsv/main)](https://app.codecov.io/gh/martijn/xsv)
-[![Yard Docs](http://img.shields.io/badge/yard-docs-blue.svg)](https://rubydoc.info/github/martijn/xsv)
-[![Gem Version](https://badge.fury.io/rb/xsv.svg)](https://badge.fury.io/rb/xsv)
+
+[![Test badge](https://img.shields.io/github/workflow/status/martijn/xsv/Ruby/main)](https://github.com/martijn/xsv/actions/workflows/ruby.yml)
+[![Codecov badge](https://img.shields.io/codecov/c/github/martijn/xsv/main)](https://app.codecov.io/gh/martijn/xsv)
+[![Yard Docs badge](http://img.shields.io/badge/yard-docs-blue.svg)](https://rubydoc.info/github/martijn/xsv)
+[![Gem Version badge](https://badge.fury.io/rb/xsv.svg)](https://badge.fury.io/rb/xsv)
 
 Xsv is a fast, lightweight, pure Ruby parser for ISO/IEC 29500 Office Open XML spreadsheet files
 (commonly known as Excel or .xlsx files). It strives to be minimal in the
