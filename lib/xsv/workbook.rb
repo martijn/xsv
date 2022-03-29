@@ -93,8 +93,11 @@ module Xsv
       @zip.glob("xl/worksheets/sheet*.xml").sort do |a, b|
         a.name[/\d+/].to_i <=> b.name[/\d+/].to_i
       end.map do |entry|
-        rel = @relationships.detect { |r| entry.name.end_with?(r[:Target]) && r[:Type].end_with?("worksheet") }
-        sheet_ids = @sheet_ids.detect { |i| i[:"r:id"] == rel[:Id] }
+        rel = @relationships.detect do |r|
+          entry.name.end_with?(r[:Target].sub(/^\//, "")) && # ignore leading / in some files
+            r[:Type].end_with?("worksheet")
+        end
+        sheet_ids = @sheet_ids.detect { |i| i[:id] == rel[:Id] }
         Xsv::Sheet.new(self, entry.get_input_stream, entry.size, sheet_ids).tap do |sheet|
           sheet.parse_headers! if mode == :hash
         end
