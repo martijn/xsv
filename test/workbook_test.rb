@@ -104,4 +104,12 @@ class WorkbookTest < Minitest::Test
 
     assert_match(/Xsv::Workbook/, @workbook.inspect)
   end
+
+  def test_open_xml_sdk
+    @workbook = Xsv.open("test/files/open-xml-sdk.xlsx", parse_headers: true)
+    @sheet = @workbook.sheets[0]
+
+    assert_equal "2022-03-04 12:00:00 AM", @sheet[0]["Date"]
+    assert_equal "ABC123", @sheet[0]["Value"]
+  end
 end

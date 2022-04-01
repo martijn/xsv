@@ -2,7 +2,7 @@
 
 module Xsv
   class SaxParser
-    ATTR_REGEX = /((\S+)="(.*?)")/m
+    ATTR_REGEX = /((\p{Alnum}+)="(.*?)")/mn
 
     def parse(io)
       responds_to_end_element = respond_to?(:end_element)
@@ -67,13 +67,15 @@ module Xsv
               args = nil
             end
 
+            stripped_tag_name = strip_namespace(tag_name)
+
             if tag_name.start_with?("/")
-              end_element(tag_name[1..]) if responds_to_end_element
+              end_element(strip_namespace(tag_name[1..])) if responds_to_end_element
             elsif args.nil?
-              start_element(tag_name, nil)
+              start_element(stripped_tag_name, nil)
             else
-              start_element(tag_name, args.scan(ATTR_REGEX).each_with_object({}) { |m, h| h[m[1].to_sym] = m[2] })
-              end_element(tag_name) if responds_to_end_element && args.end_with?("/")
+              start_element(stripped_tag_name, args.scan(ATTR_REGEX).each_with_object({}) { |(_, k, v), h| h[k.to_sym] = v })
+              end_element(stripped_tag_name) if responds_to_end_element && args.end_with?("/")
             end
 
             state = :look_start
@@ -83,6 +85,17 @@ module Xsv
             must_read = true
           end
         end
+      end
+    end
+
+    private
+
+    # I am not proud of this, but there's simply no need to deal with xmlns for this application ¯\_(ツ)_/¯
+    def strip_namespace(tag)
+      if (offset = tag.index(":"))
+        tag[offset + 1..]
+      else
+        tag
       end
     end
   end
