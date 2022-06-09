@@ -9,10 +9,11 @@ module Xsv
       responds_to_characters = respond_to?(:characters)
 
       loop do
-        if (chars = io.gets("<")&.chomp("<"))
+        if (chars = io.gets("<"))
           break if io.eof? # Ignore trailing whitespace/newlines after last tag
 
-          if responds_to_characters && !chars.empty?
+          if responds_to_characters && chars != "<"
+            chars.chop!
             if chars.index("&")
               chars.gsub!("&amp;", "&")
               chars.gsub!("&apos;", "'")
@@ -29,8 +30,8 @@ module Xsv
 
         if (tag = io.gets(">"))
           raise Xsv::Error, "Malformed XML document, looking for end of tag beyond EOF" unless tag.end_with?(">")
-          tag.chomp!(">")
 
+          tag.chop!
           tag_name, _, args = tag.partition(" ")
           stripped_tag_name = strip_namespace(tag_name)
 

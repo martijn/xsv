@@ -4,7 +4,6 @@ class SaxParserTest < Minitest::Test
   def test_truncated_document
     str = File.open("test/files/sheet1.xml") { |file| file.read(100) }
 
-    puts str
     parser = Class.new(Xsv::SaxParser) do
       def start_element(_, _)
       end
