@@ -54,14 +54,12 @@ class SheetRowsHandlerTest < Minitest::Test
     (0..5).each do |row_skip|
       rows = []
       handler = Xsv::SheetRowsHandler.new(:array, ([nil] * 10), @workbook, row_skip, 6, &collector)
-      handler.parse(@sheet)
+      handler.parse(StringIO.new(@sheet))
       assert_equal first_columns[row_skip..], rows.map(&:first)
     end
   end
 
   def test_inlinestr_text
-    @sheet = File.read("test/files/inlineStr.xml")
-
     rows = []
 
     collector = proc do |row|
@@ -69,7 +67,9 @@ class SheetRowsHandlerTest < Minitest::Test
     end
 
     handler = Xsv::SheetRowsHandler.new(:array, ([nil] * 10), @workbook, 0, 6, &collector)
-    handler.parse(@sheet)
+    File.open("test/files/inlineStr.xml") do |sheet|
+      handler.parse(sheet)
+    end
 
     assert_equal "This is Text", rows[0][0]
   end
@@ -99,7 +99,7 @@ class SheetRowsHandlerTest < Minitest::Test
     data.gsub! "t=\"s\"", "t=\"xyz\""
 
     assert_raises Xsv::Error, /unknown column type/ do
-      handler.parse(data)
+      handler.parse(StringIO.new(data))
     end
   end
 end
