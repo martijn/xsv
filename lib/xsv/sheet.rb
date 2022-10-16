@@ -83,6 +83,13 @@ module Xsv
     # @return [self]
     def parse_headers!
       @headers = parse_headers
+
+      # Check for duplicate headers, but don't care about nil columns
+      if (unique_headers = @headers.compact.uniq) != @headers.compact
+        first_dupe = @headers.compact.zip(unique_headers).detect { |k,v| k != v }.first
+        raise Xsv::DuplicateHeaders, "Duplicate header '#{first_dupe}' found, consider parsing this sheet in array mode."
+      end
+
       @mode = :hash
 
       self
