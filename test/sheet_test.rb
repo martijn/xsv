@@ -35,4 +35,26 @@ class SheetTest < Minitest::Test
     @array_workbook = Xsv.open("test/files/excel2016.xlsx", parse_headers: false)
     assert_kind_of Array, @array_workbook.sheets[0][0]
   end
+
+  def test_duplicate_headers
+    @sheet = Xsv.open("test/files/dupe-headers.xlsx").sheets[0]
+
+    error = assert_raises Xsv::DuplicateHeaders do
+      @sheet.parse_headers!
+    end
+
+    assert_equal error.message, "Duplicate header 'Header BD' found, consider parsing this sheet in array mode."
+
+    # Ensure array mode didn't break in the process
+    assert_equal :array, @sheet.mode
+    assert_equal ["Header A", "Header BD", "Header C", "Header BD", "Header E"], @sheet.first
+  end
+
+  def test_duplicate_headers_on_open
+    error = assert_raises Xsv::DuplicateHeaders do
+      Xsv.open("test/files/dupe-headers.xlsx", parse_headers: true)
+    end
+
+    assert_equal error.message, "Duplicate header 'Header BD' found, consider parsing this sheet in array mode."
+  end
 end
