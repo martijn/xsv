@@ -6,7 +6,7 @@ module Xsv
   class SharedStringsParser < SaxParser
     def self.parse(io)
       strings = []
-      new { |s| strings << s }.parse(io)
+      new { |s| strings << -s }.parse(io)
       strings
     end
 
