@@ -2,7 +2,10 @@
 
 ## HEAD (to become 1.2.0)
 
-- **Minor breaking change:** Raise an error when entering hash mode on a sheet with duplicate headers to prevent unintentional behaviour (fixes #44)
+**Minor braking changes in this release**
+
+- Raise an error when entering hash mode on a sheet with duplicate headers to prevent unintentional behaviour (fixes #44)
+- Xsv now returns frozen strings to further improve performance. This means it's no longer possible to call mutating methods on strings read from worksheets without unfreezing them first.
 
 ## 1.1.1 2022-04-01
 

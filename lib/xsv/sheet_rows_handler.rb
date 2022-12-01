@@ -85,7 +85,7 @@ module Xsv
       when "s"
         @workbook.shared_strings[@current_value.to_i]
       when "str", "inlineStr"
-        -(@current_value.strip)
+        -@current_value.strip
       when "e" # N/A
         nil
       when nil, "n"
