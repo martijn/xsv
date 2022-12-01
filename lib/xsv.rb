@@ -20,6 +20,7 @@ require "xsv/workbook"
 # deals with minimal formatting and cannot create or modify documents.
 module Xsv
   class Error < StandardError; end
+
   class DuplicateHeaders < StandardError; end
 
   # An AssertionFailed error indicates an unexpected condition, meaning a bug
