@@ -85,7 +85,7 @@ module Xsv
       @headers = parse_headers
 
       # Check for duplicate headers, but don't care about nil columns
-      if (duplicate_header = @headers.detect { @headers.count(_1) > 1 })
+      if (duplicate_header = @headers.detect { |h| @headers.count(h) > 1 })
         raise Xsv::DuplicateHeaders, "Duplicate header '#{duplicate_header}' found, consider parsing this sheet in array mode."
       end
 
