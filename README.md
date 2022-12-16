@@ -1,6 +1,8 @@
 # Xsv .xlsx reader
 
-[![Test badge](https://img.shields.io/github/workflow/status/martijn/xsv/Ruby/main)](https://github.com/martijn/xsv/actions/workflows/ruby.yml)
+
+
+[![Test badge](https://img.shields.io/github/actions/workflow/status/martijn/xsv/ruby.yml?branch=main)](https://github.com/martijn/xsv/actions/workflows/ruby.yml)
 [![Codecov badge](https://img.shields.io/codecov/c/github/martijn/xsv/main)](https://app.codecov.io/gh/martijn/xsv)
 [![Yard Docs badge](http://img.shields.io/badge/yard-docs-blue.svg)](https://rubydoc.info/github/martijn/xsv)
 [![Gem Version badge](https://badge.fury.io/rb/xsv.svg)](https://badge.fury.io/rb/xsv)
