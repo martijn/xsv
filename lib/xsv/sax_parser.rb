@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "cgi"
+
 module Xsv
   class SaxParser
     ATTR_REGEX = /((\p{Alnum}+)="(.*?)")/mn
@@ -37,11 +39,7 @@ module Xsv
 
             if responds_to_characters && !chars.empty?
               if chars.index("&")
-                chars.gsub!("&amp;", "&")
-                chars.gsub!("&apos;", "'")
-                chars.gsub!("&gt;", ">")
-                chars.gsub!("&lt;", "<")
-                chars.gsub!("&quot;", '"')
+                chars = CGI.unescapeHTML(chars)
               end
               characters(chars)
             end

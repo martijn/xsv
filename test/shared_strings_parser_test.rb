@@ -28,7 +28,7 @@ class SharedStringsParserTest < Minitest::Test
 
     assert_equal Encoding::UTF_8, sheet[0][0].encoding
     assert_equal "Zé", sheet[0][0]
-    assert_equal %q(entities "&'<>), sheet[1][0]
+    assert_equal %q(entities "&'<>ä), sheet[1][0]
     assert_equal "euro €", sheet[5][0]
   end
 
