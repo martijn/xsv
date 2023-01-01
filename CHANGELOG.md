@@ -1,11 +1,12 @@
 # Xsv Changelog
 
-## HEAD (to become 1.2.0)
+## 1.2.0 2023-01-01
 
-**Minor breaking changes in this release**
+**This release contains the following minor breaking changes**
 
 - Raise an error when entering hash mode on a sheet with duplicate headers to prevent unintentional behaviour (fixes #44)
 - Xsv now returns frozen strings to further improve performance. This means it's no longer possible to call mutating methods on strings read from worksheets without unfreezing them first.
+- Unescape all HTML entities in XML characters (thanks @til)
 
 ## 1.1.1 2022-04-01
 
