@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "cgi"
+
 module Xsv
   class SaxParser
     ATTR_REGEX = /((\p{Alnum}+)="(.*?)")/mn
@@ -36,14 +38,7 @@ module Xsv
             chars = pbuf.slice!(0, o + 1).chop!.force_encoding("utf-8")
 
             if responds_to_characters && !chars.empty?
-              if chars.index("&")
-                chars.gsub!("&amp;", "&")
-                chars.gsub!("&apos;", "'")
-                chars.gsub!("&gt;", ">")
-                chars.gsub!("&lt;", "<")
-                chars.gsub!("&quot;", '"')
-              end
-              characters(chars)
+              characters(CGI.unescapeHTML(chars))
             end
 
             state = :look_end
