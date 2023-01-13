@@ -17,6 +17,7 @@ module Xsv
       @store_characters = false
 
       @row_index = 0
+      @col_index = 0
       @current_row = {}
       @current_row_number = 0
       @current_cell = {}
@@ -33,7 +34,7 @@ module Xsv
       when "v", "is", "t"
         @store_characters = true
       when "row"
-        @current_row = @empty_row.dup
+        @current_row = @mode == :array ? []  : @empty_row.dup
         @current_row_number = attrs[:r].to_i
       end
     end
@@ -47,12 +48,22 @@ module Xsv
       when "v", "is", "t"
         @store_characters = false
       when "c"
-        col_index = column_index(@current_cell[:r])
+        if @current_cell[:r]
+          col_index = column_index(@current_cell[:r])
 
-        if @mode == :array
-          @current_row[col_index] = format_cell
+          if @mode == :array
+            @current_row[col_index] = format_cell
+          else
+            @current_row[@headers[col_index]] = format_cell
+          end
         else
-          @current_row[@headers[col_index]] = format_cell
+          if @mode == :array
+            @current_row << format_cell
+          else
+            @current_row[@headers[@col_index]] = format_cell
+          end
+
+          @col_index += 1
         end
       when "row"
         return if @current_row_number <= @row_skip
@@ -60,6 +71,7 @@ module Xsv
         adjusted_row_number = @current_row_number - @row_skip
 
         @row_index += 1
+        @col_index = 0
 
         # Skip first row if we're in hash mode
         return if adjusted_row_number == 1 && @mode == :hash
@@ -72,7 +84,14 @@ module Xsv
         end
 
         # Do not return empty trailing rows
-        @block.call(@current_row) unless @row_index > @last_row
+        return if @row_index > @last_row
+
+        # Add trailing empty columns
+        if @mode == :array && @current_row.length < @empty_row.length
+          @block.call(@current_row + @empty_row[@current_row.length..])
+        else
+          @block.call(@current_row)
+        end
       end
     end
 
