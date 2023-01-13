@@ -48,23 +48,15 @@ module Xsv
       when "v", "is", "t"
         @store_characters = false
       when "c"
-        if @current_cell[:r]
-          col_index = column_index(@current_cell[:r])
+        col_index = @current_cell[:r] ? column_index(@current_cell[:r]) : @col_index
 
-          if @mode == :array
-            @current_row[col_index] = format_cell
-          else
-            @current_row[@headers[col_index]] = format_cell
-          end
+        if @mode == :array
+          @current_row[col_index] = format_cell
         else
-          if @mode == :array
-            @current_row << format_cell
-          else
-            @current_row[@headers[@col_index]] = format_cell
-          end
-
-          @col_index += 1
+          @current_row[@headers[col_index]] = format_cell
         end
+
+        @col_index += 1
       when "row"
         return if @current_row_number <= @row_skip
 
