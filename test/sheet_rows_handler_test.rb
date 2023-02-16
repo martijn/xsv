@@ -102,4 +102,35 @@ class SheetRowsHandlerTest < Minitest::Test
       handler.parse(data)
     end
   end
+
+  def test_column_without_r_array
+    @sheet = File.read("test/files/column-without-r.xml")
+
+    rows = []
+
+    collector = proc do |row|
+      rows << row
+    end
+
+    handler = Xsv::SheetRowsHandler.new(:array, ([nil] * 2), @workbook, 0, 6, &collector)
+    handler.parse(@sheet)
+
+    assert_equal ["Some strings", "Foo"], rows[0]
+    assert_equal ["Bar", "Baz"], rows[1]
+  end
+
+  def test_column_without_r_hash
+    @sheet = File.read("test/files/column-without-r.xml")
+
+    rows = []
+
+    collector = proc do |row|
+      rows << row
+    end
+
+    handler = Xsv::SheetRowsHandler.new(:hash, {"Some strings" => "", "Foo" => ""}, @workbook, 0, 6, &collector)
+    handler.parse(@sheet)
+
+    assert_equal({"Some strings" => "Bar", "Foo" => "Baz"}, rows[0])
+  end
 end
