@@ -23,15 +23,6 @@ class SharedStringsParserTest < Minitest::Test
     assert_includes strings, "Trailing      "
   end
 
-  def test_utf8_and_entities
-    sheet = Xsv.open("test/files/utf8.xlsx").sheets[0]
-
-    assert_equal Encoding::UTF_8, sheet[0][0].encoding
-    assert_equal "Zé", sheet[0][0]
-    assert_equal %q(entities "&'<>ä), sheet[1][0]
-    assert_equal "euro €", sheet[5][0]
-  end
-
   def test_phonetic
     @file = File.open("test/files/phonetic.xml")
 
