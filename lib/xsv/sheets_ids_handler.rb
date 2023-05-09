@@ -9,7 +9,9 @@ module Xsv
 
       new { |sheet_ids| sheets_ids << sheet_ids }.parse(io)
 
-      sheets_ids
+      sheets_ids.each do |sheet|
+        sheet[:name].force_encoding(Encoding::UTF_8)
+      end
     end
 
     def initialize(&block)
