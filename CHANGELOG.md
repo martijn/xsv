@@ -1,5 +1,10 @@
 # Xsv Changelog
 
+## 1.2.1 2023-05-09
+
+- Handle columns without `r` attribute (issue #48)
+- Access sheets by UTF-8 name (thanks @sebikeller)
+
 ## 1.2.0 2023-01-01
 
 **This release contains the following minor breaking changes**
