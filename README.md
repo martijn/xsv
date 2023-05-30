@@ -85,9 +85,8 @@ sheet.parse_headers!
 sheet[0] # => {"header1" => "value1", "header2" => "value2"}
 ```
 
-Because of the way Ruby hashes work will raise `Xsv::DuplicateHeaders` if it detects
-duplicate values in the header row when calling `#parse_headers!` or when opening
-a workbook with `parse_headers: true`.
+Xsv will raise `Xsv::DuplicateHeaders` if it detects duplicate values in the header row when calling
+`#parse_headers!` or when opening a workbook with `parse_headers: true` to ensure hash keys are unique.
 
 `Xsv::Sheet` implements `Enumerable` so along with `#each`
 you can call methods like `#first`, `#filter`/`#select`, and `#map` on it.
