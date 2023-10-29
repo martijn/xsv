@@ -66,7 +66,7 @@ module Xsv
 
             # Strip XML namespace from tag
             if (offset = tag_name.index(":"))
-              tag_name.slice!(..offset)
+              tag_name.slice!(0, offset + 1)
             end
 
             if is_close_tag
