@@ -62,15 +62,20 @@ module Xsv
               args = nil
             end
 
-            stripped_tag_name = strip_namespace(tag_name)
+            is_close_tag = tag_name.delete_prefix!("/")
 
-            if tag_name.start_with?("/")
-              end_element(strip_namespace(tag_name[1..])) if responds_to_end_element
+            # Strip XML namespace from tag
+            if (offset = tag_name.index(":"))
+              tag_name.slice!(..offset)
+            end
+
+            if is_close_tag
+              end_element(tag_name) if responds_to_end_element
             elsif args.nil?
-              start_element(stripped_tag_name, nil)
+              start_element(tag_name, nil)
             else
-              start_element(stripped_tag_name, args.scan(ATTR_REGEX).each_with_object({}) { |(_, k, v), h| h[k.to_sym] = v })
-              end_element(stripped_tag_name) if responds_to_end_element && args.end_with?("/")
+              start_element(tag_name, args.scan(ATTR_REGEX).each_with_object({}) { |(_, k, v), h| h[k.to_sym] = v })
+              end_element(tag_name) if responds_to_end_element && args.end_with?("/")
             end
 
             state = :look_start
@@ -80,17 +85,6 @@ module Xsv
             must_read = true
           end
         end
-      end
-    end
-
-    private
-
-    # I am not proud of this, but there's simply no need to deal with xmlns for this application ¯\_(ツ)_/¯
-    def strip_namespace(tag)
-      if (offset = tag.index(":"))
-        tag[offset + 1..]
-      else
-        tag
       end
     end
   end

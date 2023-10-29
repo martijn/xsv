@@ -1,5 +1,9 @@
 # Xsv Changelog
 
+## HEAD
+
+- Minor performance improvements in the XML parser
+
 ## 1.2.1 2023-05-09
 
 - Handle columns without `r` attribute (issue #48)
