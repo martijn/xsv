@@ -1,23 +1,20 @@
-# Xsv .xlsx reader
-
-
+# Xsv .xlsx reader for Ruby
 
 [![Test badge](https://img.shields.io/github/actions/workflow/status/martijn/xsv/ruby.yml?branch=main)](https://github.com/martijn/xsv/actions/workflows/ruby.yml)
 [![Codecov badge](https://img.shields.io/codecov/c/github/martijn/xsv/main)](https://app.codecov.io/gh/martijn/xsv)
 [![Yard Docs badge](http://img.shields.io/badge/yard-docs-blue.svg)](https://rubydoc.info/github/martijn/xsv)
 [![Gem Version badge](https://badge.fury.io/rb/xsv.svg)](https://badge.fury.io/rb/xsv)
 
-Xsv is a fast, lightweight, pure Ruby parser for ISO/IEC 29500 Office Open XML spreadsheet files
-(commonly known as Excel or .xlsx files). It strives to be minimal in the
-sense that it provides nothing a CSV reader wouldn't, meaning it only
-deals with minimal formatting and cannot create or modify documents.
+Xsv is a high performance, lightweight, pure Ruby parser for ISO/IEC 29500 Office Open XML spreadsheets
+(commonly known as Excel or .xlsx files). It strives to be minimal in the sense that it provides nothing a
+CSV reader wouldn't. This means it only deals with the minimal required formatting and cannot create or modify documents.
+Xsv can handle very large Excel files with minimal resources thanks to a custom streaming XML parser that
+is optimized for the Excel file format.
 
 Xsv is designed for worksheets with a single table of data, optionally
 with a header row. It only casts values to basic Ruby types (integer, float,
 date and time) and does not deal with most formatting or more advanced
-functionality. It strives for fast processing of large worksheets with
-minimal RAM and CPU consumption and has been in production use since the earliest
-versions.
+functionality. Xsv has been production-ready since the initial release.
 
 Xsv stands for 'Excel Separated Values', because Excel just gets in the way.
 
@@ -44,6 +41,7 @@ and is designed to be thread-safe.
 ## Usage
 
 ### Array and hash mode
+
 Xsv has two modes of operation. By default, it returns an array for
 each row in the sheet:
 
@@ -165,7 +163,7 @@ Xsv is faster and more memory efficient than other gems because of two things: i
 Jamie Schembri did a shootout of Xsv against various other Excel reading gems comparing parsing speed, memory usage, and allocations.
 Check our his blog post: [Faster Excel parsing in Ruby](https://blog.schembri.me/post/faster-excel-parsing-in-ruby/).
 
-Pre-1.0, Xsv used a native extension for XML parsing, which was faster than the native Ruby one (on MRI). But even with the native Ruby version generally Xsv still outperforms other Ruby parsing gems.
+Pre-1.0, Xsv used a native extension for XML parsing, which was faster than the native Ruby one (on MRI). But even with the native Ruby version generally Xsv still outperforms the competition.
 
 ## Contributing
 
@@ -175,4 +173,9 @@ for inclusion in the source code repository.
 
 ## License
 
+Copyright © Martijn Storck and Xsv contributors
+
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+
+
+
