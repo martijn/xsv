@@ -34,7 +34,7 @@ module Xsv
       when "v", "is", "t"
         @store_characters = true
       when "row"
-        @current_row = @mode == :array ? []  : @empty_row.dup
+        @current_row = @mode == :array ? [] : @empty_row.dup
         @current_row_number = attrs[:r].to_i
       end
     end

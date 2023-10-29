@@ -35,7 +35,7 @@ module Xsv
       46 => "[h]:mm:ss",
       47 => "mm:ss.0",
       48 => "##0.0E+0",
-      49 => "@"
+      49 => "@",
     }.freeze
 
     MINUTE = 60
