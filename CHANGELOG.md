@@ -3,6 +3,7 @@
 ## HEAD
 
 - Minor performance improvements in the XML parser
+- Update of development dependencies including minitest and standardrb
 
 ## 1.2.1 2023-05-09
 

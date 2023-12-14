@@ -39,7 +39,7 @@ class Numbers6Test < Minitest::Test
 
     sheet.parse_headers!
 
-    expected = { "Text" => "Hi there", "Number" => 1234, nil => nil, "Date" => Date.new(2020, 2, 20), "Time" => "13:00", "DateTime" => Time.new(2020, 2, 20, 13, 0o0) }
+    expected = {"Text" => "Hi there", "Number" => 1234, nil => nil, "Date" => Date.new(2020, 2, 20), "Time" => "13:00", "DateTime" => Time.new(2020, 2, 20, 13, 0o0)}
 
     assert_equal expected, sheet[0]
   end

@@ -34,12 +34,12 @@ module Xsv
   # @return [Xsv::Workbook] The workbook instance
   def self.open(filename_or_string, trim_empty_rows: false, parse_headers: false)
     zip = if filename_or_string.is_a?(IO) || filename_or_string.respond_to?(:read) # is it a buffer?
-        Zip::File.open_buffer(filename_or_string)
-      elsif filename_or_string.start_with?("PK\x03\x04") # is it a string containing a file?
-        Zip::File.open_buffer(filename_or_string)
-      else # must be a filename
-        Zip::File.open(filename_or_string)
-      end
+      Zip::File.open_buffer(filename_or_string)
+    elsif filename_or_string.start_with?("PK\x03\x04") # is it a string containing a file?
+      Zip::File.open_buffer(filename_or_string)
+    else # must be a filename
+      Zip::File.open(filename_or_string)
+    end
 
     workbook = Xsv::Workbook.new(zip, trim_empty_rows: trim_empty_rows, parse_headers: parse_headers)
 
