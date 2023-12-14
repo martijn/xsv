@@ -1,7 +1,6 @@
 # Xsv .xlsx reader for Ruby
 
 [![Test badge](https://img.shields.io/github/actions/workflow/status/martijn/xsv/ruby.yml?branch=main)](https://github.com/martijn/xsv/actions/workflows/ruby.yml)
-[![Codecov badge](https://img.shields.io/codecov/c/github/martijn/xsv/main)](https://app.codecov.io/gh/martijn/xsv)
 [![Yard Docs badge](http://img.shields.io/badge/yard-docs-blue.svg)](https://rubydoc.info/github/martijn/xsv)
 [![Gem Version badge](https://badge.fury.io/rb/xsv.svg)](https://badge.fury.io/rb/xsv)
 
@@ -176,6 +175,3 @@ for inclusion in the source code repository.
 Copyright © Martijn Storck and Xsv contributors
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
-
-
-
