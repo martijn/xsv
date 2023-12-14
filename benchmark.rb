@@ -14,7 +14,6 @@ def bench_perf(sheet)
   result = Benchmark::Perf.cpu(repeat: 5) do
     sheet.each do |row|
       row.each do |cell|
-        cell
       end
     end
   end
@@ -27,12 +26,13 @@ def bench_mem(sheet)
     bm.report do
       sheet.each do |row|
         row.each do |cell|
-          cell
         end
       end
     end
   end
 end
+
+puts RUBY_DESCRIPTION
 
 file = File.read("test/files/10k-sheet.xlsx")
 
