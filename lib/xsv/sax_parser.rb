@@ -74,7 +74,14 @@ module Xsv
             elsif args.nil?
               start_element(tag_name, nil)
             else
-              start_element(tag_name, args.scan(ATTR_REGEX).each_with_object({}) { |(_, k, v), h| h[k.to_sym] = v })
+              attribute_buffer = {}
+              attributes = args.scan(ATTR_REGEX)
+              while (attr = attributes.delete_at(0))
+                attribute_buffer[attr[1].to_sym] = attr[2]
+              end
+
+              start_element(tag_name, attribute_buffer)
+
               end_element(tag_name) if responds_to_end_element && args.end_with?("/")
             end
 

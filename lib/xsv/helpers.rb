@@ -35,7 +35,7 @@ module Xsv
       46 => "[h]:mm:ss",
       47 => "mm:ss.0",
       48 => "##0.0E+0",
-      49 => "@",
+      49 => "@"
     }.freeze
 
     MINUTE = 60
@@ -45,11 +45,14 @@ module Xsv
     EPOCH = Date.new(1899, 12, 30).freeze
 
     # Return the index number for the given Excel column name (i.e. "A1" => 0)
+    # @param col [String] Column name in A1 notation
     def column_index(col)
-      col.each_codepoint.reduce(0) do |sum, n|
-        break sum - 1 if n < A_CODEPOINT # reached a number
+      chars = col.bytes
+      sum = 0
+      while (char = chars.delete_at(0))
+        break sum - 1 if char < A_CODEPOINT # reached the number
 
-        sum * 26 + (n - A_CODEPOINT + 1)
+        sum = sum * 26 + (char - A_CODEPOINT + 1)
       end
     end
 
