@@ -2,8 +2,10 @@
 
 ## HEAD
 
-- Minor performance improvements in the XML parser
+- Ruby 2.6 is no longer supported. Xsv is compatible with Ruby 2.7 through 3.3, latest JRuby, and latest TruffleRuby
+- Easier access worksheets using `Xsv::Workbook#[]` and `Enumerable` methods on `Xsv::Workbook`. The old `sheets` and `sheet_by_name` method have been retained for backward compatibility.
 - Update of development dependencies including minitest and standardrb
+- Various performance improvements, especially with YJIT on Ruby 3.3
 
 ## 1.2.1 2023-05-09
 
