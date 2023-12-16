@@ -1,6 +1,6 @@
 # Xsv Changelog
 
-## HEAD
+## 1.3.0 2023-12-16
 
 - Ruby 2.6 is no longer supported. Xsv is compatible with Ruby 2.7 through 3.3, latest JRuby, and latest TruffleRuby
 - Easier access worksheets using `Xsv::Workbook#[]` and `Enumerable` methods on `Xsv::Workbook`. The old `sheets` and `sheet_by_name` method have been retained for backward compatibility.
