@@ -112,4 +112,52 @@ class WorkbookTest < Minitest::Test
     assert_equal "2022-03-04 12:00:00 AM", @sheet[0]["Date"]
     assert_equal "ABC123", @sheet[0]["Value"]
   end
+
+  def test_index_open_by_index
+    @workbook = Xsv.open(File.read("test/files/office365-xl7.xlsx"))
+
+    sheet = @workbook[1]
+    assert_equal "Blad2", sheet.name
+  end
+
+  def test_index_open_by_out_of_range_index
+    @workbook = Xsv.open(File.read("test/files/office365-xl7.xlsx"))
+
+    sheet = @workbook[99]
+    assert_nil sheet
+  end
+
+  def test_index_open_by_name
+    @workbook = Xsv.open(File.read("test/files/office365-xl7.xlsx"))
+
+    sheet = @workbook["Blad2"]
+    assert_equal "Blad2", sheet.name
+  end
+
+  def test_index_open_by_nonexistent_name
+    @workbook = Xsv.open(File.read("test/files/office365-xl7.xlsx"))
+
+    sheet = @workbook["Blad99"]
+    assert_nil sheet
+  end
+
+  def test_index_open_by_invalid_type
+    @workbook = Xsv.open(File.read("test/files/office365-xl7.xlsx"))
+
+    assert_raises ArgumentError do
+      @workbook[true]
+    end
+  end
+
+  def test_first
+    @workbook = Xsv.open(File.read("test/files/office365-xl7.xlsx"))
+
+    assert_equal "Blad1", @workbook.first.name
+  end
+
+  def test_enumerable
+    @workbook = Xsv.open(File.read("test/files/office365-xl7.xlsx"))
+
+    assert_equal %w(Blad1 Blad2 Blad3), @workbook.map(&:name)
+  end
 end

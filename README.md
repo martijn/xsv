@@ -45,9 +45,12 @@ Xsv has two modes of operation. By default, it returns an array for
 each row in the sheet:
 
 ```ruby
-x = Xsv.open("sheet.xlsx") # => #<Xsv::Workbook sheets=1>
+workbook = Xsv.open("sheet.xlsx") # => #<Xsv::Workbook sheets=1>
 
-sheet = x.sheets[0]
+# Access worksheet by index, 0 is the first sheet
+sheet = workbook[0]
+# or, access worksheet by name
+sheet = workbook["Sheet1"]
 
 # Iterate over rows
 sheet.each do |row|
@@ -65,15 +68,16 @@ option on open:
 ```ruby
 # Parse headers for all sheets on open
 
-x = Xsv.open("sheet.xlsx", parse_headers: true)
+workbook = Xsv.open("sheet.xlsx", parse_headers: true)
 
-x.sheets[0][1]   # => {"header1" => "value1", "header2" => "value2"}
+# Get the first row from the first sheet
+workbook.first.first   # => {"header1" => "value1", "header2" => "value2"}
 
 # Manually parse headers for a single sheet
 
-x = Xsv.open("sheet.xlsx")
+workbook = Xsv.open("sheet.xlsx")
 
-sheet = x.sheets[0]
+sheet = workbook[0]
 
 sheet[0]  # => ["header1", "header2"]
 
@@ -86,7 +90,13 @@ Xsv will raise `Xsv::DuplicateHeaders` if it detects duplicate values in the hea
 `#parse_headers!` or when opening a workbook with `parse_headers: true` to ensure hash keys are unique.
 
 `Xsv::Sheet` implements `Enumerable` so along with `#each`
-you can call methods like `#first`, `#filter`/`#select`, and `#map` on it.
+you can call methods like `#first`, `#filter`/`#select`, and `#map` on it. Likewise these methods can
+be used on `Xsv::Workbook` to iterate over sheets, for example:
+
+```ruby
+# Get the name of all the sheets in a workbook
+sheet_names = @workbook.map(&:name)
+```
 
 ### Opening a string or buffer instead of filename
 
@@ -111,24 +121,6 @@ end
 
 Prior to Xsv 1.1.0, `Xsv::Workbook.open` was used instead of `Xsv.open`. The parameters are identical and
 the former is maintained for backwards compatibility.
-
-### Accessing sheets by name
-
-The sheets can be accessed by index or by name:
-
-```ruby
-x = Xsv.open("sheet.xlsx")
-
-sheet = x.sheets[0] # gets sheet by index
-
-sheet = x.sheets_by_name('Name').first # gets sheet by name
-```
-
-To get all the sheets names:
-
-```ruby
-sheet_names = x.sheets.map(&:name)
-```
 
 ### Assumptions
 
