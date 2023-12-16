@@ -6,6 +6,8 @@ module Xsv
   # An OOXML Spreadsheet document is called a Workbook. A Workbook consists of
   # multiple Sheets that are available in the array that's accessible through {#sheets}
   class Workbook
+    include Enumerable
+
     # Access the Sheet objects contained in the workbook
     # @return [Array<Sheet>]
     attr_reader :sheets
@@ -67,6 +69,24 @@ module Xsv
     # Get number format for given style index
     def get_num_fmt(style)
       @num_fmts[@xfs[style][:numFmtId]]
+    end
+
+    def each(&block)
+      sheets.each(&block)
+    end
+
+    # Get a sheet by index or name
+    # @param [String, Integer] index_or_name The name of the sheet or index in the workbook
+    # @return [<Xsv::Sheet>, nil] returns the sheet instance or nil if it was not found
+    def [](index_or_name)
+      case index_or_name
+      when Integer
+        sheets[index_or_name]
+      when String
+        sheets_by_name(index_or_name).first
+      else
+        raise ArgumentError, "Sheets can be accessed by Integer of String only"
+      end
     end
 
     private
