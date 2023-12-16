@@ -30,13 +30,11 @@ module Xsv
     #
     # @param workbook [Workbook] The Workbook with shared data such as shared strings and styles
     # @param io [IO] A handle to an open worksheet XML file
-    # @param size [Number] size of the XML file
-    def initialize(workbook, io, size, ids)
+    def initialize(workbook, io, ids)
       @workbook = workbook
       @id = ids[:sheetId].to_i
       @io = io
       @name = ids[:name]
-      @size = size
       @headers = []
       @mode = :array
       @row_skip = 0
@@ -58,11 +56,7 @@ module Xsv
     # Iterate over rows, returning either hashes or arrays based on the current mode.
     def each_row(&block)
       @io.rewind
-
-      handler = SheetRowsHandler.new(@mode, empty_row, @workbook, @row_skip, @last_row, &block)
-
-      handler.parse(@io)
-
+      SheetRowsHandler.new(@mode, empty_row, @workbook, @row_skip, @last_row, &block).parse(@io)
       true
     end
 

@@ -98,7 +98,7 @@ module Xsv
             r[:Type].end_with?("worksheet")
         end
         sheet_ids = @sheet_ids.detect { |i| i[:id] == rel[:Id] }
-        Xsv::Sheet.new(self, entry.get_input_stream, entry.size, sheet_ids).tap do |sheet|
+        Xsv::Sheet.new(self, entry.get_input_stream, sheet_ids).tap do |sheet|
           sheet.parse_headers! if mode == :hash
         end
       end
