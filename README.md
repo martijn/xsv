@@ -6,7 +6,8 @@
 
 Xsv is a high performance, lightweight, pure Ruby parser for ISO/IEC 29500 Office Open XML spreadsheets
 (commonly known as Excel or .xlsx files). It strives to be minimal in the sense that it provides nothing a
-CSV reader wouldn't. This means it only deals with the minimal required formatting and cannot create or modify documents.
+CSV reader wouldn't. This means it only deals with the minimal required formatting and cannot create or modify
+documents.
 Xsv can handle very large Excel files with minimal resources thanks to a custom streaming XML parser that
 is optimized for the Excel file format.
 
@@ -71,19 +72,19 @@ option on open:
 workbook = Xsv.open("sheet.xlsx", parse_headers: true)
 
 # Get the first row from the first sheet
-workbook.first.first   # => {"header1" => "value1", "header2" => "value2"}
+workbook.first.first # => {"header1" => "value1", "header2" => "value2"}
 
 # Manually parse headers for a single sheet
 
 workbook = Xsv.open("sheet.xlsx")
 
-sheet = workbook[0]
+sheet = workbook.first
 
-sheet[0]  # => ["header1", "header2"]
+sheet.first # => ["header1", "header2"]
 
 sheet.parse_headers!
 
-sheet[0] # => {"header1" => "value1", "header2" => "value2"}
+sheet.first # => {"header1" => "value1", "header2" => "value2"}
 ```
 
 Xsv will raise `Xsv::DuplicateHeaders` if it detects duplicate values in the header row when calling
@@ -135,26 +136,35 @@ If your data or headers do not start on the first row of the sheet you can
 tell Xsv to skip a number of rows:
 
 ```ruby
-workbook.sheets[0].row_skip = 1
+sheet = workbook[0]
+sheet.row_skip = 1
 ```
 
 All operations will honour this offset, making the skipped rows unreachable.
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can
+also run `bin/console` for an interactive prompt that will allow you to experiment.
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the
+version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version,
+push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
 ## Performance and Benchmarks
 
-Xsv is faster and more memory efficient than other gems because of two things: it only _reads values_ from Excel files and it's based on a SAX-based parser instead of a DOM-based parser. If you want to read some background on this, check out my blog post on
+Xsv is faster and more memory efficient than other gems because of two things: it only _reads values_ from Excel files
+and it's based on a SAX-based parser instead of a DOM-based parser. If you want to read some background on this, check
+out my blog post on
 [Efficient XML parsing in Ruby](https://storck.io/posts/efficient-xml-parsing-in-ruby/).
 
-Jamie Schembri did a shootout of Xsv against various other Excel reading gems comparing parsing speed, memory usage, and allocations.
+Jamie Schembri did a shootout of Xsv against various other Excel reading gems comparing parsing speed, memory usage, and
+allocations.
 Check our his blog post: [Faster Excel parsing in Ruby](https://blog.schembri.me/post/faster-excel-parsing-in-ruby/).
 
-Pre-1.0, Xsv used a native extension for XML parsing, which was faster than the native Ruby one (on MRI). But even with the native Ruby version generally Xsv still outperforms the competition.
+Pre-1.0, Xsv used a native extension for XML parsing, which was faster than the native Ruby one (on MRI). But even
+the current native Ruby parser generally outperforms the competition. For maximum performance, it is recommended to
+enable YJIT.
 
 ## Contributing
 
