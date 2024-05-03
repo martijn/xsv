@@ -57,4 +57,14 @@ class SheetTest < Minitest::Test
 
     assert_equal error.message, "Duplicate header 'Header BD' found, consider parsing this sheet in array mode."
   end
+
+  def test_complex_headers
+    @sheet = Xsv.open("test/files/complex-headers.xlsx").sheets[0]
+    @sheet.parse_headers!
+
+    assert_equal [nil, nil, "Customer nr.", "Customer name", "Item number", "Description", "Qty outst.", "Another Ref",
+                  "Reference", "Site address", "Zdepot", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil,
+                  nil, nil, nil, nil, nil, nil], @sheet.headers
+    assert_equal 'Soap', @sheet[0][:description]
+  end
 end
