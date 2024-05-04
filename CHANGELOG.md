@@ -1,5 +1,10 @@
 # Xsv Changelog
 
+## HEAD
+
+- Fix issue #56 with multiple nil headers 
+- Ignore colums with a `nil` header in hash mode
+
 ## 1.3.0 2023-12-16
 
 - Ruby 2.6 is no longer supported. Xsv is compatible with Ruby 2.7 through 3.3, latest JRuby, and latest TruffleRuby

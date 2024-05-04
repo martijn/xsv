@@ -6,8 +6,9 @@ module Xsv
   class SheetRowsHandler < SaxParser
     include Xsv::Helpers
 
-    def initialize(mode, empty_row, workbook, row_skip, last_row, &block)
+    def initialize(mode, headers, empty_row, workbook, row_skip, last_row, &block)
       @mode = mode
+      @headers = headers
       @empty_row = empty_row
       @workbook = workbook
       @row_skip = row_skip
@@ -22,8 +23,6 @@ module Xsv
       @current_row_number = 0
       @current_cell = {}
       @current_value = +""
-
-      @headers = @empty_row.keys if @mode == :hash
     end
 
     def start_element(name, attrs)
@@ -34,7 +33,7 @@ module Xsv
       when "v", "is", "t"
         @store_characters = true
       when "row"
-        @current_row = @mode == :array ? [] : @empty_row.dup
+        @current_row = (@mode == :array) ? [] : @empty_row.dup
         @current_row_number = attrs[:r].to_i
       end
     end
@@ -53,7 +52,7 @@ module Xsv
         if @mode == :array
           @current_row[col_index] = format_cell
         else
-          @current_row[@headers[col_index]] = format_cell
+          @current_row[@headers[col_index]] = format_cell unless @headers[col_index].nil?
         end
 
         @col_index += 1

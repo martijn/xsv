@@ -11,7 +11,7 @@ class SheetRowsHandlerTest < Minitest::Test
     empty_row = [nil] * 7
 
     rows = []
-    handler = Xsv::SheetRowsHandler.new(:array, empty_row, @workbook, 0, 99999) do |row|
+    handler = Xsv::SheetRowsHandler.new(:array, nil, empty_row, @workbook, 0, 99999) do |row|
       rows << row
     end
 
@@ -27,7 +27,7 @@ class SheetRowsHandlerTest < Minitest::Test
     empty_row = {"Some strings" => nil, "Some integer numbers" => nil, "Some decimal numbers" => nil, "Some empty values" => nil, "Some dates" => nil, "Some times" => nil, "Some integer calculations" => nil, "Some decimal calculations" => nil}
 
     rows = []
-    handler = Xsv::SheetRowsHandler.new(:hash, empty_row, @workbook, 0, 99999) do |row|
+    handler = Xsv::SheetRowsHandler.new(:hash, empty_row.keys, empty_row, @workbook, 0, 99999) do |row|
       rows << row
     end
 
@@ -53,7 +53,7 @@ class SheetRowsHandlerTest < Minitest::Test
 
     6.times do |row_skip|
       rows = []
-      handler = Xsv::SheetRowsHandler.new(:array, ([nil] * 10), @workbook, row_skip, 6, &collector)
+      handler = Xsv::SheetRowsHandler.new(:array, nil, ([nil] * 10), @workbook, row_skip, 6, &collector)
       handler.parse(@sheet)
       assert_equal first_columns[row_skip..], rows.map(&:first)
     end
@@ -68,7 +68,7 @@ class SheetRowsHandlerTest < Minitest::Test
       rows << row
     end
 
-    handler = Xsv::SheetRowsHandler.new(:array, ([nil] * 10), @workbook, 0, 6, &collector)
+    handler = Xsv::SheetRowsHandler.new(:array, nil, ([nil] * 10), @workbook, 0, 6, &collector)
     handler.parse(@sheet)
 
     assert_equal "This is Text", rows[0][0]
@@ -76,7 +76,7 @@ class SheetRowsHandlerTest < Minitest::Test
 
   def test_special_types
     rows = []
-    handler = Xsv::SheetRowsHandler.new(:array, [], @workbook, 0, 99999) do |row|
+    handler = Xsv::SheetRowsHandler.new(:array, nil, [], @workbook, 0, 99999) do |row|
       rows << row
     end
 
@@ -93,7 +93,7 @@ class SheetRowsHandlerTest < Minitest::Test
   end
 
   def test_unknown_type
-    handler = Xsv::SheetRowsHandler.new(:array, [], @workbook, 0, 99999) {}
+    handler = Xsv::SheetRowsHandler.new(:array, nil, [], @workbook, 0, 99999) {}
 
     data = @sheet.read
     data.gsub! "t=\"s\"", "t=\"xyz\""
@@ -112,7 +112,7 @@ class SheetRowsHandlerTest < Minitest::Test
       rows << row
     end
 
-    handler = Xsv::SheetRowsHandler.new(:array, ([nil] * 2), @workbook, 0, 6, &collector)
+    handler = Xsv::SheetRowsHandler.new(:array, [], ([nil] * 2), @workbook, 0, 6, &collector)
     handler.parse(@sheet)
 
     assert_equal ["Some strings", "Foo"], rows[0]
@@ -128,7 +128,8 @@ class SheetRowsHandlerTest < Minitest::Test
       rows << row
     end
 
-    handler = Xsv::SheetRowsHandler.new(:hash, {"Some strings" => "", "Foo" => ""}, @workbook, 0, 6, &collector)
+    empty_row = {"Some strings" => "", "Foo" => ""}
+    handler = Xsv::SheetRowsHandler.new(:hash, empty_row.keys, empty_row, @workbook, 0, 6, &collector)
     handler.parse(@sheet)
 
     assert_equal({"Some strings" => "Bar", "Foo" => "Baz"}, rows[0])

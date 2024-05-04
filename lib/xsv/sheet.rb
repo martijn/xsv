@@ -56,7 +56,7 @@ module Xsv
     # Iterate over rows, returning either hashes or arrays based on the current mode.
     def each_row(&block)
       @io.rewind
-      SheetRowsHandler.new(@mode, empty_row, @workbook, @row_skip, @last_row, &block).parse(@io)
+      SheetRowsHandler.new(@mode, @headers, empty_row, @workbook, @row_skip, @last_row, &block).parse(@io)
       true
     end
 
@@ -114,7 +114,7 @@ module Xsv
       when :array
         [nil] * @column_count
       when :hash
-        @headers.zip([]).to_h
+        @headers.compact.zip([]).to_h
       end
     end
   end
