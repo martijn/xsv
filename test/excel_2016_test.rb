@@ -75,7 +75,7 @@ class Excel2016Test < Minitest::Test
 
     row = @file.sheets[1][3]
 
-    expected = {"Header cell A" => nil, "Header cell B" => "Row with leading null", nil => nil, "Header cell D" => "Row with leading null"}
+    expected = {"Header cell A" => nil, "Header cell B" => "Row with leading null", "Header cell D" => "Row with leading null"}
 
     assert_equal expected, row
   end
@@ -91,7 +91,7 @@ class Excel2016Test < Minitest::Test
 
     row = @file.sheets[1][4]
 
-    expected = {"Header cell A" => "Row with trailing null", "Header cell B" => "Row with trailing null", nil => nil, "Header cell D" => nil}
+    expected = {"Header cell A" => "Row with trailing null", "Header cell B" => "Row with trailing null", "Header cell D" => nil}
 
     assert_equal expected, row
   end
