@@ -13,6 +13,17 @@ class SheetTest < Minitest::Test
     assert_equal 2, filtered_rows.length
   end
 
+  def test_each_enumerator
+    @workbook = Xsv.open("test/files/excel2016.xlsx")
+    sheet = @workbook.sheets[0]
+
+    last_row_index = nil
+    sheet.each.with_index do |row, index|
+      last_row_index = index
+    end
+    assert_equal 3, last_row_index
+  end
+
   def test_empty
     @workbook = Xsv.open("test/files/empty.xlsx")
     sheet = @workbook.sheets[0]
