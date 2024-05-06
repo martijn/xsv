@@ -55,6 +55,8 @@ module Xsv
 
     # Iterate over rows, returning either hashes or arrays based on the current mode.
     def each_row(&block)
+      return to_enum(__method__) unless block
+
       @io.rewind
       SheetRowsHandler.new(@mode, @headers, empty_row, @workbook, @row_skip, @last_row, &block).parse(@io)
       true
