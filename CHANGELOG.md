@@ -1,6 +1,6 @@
 # Xsv Changelog
 
-## HEAD
+## 1.3.1 2023-05-06
 
 - Fix issue #56 with multiple nil headers 
 - Ignore colums with a `nil` header in hash mode
