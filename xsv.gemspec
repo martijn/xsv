@@ -43,5 +43,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "bundler", "< 3"
   spec.add_development_dependency "rake", "~> 13.2"
   spec.add_development_dependency "minitest", "~> 5.24"
-  spec.add_development_dependency "standard", "~> 1.43"
+  # Maintain Ruby 2.7 compatibility
+  spec.add_development_dependency "standard", "1.37.0"
 end
