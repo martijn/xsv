@@ -74,7 +74,7 @@ module Xsv
       # Compensate for rounding errors
       if minutes >= 60
         hours += (minutes / 60)
-        minutes = minutes % 60
+        minutes %= 60
       end
 
       format("%02d:%02d", hours, minutes)

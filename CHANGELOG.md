@@ -1,5 +1,10 @@
 # Xsv Changelog
 
+## 1.3.2 2024-12-25
+
+- Xsv is now compatbile with Ruby 2.7 through 3.4, latest JRuby, and latest TruffleRuby
+- Sheet#each_row returns Enumerator when no block is given (thanks @myabc)
+
 ## 1.3.1 2024-05-06
 
 - Fix issue #56 with multiple nil headers 

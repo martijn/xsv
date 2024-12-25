@@ -158,6 +158,6 @@ class WorkbookTest < Minitest::Test
   def test_enumerable
     @workbook = Xsv.open(File.read("test/files/office365-xl7.xlsx"))
 
-    assert_equal %w(Blad1 Blad2 Blad3), @workbook.map(&:name)
+    assert_equal %w[Blad1 Blad2 Blad3], @workbook.map(&:name)
   end
 end
