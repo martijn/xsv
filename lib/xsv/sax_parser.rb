@@ -38,7 +38,11 @@ module Xsv
             chars = pbuf.slice!(0, o + 1).chop!.force_encoding("utf-8")
 
             if responds_to_characters && !chars.empty?
-              characters(CGI.unescapeHTML(chars))
+              if chars.include?("&")
+                characters(CGI.unescapeHTML(chars))
+              else
+                characters(chars)
+              end
             end
 
             state = :look_end
