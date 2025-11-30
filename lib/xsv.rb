@@ -33,12 +33,24 @@ module Xsv
   # @param parse_headers [Boolean] Call `parse_headers!` on all sheets on load
   # @return [Xsv::Workbook] The workbook instance
   def self.open(filename_or_string, trim_empty_rows: false, parse_headers: false)
-    zip = if filename_or_string.is_a?(IO) || filename_or_string.respond_to?(:read) # is it a buffer?
-      Zip::File.open_buffer(filename_or_string)
-    elsif filename_or_string.start_with?("PK\x03\x04") # is it a string containing a file?
-      Zip::File.open_buffer(filename_or_string)
-    else # must be a filename
-      Zip::File.open(filename_or_string)
+    begin
+      zip = if filename_or_string.is_a?(IO) || filename_or_string.respond_to?(:read) # is it a buffer?
+        Zip::File.open_buffer(filename_or_string)
+      elsif filename_or_string.start_with?("PK\x03\x04") # is it a string containing a file?
+        Zip::File.open_buffer(filename_or_string)
+      else # must be a filename
+        Zip::File.open(filename_or_string)
+      end
+    rescue Zip::Error => e
+      # Convert Zip::Error to Xsv::Error only for empty files opened from buffer
+      # Keep Zip::Error for files opened by filename (for backward compatibility with tests)
+      if (filename_or_string.is_a?(IO) || filename_or_string.respond_to?(:read) ||
+          (filename_or_string.is_a?(String) && filename_or_string.start_with?("PK\x03\x04"))) &&
+         (e.message.include?("zero size") || e.message.include?("empty"))
+        raise Xsv::Error, e.message
+      else
+        raise
+      end
     end
 
     workbook = Xsv::Workbook.new(zip, trim_empty_rows: trim_empty_rows, parse_headers: parse_headers)

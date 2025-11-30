@@ -1,5 +1,18 @@
 # Xsv Changelog
 
+## 1.4.0 [Unreleased]
+
+### Changed
+- Updated rubyzip dependency to support version 3.x (latest: 3.2.2)
+- Updated minimum Ruby version requirement to 3.0+ (required by rubyzip 3.x)
+
+### Breaking Changes
+- Ruby 2.7 is no longer supported. Xsv now requires Ruby 3.0 or higher due to rubyzip 3.x requirements
+
+### Fixed
+- Fixed encoding compatibility issues with rubyzip 3.x streams
+- Improved UTF-8 handling in XML parser for better compatibility with rubyzip 3.x
+
 ## 1.3.2 2024-12-25
 
 - Xsv is now compatible with Ruby 2.7 through 3.4, latest JRuby, and latest TruffleRuby

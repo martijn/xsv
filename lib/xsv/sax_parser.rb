@@ -4,7 +4,10 @@ require "cgi"
 
 module Xsv
   class SaxParser
-    ATTR_REGEX = /((\p{Alnum}+)="(.*?)")/mn
+    # Create UTF-8 regex by building from UTF-8 string pattern
+    # This ensures the regex can match UTF-8 strings properly
+    ATTR_PATTERN_UTF8 = "((\\p{Alnum}+)=\"(.*?)\")".encode(Encoding::UTF_8)
+    ATTR_REGEX = Regexp.new(ATTR_PATTERN_UTF8, Regexp::MULTILINE)
 
     def parse(io)
       responds_to_end_element = respond_to?(:end_element)
@@ -79,7 +82,10 @@ module Xsv
               start_element(tag_name, nil)
             else
               attribute_buffer = {}
-              attributes = args.scan(ATTR_REGEX)
+              # Convert args to UTF-8 for regex matching (rubyzip 3.x may return BINARY)
+              # The content is UTF-8, so we can safely force the encoding
+              args_utf8 = args.dup.force_encoding(Encoding::UTF_8)
+              attributes = args_utf8.scan(ATTR_REGEX)
               while (attr = attributes.delete_at(0))
                 attribute_buffer[attr[1].to_sym] = attr[2]
               end
