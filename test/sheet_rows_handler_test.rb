@@ -134,4 +134,46 @@ class SheetRowsHandlerTest < Minitest::Test
 
     assert_equal({"Some strings" => "Bar", "Foo" => "Baz"}, rows[0])
   end
+
+  def test_row_without_r_attribute
+    @sheet = File.read("test/files/row-without-r.xml")
+
+    rows = []
+
+    collector = proc do |row|
+      rows << row
+    end
+
+    # Test array mode
+    handler = Xsv::SheetRowsHandler.new(:array, nil, ([nil] * 2), @workbook, 0, 6, &collector)
+    handler.parse(@sheet)
+
+    assert_equal 3, rows.length, "Should parse all 3 rows even when r attribute is missing"
+    assert_equal "Row1Col1", rows[0][0]
+    assert_equal "Row1Col2", rows[0][1]
+    assert_equal "Row2Col1", rows[1][0]
+    assert_equal "Row2Col2", rows[1][1]
+    assert_equal "Row3Col1", rows[2][0]
+    assert_equal "Row3Col2", rows[2][1]
+  end
+
+  def test_row_without_r_attribute_with_row_skip
+    @sheet = File.read("test/files/row-without-r.xml")
+
+    rows = []
+
+    collector = proc do |row|
+      rows << row
+    end
+
+    # Test with row_skip = 1 (skip first row)
+    handler = Xsv::SheetRowsHandler.new(:array, nil, ([nil] * 2), @workbook, 1, 6, &collector)
+    handler.parse(@sheet)
+
+    assert_equal 2, rows.length, "Should skip first row and parse remaining 2 rows"
+    assert_equal "Row2Col1", rows[0][0]
+    assert_equal "Row2Col2", rows[0][1]
+    assert_equal "Row3Col1", rows[1][0]
+    assert_equal "Row3Col2", rows[1][1]
+  end
 end

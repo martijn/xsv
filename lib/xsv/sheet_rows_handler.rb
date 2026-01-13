@@ -34,7 +34,12 @@ module Xsv
         @store_characters = true
       when "row"
         @current_row = (@mode == :array) ? [] : @empty_row.dup
-        @current_row_number = attrs[:r].to_i
+        if attrs[:r]
+          @current_row_number = attrs[:r].to_i
+        else
+          # Use position-based numbering when r attribute is missing
+          @current_row_number += 1
+        end
       end
     end
 
