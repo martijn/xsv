@@ -1,11 +1,14 @@
 # Xsv Changelog
 
-## 1.4.0 (Unreleased)
+## 1.4.0 2026-01-29
 
 - Ruby 2.7, 3.0, and 3.1 are no longer supported. Xsv is now compatible with Ruby 3.2 through 4.0, latest JRuby, and latest TruffleRuby
 - Add compatibility with Rubyzip 3
 - Fix UTF-8 encoding issues when parsing XML with multi-byte characters
 - Handle incomplete UTF-8 sequences at chunk boundaries in the streaming XML parser
+- Fix parsing of rows without the `r` attribute (thanks @romanbsd)
+- Performance: avoid calling `unescapeHTML` unless there are entities in the text
+- Fix typos in CHANGELOG (thanks @jdufresne)
 
 ## 1.3.2 2024-12-25
 
