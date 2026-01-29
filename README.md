@@ -34,8 +34,8 @@ Or install it yourself as:
 
     $ gem install xsv
 
-Xsv targets ruby >= 2.7 and has a just single dependency, `rubyzip`. It has been
-tested successfully with MRI, JRuby, and TruffleRuby. It has no native extensions
+Xsv targets Ruby >= 3.2 and has just a single dependency, `rubyzip`. It has been
+tested successfully with MRI (including Ruby 4.0), JRuby, and TruffleRuby. It has no native extensions
 and is designed to be thread-safe.
 
 ## Usage
