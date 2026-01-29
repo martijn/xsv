@@ -86,7 +86,9 @@ class WorkbookTest < Minitest::Test
   def test_open_empty_file_from_buffer
     tempfile = Tempfile.new
 
-    assert_raises Xsv::Error do
+    # Rubyzip 2 allows open_buffer to succeed, then Xsv raises Xsv::Error
+    # Rubyzip 3 raises Zip::Error immediately in open_buffer
+    assert_raises Zip::Error, Xsv::Error do
       @workbook = Xsv.open(tempfile)
     end
   end

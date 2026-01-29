@@ -4,7 +4,48 @@ require "cgi"
 
 module Xsv
   class SaxParser
-    ATTR_REGEX = /((\p{Alnum}+)="(.*?)")/mn
+    ATTR_REGEX = /((\p{Alnum}+)="(.*?)")/m
+
+    # Returns the number of bytes to trim from the end of a UTF-8 string
+    # to avoid splitting a multi-byte character. Returns 0 if the string
+    # ends with a complete character.
+    def self.incomplete_utf8_tail_size(bytes)
+      return 0 if bytes.empty?
+
+      # Check up to 3 bytes from the end (max UTF-8 char is 4 bytes)
+      check_length = [bytes.bytesize, 3].min
+      tail = bytes.byteslice(-check_length, check_length)
+
+      tail.each_byte.with_index.reverse_each do |byte, i|
+        # Check if this is a leading byte (starts a multi-byte sequence)
+        if byte >= 0xC0 # 11000000 - start of multi-byte sequence
+          # i is position in tail, bytes after leading byte = check_length - i - 1
+          # total bytes in sequence = 1 (leading) + continuation bytes = check_length - i
+          bytes_in_sequence = check_length - i
+
+          # Determine expected length from leading byte
+          expected_length = if byte >= 0xF0 # 11110xxx - 4 byte sequence
+            4
+          elsif byte >= 0xE0 # 1110xxxx - 3 byte sequence
+            3
+          else # 110xxxxx - 2 byte sequence
+            2
+          end
+
+          # If we don't have enough bytes, this sequence is incomplete
+          return bytes_in_sequence if bytes_in_sequence < expected_length
+
+          # Sequence is complete
+          return 0
+        elsif byte < 0x80
+          # ASCII byte - string ends with complete character
+          return 0
+        end
+        # else: continuation byte (10xxxxxx), keep looking for leading byte
+      end
+
+      0
+    end
 
     def parse(io)
       responds_to_end_element = respond_to?(:end_element)
@@ -16,17 +57,36 @@ module Xsv
         eof_reached = true
         must_read = false
       else
-        pbuf = String.new(capacity: 8192)
+        pbuf = String.new(capacity: 8192, encoding: "utf-8")
         eof_reached = false
         must_read = true
       end
+      leftover = String.new(encoding: "binary")
 
       loop do
         if must_read
           begin
-            pbuf << io.sysread(2048)
-          rescue EOFError, TypeError
-            # EOFError is thrown by IO, rubyzip returns nil from sysread on EOF
+            chunk = io.sysread(2048)
+            if chunk
+              # Prepend any leftover bytes from previous incomplete UTF-8 sequence
+              chunk = leftover << chunk unless leftover.empty?
+
+              # Check if chunk ends with incomplete UTF-8 sequence
+              trim = SaxParser.incomplete_utf8_tail_size(chunk)
+              if trim > 0
+                leftover = chunk.byteslice(-trim, trim)
+                chunk = chunk.byteslice(0, chunk.bytesize - trim)
+              else
+                leftover = String.new(encoding: "binary")
+              end
+
+              pbuf << chunk.force_encoding("utf-8")
+            else
+              # rubyzip < 3 returns nil from sysread on EOF
+              eof_reached = true
+            end
+          rescue EOFError
+            # EOFError is thrown by IO and rubyzip >= 3
             eof_reached = true
           end
 
@@ -79,7 +139,7 @@ module Xsv
               start_element(tag_name, nil)
             else
               attribute_buffer = {}
-              attributes = args.scan(ATTR_REGEX)
+              attributes = args.force_encoding("utf-8").scan(ATTR_REGEX)
               while (attr = attributes.delete_at(0))
                 attribute_buffer[attr[1].to_sym] = attr[2]
               end
