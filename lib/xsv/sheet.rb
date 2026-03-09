@@ -67,22 +67,22 @@ module Xsv
     # Get row by number or a range of rows, starting at 0. Returns either a hash or an array
     # based on the current mode. When called with a Range, returns an array of rows.
     # If the specified index is out of bounds an empty row is returned.
-    def [](number)
-      case number
+    def [](number_or_range)
+      case number_or_range
       when Range
         rows = []
         each_with_index do |row, i|
-          rows << row if number.cover?(i)
+          rows << row if number_or_range.cover?(i)
         end
         rows
       when Integer
         each_with_index do |row, i|
-          return row if i == number
+          return row if i == number_or_range
         end
 
         empty_row
       else
-        raise ArgumentError, "Expected Integer or Range, got #{number.class}"
+        raise ArgumentError, "Expected Integer or Range, got #{number_or_range.class}"
       end
     end
 
