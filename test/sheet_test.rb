@@ -69,6 +69,51 @@ class SheetTest < Minitest::Test
     assert_equal error.message, "Duplicate header 'Header BD' found, consider parsing this sheet in array mode."
   end
 
+  def test_range_access_array_mode
+    @workbook = Xsv.open("test/files/excel2016.xlsx")
+    sheet = @workbook.sheets[0]
+
+    rows = sheet[0..1]
+    assert_kind_of Array, rows
+    assert_equal 2, rows.length
+    assert_equal sheet[0], rows[0]
+    assert_equal sheet[1], rows[1]
+  end
+
+  def test_range_access_hash_mode
+    @workbook = Xsv.open("test/files/excel2016.xlsx", parse_headers: true)
+    sheet = @workbook.sheets[0]
+
+    rows = sheet[0..1]
+    assert_kind_of Array, rows
+    assert_equal 2, rows.length
+    rows.each { |row| assert_kind_of Hash, row }
+  end
+
+  def test_range_access_out_of_bounds
+    @workbook = Xsv.open("test/files/excel2016.xlsx")
+    sheet = @workbook.sheets[0]
+
+    rows = sheet[100..200]
+    assert_equal [], rows
+  end
+
+  def test_range_access_endless
+    @workbook = Xsv.open("test/files/excel2016.xlsx")
+    sheet = @workbook.sheets[0]
+
+    rows = sheet[2..]
+    all_rows = sheet.to_a
+    assert_equal all_rows[2..], rows
+  end
+
+  def test_bracket_raises_on_invalid_type
+    @workbook = Xsv.open("test/files/excel2016.xlsx")
+    sheet = @workbook.sheets[0]
+
+    assert_raises(ArgumentError) { sheet["foo"] }
+  end
+
   def test_complex_headers_array_mode
     @sheet = Xsv.open("test/files/complex-headers.xlsx").sheets[0]
     assert_equal("Customer nr.", @sheet[0][2])

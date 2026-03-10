@@ -64,14 +64,26 @@ module Xsv
 
     alias_method :each, :each_row
 
-    # Get row by number, starting at 0. Returns either a hash or an array based on the current row.
+    # Get row by number or a range of rows, starting at 0. Returns either a hash or an array
+    # based on the current mode. When called with a Range, returns an array of rows.
     # If the specified index is out of bounds an empty row is returned.
-    def [](number)
-      each_with_index do |row, i|
-        return row if i == number
-      end
+    def [](number_or_range)
+      case number_or_range
+      when Range
+        rows = []
+        each_with_index do |row, i|
+          rows << row if number_or_range.cover?(i)
+        end
+        rows
+      when Integer
+        each_with_index do |row, i|
+          return row if i == number_or_range
+        end
 
-      empty_row
+        empty_row
+      else
+        raise ArgumentError, "Expected Integer or Range, got #{number_or_range.class}"
+      end
     end
 
     # Load headers in the top row of the worksheet. After parsing of headers
