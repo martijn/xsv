@@ -12,4 +12,12 @@ class SheetBoundsHandlerTest < Minitest::Test
     assert_equal 4, rows
     assert_equal 8, cols
   end
+
+  def test_sheet_bounds_with_inline_strings_without_dimension
+    sheet = File.open("test/files/inlineStr-no-dimension.xml")
+    rows, cols = Xsv::SheetBoundsHandler.get_bounds(sheet, @workbook)
+
+    assert_equal 3, rows
+    assert_equal 2, cols
+  end
 end

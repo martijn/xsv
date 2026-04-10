@@ -40,7 +40,7 @@ module Xsv
       when "c"
         @state = name
         @cell = attrs[:r]
-      when "v"
+      when "v", "is"
         col = column_index(@cell)
         @max_column = col if col > @max_column
         @max_row = @row if @row > @max_row
