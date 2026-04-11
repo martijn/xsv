@@ -1,5 +1,10 @@
 # Xsv Changelog
 
+## 1.4.1 2026-04-11
+
+- Add Range support to Sheet#[] (thanks @paddor)
+- Fix SheetBoundsHandler to detect rows with inlineStr cells (thanks @kikumiyako)
+
 ## 1.4.0 2026-01-29
 
 - Ruby 2.7, 3.0, and 3.1 are no longer supported. Xsv is now compatible with Ruby 3.2 through 4.0, latest JRuby, and latest TruffleRuby
