@@ -1,5 +1,9 @@
 # Xsv Changelog
 
+## Unreleased
+
+- Performance: rewrite the streaming XML parser to scan its buffer by byte offset, roughly 2.5-3x faster with ~60% fewer allocated objects and far less allocated memory, especially for non-ASCII content
+
 ## 1.4.1 2026-04-11
 
 - Add Range support to Sheet#[] (thanks @paddor)

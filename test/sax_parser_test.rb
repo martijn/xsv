@@ -14,46 +14,16 @@ class SaxParserTest < Minitest::Test
     end
   end
 
-  def test_incomplete_utf8_tail_size
-    # Complete ASCII
-    assert_equal 0, Xsv::SaxParser.incomplete_utf8_tail_size("hello".b)
-
-    # Complete 2-byte UTF-8 (ñ = C3 B1)
-    assert_equal 0, Xsv::SaxParser.incomplete_utf8_tail_size("cañon".b)
-
-    # Incomplete 2-byte UTF-8 (just the leading byte C3)
-    assert_equal 1, Xsv::SaxParser.incomplete_utf8_tail_size("ca\xC3".b)
-
-    # Complete 3-byte UTF-8 (€ = E2 82 AC)
-    assert_equal 0, Xsv::SaxParser.incomplete_utf8_tail_size("100\xE2\x82\xAC".b)
-
-    # Incomplete 3-byte UTF-8 (just E2)
-    assert_equal 1, Xsv::SaxParser.incomplete_utf8_tail_size("100\xE2".b)
-
-    # Incomplete 3-byte UTF-8 (E2 82, missing last byte)
-    assert_equal 2, Xsv::SaxParser.incomplete_utf8_tail_size("100\xE2\x82".b)
-
-    # Complete 4-byte UTF-8 (😀 = F0 9F 98 80)
-    assert_equal 0, Xsv::SaxParser.incomplete_utf8_tail_size("hi\xF0\x9F\x98\x80".b)
-
-    # Incomplete 4-byte UTF-8 (just F0)
-    assert_equal 1, Xsv::SaxParser.incomplete_utf8_tail_size("hi\xF0".b)
-
-    # Incomplete 4-byte UTF-8 (F0 9F)
-    assert_equal 2, Xsv::SaxParser.incomplete_utf8_tail_size("hi\xF0\x9F".b)
-
-    # Incomplete 4-byte UTF-8 (F0 9F 98)
-    assert_equal 3, Xsv::SaxParser.incomplete_utf8_tail_size("hi\xF0\x9F\x98".b)
-
-    # Empty string
-    assert_equal 0, Xsv::SaxParser.incomplete_utf8_tail_size("".b)
-  end
-
   # Mock IO that yields chunks at specific byte boundaries to test UTF-8 handling
   class ChunkedIO
     def initialize(chunks)
       @chunks = chunks
       @index = 0
+    end
+
+    # Splits a string into chunks of the given byte size
+    def self.split(string, size)
+      new(string.b.scan(/.{1,#{size}}/mn))
     end
 
     def sysread(_size)
@@ -117,5 +87,50 @@ class SaxParserTest < Minitest::Test
     parser.new.parse(io)
 
     assert_equal ["😀"], collected_chars
+  end
+
+  class Recorder < Xsv::SaxParser
+    attr_reader :events
+
+    def initialize
+      @events = []
+    end
+
+    def start_element(name, attrs)
+      @events << [:start, name, attrs]
+    end
+
+    def end_element(name)
+      @events << [:end, name]
+    end
+
+    def characters(chars)
+      @events << [:chars, chars, chars.encoding]
+    end
+  end
+
+  def test_any_chunk_boundary
+    xml = File.read("test/files/sheet1.xml") +
+      %(<x:root a="Zürich €" x:b="😀"><t>😀 Ελληνικά &amp; 日本語</t><x:t xml:space="preserve"> café </x:t><c r="A1" t="s"/><e/></x:root>)
+
+    expected = Recorder.new.tap { |r| r.parse(xml) }.events
+
+    (1..8).each do |size|
+      assert_equal expected, Recorder.new.tap { |r| r.parse(ChunkedIO.split(xml, size)) }.events, "chunk size #{size}"
+    end
+  end
+
+  def test_invalid_utf8
+    xml = "<a>\x80bad</a>\xFF<b x=\"\xBF\" y=\"1\"/>".b
+
+    events = Recorder.new.tap { |r| r.parse(xml) }.events
+
+    assert_equal [
+      [:start, "a", nil],
+      [:chars, "\x80bad".b.force_encoding("utf-8"), Encoding::UTF_8],
+      [:end, "a"],
+      [:chars, "\xFF".b.force_encoding("utf-8"), Encoding::UTF_8],
+      [:start, "b", {x: "\xBF".b.force_encoding("utf-8"), y: "1"}]
+    ], events
   end
 end
