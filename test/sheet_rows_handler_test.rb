@@ -176,4 +176,54 @@ class SheetRowsHandlerTest < Minitest::Test
     assert_equal "Row3Col1", rows[1][0]
     assert_equal "Row3Col2", rows[1][1]
   end
+
+  # IO that returns the XML in chunks of a fixed number of bytes
+  class ChunkedIO
+    def initialize(string, size)
+      @chunks = string.b.scan(/.{1,#{size}}/mn)
+    end
+
+    def sysread(_size)
+      @chunks.shift or raise EOFError
+    end
+  end
+
+  SCANNER_XML = <<~XML
+    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+    <x:worksheet xmlns:x="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><x:sheetData>
+    <x:row r="1"><x:c r="A1" t="inlineStr"><x:is><x:t>Zürich &amp; 😀</x:t></x:is></x:c><x:c r="C1" t="b"><x:v>1</x:v></x:c></x:row>
+    <row r="3" spans="1:3"><c r="A3" s="0"/><c r="B3"><v>4.5</v></c><c r="C3" t="s"><v>0</v></c></row>
+    <row r="4"/>
+    <row><c><v>7</v></c><c t="str"><f>A5</f><v> é </v></c></row>
+    </x:sheetData></x:worksheet>
+  XML
+
+  def test_scanner
+    expected = [
+      ["Zürich & 😀", nil, true],
+      [nil, nil, nil],
+      [nil, 4.5, "Some strings"],
+      [nil, nil, nil],
+      [7, "é", nil]
+    ]
+
+    rows = []
+    Xsv::SheetRowsHandler.new(:array, nil, [nil] * 3, @workbook, 0, 99) { |row| rows << row }.parse(SCANNER_XML)
+
+    assert_equal expected, rows
+
+    # Rows split across chunks of any size are parsed again after reading more data
+    (1..8).each do |size|
+      rows = []
+      Xsv::SheetRowsHandler.new(:array, nil, [nil] * 3, @workbook, 0, 99) { |row| rows << row }.parse(ChunkedIO.new(SCANNER_XML, size))
+
+      assert_equal expected, rows, "chunk size #{size}"
+    end
+  end
+
+  def test_scanner_truncated_document
+    assert_raises Xsv::Error do
+      Xsv::SheetRowsHandler.new(:array, nil, [nil] * 3, @workbook, 0, 99) {}.parse(SCANNER_XML[0, 200])
+    end
+  end
 end

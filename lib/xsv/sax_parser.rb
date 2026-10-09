@@ -3,160 +3,140 @@
 require "cgi"
 
 module Xsv
+  # Minimal streaming XML parser, optimized for the XML found in xlsx files. Subclasses implement
+  # `start_element(name, attrs)` and optionally `end_element(name)` and `characters(value)`.
+  #
+  # The document is read in chunks into a buffer. Instead of consuming the buffer from the front,
+  # the parser moves a cursor through it using byte offsets and only compacts it when the next
+  # chunk is appended, so each byte is scanned a constant number of times. Strings are only
+  # allocated for values that are passed to the callbacks.
   class SaxParser
-    ATTR_REGEX = /((\p{Alnum}+)="(.*?)")/m
+    CHUNK_SIZE = 65_536
 
-    # Returns the number of bytes to trim from the end of a UTF-8 string
-    # to avoid splitting a multi-byte character. Returns 0 if the string
-    # ends with a complete character.
-    def self.incomplete_utf8_tail_size(bytes)
-      return 0 if bytes.empty?
-
-      # Check up to 3 bytes from the end (max UTF-8 char is 4 bytes)
-      check_length = [bytes.bytesize, 3].min
-      tail = bytes.byteslice(-check_length, check_length)
-
-      tail.each_byte.with_index.reverse_each do |byte, i|
-        # Check if this is a leading byte (starts a multi-byte sequence)
-        if byte >= 0xC0 # 11000000 - start of multi-byte sequence
-          # i is position in tail, bytes after leading byte = check_length - i - 1
-          # total bytes in sequence = 1 (leading) + continuation bytes = check_length - i
-          bytes_in_sequence = check_length - i
-
-          # Determine expected length from leading byte
-          expected_length = if byte >= 0xF0 # 11110xxx - 4 byte sequence
-            4
-          elsif byte >= 0xE0 # 1110xxxx - 3 byte sequence
-            3
-          else # 110xxxxx - 2 byte sequence
-            2
-          end
-
-          # If we don't have enough bytes, this sequence is incomplete
-          return bytes_in_sequence if bytes_in_sequence < expected_length
-
-          # Sequence is complete
-          return 0
-        elsif byte < 0x80
-          # ASCII byte - string ends with complete character
-          return 0
-        end
-        # else: continuation byte (10xxxxxx), keep looking for leading byte
-      end
-
-      0
-    end
-
+    # `while true` is used instead of `loop`, because it avoids a block call per iteration
+    # standard:disable Style/InfiniteLoop
     def parse(io)
       responds_to_end_element = respond_to?(:end_element)
       responds_to_characters = respond_to?(:characters)
 
-      state = :look_start
       if io.is_a?(String)
-        pbuf = io.dup
+        buf = io.dup.force_encoding(Encoding::UTF_8)
         eof_reached = true
-        must_read = false
       else
-        pbuf = String.new(capacity: 8192, encoding: "utf-8")
+        buf = String.new(capacity: CHUNK_SIZE * 2, encoding: Encoding::UTF_8)
         eof_reached = false
-        must_read = true
       end
-      leftover = String.new(encoding: "binary")
 
-      loop do
-        if must_read
-          begin
-            chunk = io.sysread(2048)
-            if chunk
-              # Prepend any leftover bytes from previous incomplete UTF-8 sequence
-              chunk = leftover << chunk unless leftover.empty?
+      pos = 0 # start of the unparsed data in buf
+      gt = 0 # position of the previous ">" in buf
 
-              # Check if chunk ends with incomplete UTF-8 sequence
-              trim = SaxParser.incomplete_utf8_tail_size(chunk)
-              if trim > 0
-                leftover = chunk.byteslice(-trim, trim)
-                chunk = chunk.byteslice(0, chunk.bytesize - trim)
-              else
-                leftover = String.new(encoding: "binary")
-              end
+      # Positions of the next occurrence of these characters in buf. Caching them keeps the
+      # searches linear when a character is absent from a stretch of the document. The buffer
+      # size is cached when there are no more occurrences, so that comparisons never match.
+      space = -1
+      equals = -1 # '="'
+      colon = -1
 
-              pbuf << chunk.force_encoding("utf-8")
-            else
-              # rubyzip < 3 returns nil from sysread on EOF
-              eof_reached = true
-            end
-          rescue EOFError
-            # EOFError is thrown by IO and rubyzip >= 3
+      # Searches for a character always start at a delimiter, never right after one: byteindex
+      # requires its offset to be at a character boundary, and that might not be the case
+      # right after a delimiter in a document containing invalid UTF-8.
+      while true
+        # Find the next complete tag, reading more data if necessary
+        lt = buf.byteindex("<", gt)
+        gt = lt && buf.byteindex(">", lt)
+
+        unless gt
+          if eof_reached
+            raise Xsv::Error, "Malformed XML document, looking for end of tag beyond EOF" if lt
+            # Discard anything after the last tag in the document
+            break
+          end
+
+          # Drop the parsed data and append the next chunk. Multi-byte UTF-8 characters split
+          # across chunks are reassembled here, so only complete characters are emitted.
+          buf = buf.byteslice(pos, buf.bytesize - pos) if pos > 0
+          pos = 0
+          gt = 0
+          space = equals = colon = -1
+
+          if (chunk = read_chunk(io))
+            buf << chunk
+          else
             eof_reached = true
           end
 
-          must_read = false
+          next
         end
 
-        if state == :look_start
-          if (o = pbuf.index("<"))
-            chars = pbuf.slice!(0, o + 1).chop!.force_encoding("utf-8")
+        if responds_to_characters && lt > pos
+          chars = buf.byteslice(pos, lt - pos)
+          characters(chars.include?("&") ? CGI.unescapeHTML(chars) : chars)
+        end
 
-            if responds_to_characters && !chars.empty?
-              if chars.include?("&")
-                characters(CGI.unescapeHTML(chars))
-              else
-                characters(chars)
-              end
-            end
+        pos = gt + 1
 
-            state = :look_end
-          elsif eof_reached
-            # Discard anything after the last tag in the document
-            break
-          else
-            # Continue loop to read more data into the buffer
-            must_read = true
-            next
+        space = buf.byteindex(" ", lt) || buf.bytesize if space < lt
+        colon = buf.byteindex(":", lt) || buf.bytesize if colon < lt
+
+        if buf.getbyte(lt + 1) == 47 # "/"
+          # Strip XML namespace from tag
+          name_start = (colon < gt) ? colon + 1 : lt + 2
+          end_element(buf.byteslice(name_start, gt - name_start)) if responds_to_end_element
+          next
+        end
+
+        name_end = (space < gt) ? space : gt
+        name_start = (colon < name_end) ? colon + 1 : lt + 1
+        tag_name = buf.byteslice(name_start, name_end - name_start)
+
+        if space > gt
+          start_element(tag_name, nil)
+          next
+        end
+
+        # Parse attributes, from the space after the tag name or the closing quote of the previous value
+        attributes = {}
+        attr_start = space
+        while true
+          equals = buf.byteindex('="', attr_start) || buf.bytesize if equals < attr_start
+          break if equals > gt
+
+          quote = begin
+            buf.byteindex('"', equals + 2)
+          rescue IndexError
+            # The value starts with an invalid UTF-8 byte
+            buf.b.byteindex('"', equals + 2)
           end
-        end
+          break if quote.nil? || quote > gt
 
-        if state == :look_end
-          if (o = pbuf.index(">"))
-            if (s = pbuf.index(" ")) && s < o
-              tag_name = pbuf.slice!(0, s + 1).chop!
-              args = pbuf.slice!(0, o - s)
-            else
-              tag_name = pbuf.slice!(0, o + 1).chop!
-              args = nil
-            end
+          colon = buf.byteindex(":", attr_start) || buf.bytesize if colon < attr_start
 
-            is_close_tag = tag_name.delete_prefix!("/")
-
-            # Strip XML namespace from tag
-            if (offset = tag_name.index(":"))
-              tag_name.slice!(0, offset + 1)
-            end
-
-            if is_close_tag
-              end_element(tag_name) if responds_to_end_element
-            elsif args.nil?
-              start_element(tag_name, nil)
-            else
-              attribute_buffer = {}
-              attributes = args.force_encoding("utf-8").scan(ATTR_REGEX)
-              while (attr = attributes.delete_at(0))
-                attribute_buffer[attr[1].to_sym] = attr[2]
-              end
-
-              start_element(tag_name, attribute_buffer)
-
-              end_element(tag_name) if responds_to_end_element && args.end_with?("/")
-            end
-
-            state = :look_start
-          elsif eof_reached
-            raise Xsv::Error, "Malformed XML document, looking for end of tag beyond EOF"
+          if colon < equals
+            # Strip XML namespace from attribute name
+            key = buf.byteslice(colon + 1, equals - colon - 1)
           else
-            must_read = true
+            key = buf.byteslice(attr_start + 1, equals - attr_start - 1)
+            key.lstrip!
           end
+
+          attributes[key.to_sym] = buf.byteslice(equals + 2, quote - equals - 2)
+          attr_start = quote
         end
+
+        start_element(tag_name, attributes)
       end
+    end
+    # standard:enable Style/InfiniteLoop
+
+    private
+
+    # Returns the next chunk of io as UTF-8, or nil at the end of the stream
+    def read_chunk(io)
+      # rubyzip < 3 returns nil from sysread on EOF
+      io.sysread(CHUNK_SIZE)&.force_encoding(Encoding::UTF_8)
+    rescue EOFError
+      # EOFError is thrown by IO and rubyzip >= 3
+      nil
     end
   end
 end
