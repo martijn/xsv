@@ -108,19 +108,31 @@ module Xsv
     def parse_number_format(number, format)
       number = parse_number(number) # number is always a string since it comes out of the Sax Parser
 
-      return number if format.nil?
+      case number_format_kind(format)
+      when :datetime
+        parse_datetime(number)
+      when :date
+        parse_date(number)
+      when :time
+        parse_time(number)
+      else
+        number
+      end
+    end
+
+    # Returns :date, :time or :datetime for number formats that represent these, or nil
+    def number_format_kind(format)
+      return nil if format.nil?
 
       is_date_format = format.scan(/[dmy]+/).length > 1
       is_time_format = format.scan(/[hms]+/).length > 1
 
-      if !is_date_format && !is_time_format
-        number
-      elsif is_date_format && is_time_format
-        parse_datetime(number)
+      if is_date_format && is_time_format
+        :datetime
       elsif is_date_format
-        parse_date(number)
+        :date
       elsif is_time_format
-        parse_time(number)
+        :time
       end
     end
   end

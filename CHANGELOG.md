@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Performance: rewrite the streaming XML parser to scan its buffer by byte offset, roughly 2.5-3x faster with ~60% fewer allocated objects and far less allocated memory, especially for non-ASCII content
+- Performance: parse worksheet rows with a dedicated scanner instead of generic XML callbacks, and determine date/time number formats once per style, making sheet iteration another 1.5-1.9x faster with up to 90% fewer allocated objects
 
 ## 1.4.1 2026-04-11
 

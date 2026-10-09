@@ -59,16 +59,9 @@ module Xsv
           gt = 0
           space = equals = colon = -1
 
-          begin
-            chunk = io.sysread(CHUNK_SIZE)
-            if chunk
-              buf << chunk.force_encoding(Encoding::UTF_8)
-            else
-              # rubyzip < 3 returns nil from sysread on EOF
-              eof_reached = true
-            end
-          rescue EOFError
-            # EOFError is thrown by IO and rubyzip >= 3
+          if (chunk = read_chunk(io))
+            buf << chunk
+          else
             eof_reached = true
           end
 
@@ -134,5 +127,16 @@ module Xsv
       end
     end
     # standard:enable Style/InfiniteLoop
+
+    private
+
+    # Returns the next chunk of io as UTF-8, or nil at the end of the stream
+    def read_chunk(io)
+      # rubyzip < 3 returns nil from sysread on EOF
+      io.sysread(CHUNK_SIZE)&.force_encoding(Encoding::UTF_8)
+    rescue EOFError
+      # EOFError is thrown by IO and rubyzip >= 3
+      nil
+    end
   end
 end
