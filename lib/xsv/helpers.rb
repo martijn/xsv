@@ -40,6 +40,9 @@ module Xsv
 
     MINUTE = 60
     HOUR = 3600
+    MILLISECONDS_PER_DAY = 86_400_000
+    MILLISECONDS_PER_HOUR = 3_600_000
+    MILLISECONDS_PER_MINUTE = 60_000
     A_CODEPOINT = "A".ord.freeze
     # The epoch for all dates in OOXML Spreadsheet documents
     EPOCH = Date.new(1899, 12, 30).freeze
@@ -61,23 +64,43 @@ module Xsv
       EPOCH + number
     end
 
-    # Return a time as a string for the given Excel time value
+    # Return a time as a string for the given Excel time value, rounded to the millisecond, the precision of Excel:
+    # "HH:MM", or "HH:MM:SS" when it has seconds, or "HH:MM:SS.sss" when it has milliseconds
     def parse_time(number)
       # Disregard date part
       number -= number.truncate if number.positive?
 
-      base = number * 24
+      # A time that rounds up to a whole day is midnight, as Excel shows it
+      milliseconds = (number * MILLISECONDS_PER_DAY).round
+      milliseconds = 0 if milliseconds == MILLISECONDS_PER_DAY
 
-      hours = base.truncate
-      minutes = ((base - hours) * 60).round
+      format_time(milliseconds)
+    end
 
-      # Compensate for rounding errors
-      if minutes >= 60
-        hours += (minutes / 60)
-        minutes %= 60
+    # Return an elapsed time as a string for the given Excel time value, as {#parse_time} does, but with the hours
+    # of any whole days, such as "36:30" for a day and a half. It is always read in hours, also for a format that
+    # shows it in minutes or seconds, such as [mm]:ss, which shows 90 minutes as 90:00 rather than "01:30".
+    def parse_elapsed_time(number)
+      format_time((number * MILLISECONDS_PER_DAY).round)
+    end
+
+    # Returns a number of milliseconds as a time: "HH:MM", or "HH:MM:SS" when it has seconds, or "HH:MM:SS.sss" when it
+    # has milliseconds, starting with "-" when it is negative
+    def format_time(milliseconds)
+      sign = milliseconds.negative? ? "-" : ""
+      milliseconds = milliseconds.abs
+      hours = milliseconds / MILLISECONDS_PER_HOUR
+      minutes = milliseconds / MILLISECONDS_PER_MINUTE % 60
+      seconds = milliseconds / 1000 % 60
+      milliseconds %= 1000
+
+      if milliseconds.positive?
+        format("%s%02d:%02d:%02d.%03d", sign, hours, minutes, seconds, milliseconds)
+      elsif seconds.positive?
+        format("%s%02d:%02d:%02d", sign, hours, minutes, seconds)
+      else
+        format("%s%02d:%02d", sign, hours, minutes)
       end
-
-      format("%02d:%02d", hours, minutes)
     end
 
     # Returns a time including a date as a {Time} object
@@ -115,12 +138,14 @@ module Xsv
         parse_date(number)
       when :time
         parse_time(number)
+      when :elapsed_time
+        parse_elapsed_time(number)
       else
         number
       end
     end
 
-    # Returns :date, :time or :datetime for number formats that represent these, or nil
+    # Returns :date, :time, :elapsed_time or :datetime for number formats that represent these, or nil
     def number_format_kind(format)
       return nil if format.nil?
 
@@ -132,7 +157,8 @@ module Xsv
       elsif is_date_format
         :date
       elsif is_time_format
-        :time
+        # An elapsed time, such as [h]:mm, shows the hours, minutes or seconds in brackets without a limit
+        format.match?(/\[(?:h+|m+|s+)\]/) ? :elapsed_time : :time
       end
     end
   end

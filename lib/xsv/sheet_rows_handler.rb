@@ -392,6 +392,8 @@ module Xsv
         parse_date(number)
       when :time
         parse_time(number)
+      when :elapsed_time
+        parse_elapsed_time(number)
       when :datetime
         parse_datetime(number)
       else
