@@ -21,29 +21,32 @@ module Xsv
     def start_element(name, _attrs)
       case name
       when "si"
-        @current_string = ""
+        @current_string = +""
         @skip = false
       when "rPh"
         @skip = true
       when "t"
         @state = name
+        @current_text = +""
       end
     end
 
     def characters(value)
       if @state == "t" && !@skip
-        @current_string += value
+        @current_text << value
       end
     end
 
     def end_element(name)
       case name
       when "si"
-        @block.call(unescape_characters(@current_string))
+        @block.call(@current_string)
       when "rPh"
         @skip = false
       when "t"
         @state = nil
+        # The text of each t element is escaped on its own
+        @current_string << unescape_characters(@current_text) unless @skip
       end
     end
   end
