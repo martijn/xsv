@@ -82,7 +82,7 @@ class SheetRowsHandlerTest < Minitest::Test
 
     handler.parse(@sheet)
 
-    # B4 = N/A
+    # B4 = an error cell without a value
     assert_nil rows[3][1]
     # E4 = formatted number
     assert_equal 4.999, rows[3][2]
@@ -90,6 +90,15 @@ class SheetRowsHandlerTest < Minitest::Test
     assert rows[4][0]
     # B5 = false
     refute rows[4][1]
+  end
+
+  # errors.xml has the errors of formulas in the form that Excel writes them, and an error cell without a value
+  def test_error_values
+    rows = []
+    Xsv::SheetRowsHandler.new(:array, nil, [nil] * 6, @workbook, 0, 99) { |row| rows << row }
+      .parse(File.read("test/files/errors.xml"))
+
+    assert_equal [["#N/A", "#DIV/0!", "#REF!", "#NAME?", "#VALUE!", nil]], rows
   end
 
   def test_unknown_type
