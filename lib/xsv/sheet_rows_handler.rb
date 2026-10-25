@@ -305,8 +305,9 @@ module Xsv
               attr_start = quote + 1
             end
           elsif first == LOWER_V || first == LOWER_T
-            # The text of an inline string is that of its t elements, not the whitespace around them
-            store_characters = true
+            # The text of an inline string is that of its t elements, not the whitespace around them. An element
+            # that closes itself has no text, and no end tag to stop storing it.
+            store_characters = buf.getbyte(gt - 1) != SLASH
           end
         end
       end

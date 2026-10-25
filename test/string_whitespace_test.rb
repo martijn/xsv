@@ -8,6 +8,10 @@ class StringWhitespaceTest < Minitest::Test
     Xsv::SheetRowsHandler.new(:array, nil, [nil] * 5, workbook, 0, 99) { |row| rows << row }
       .parse(File.read("test/files/string-whitespace.xml"))
 
-    assert_equal [["  Leading", "Trailing  ", " padded ", "Indented XML", "Rich text"]], rows
+    assert_equal [
+      ["  Leading", "Trailing  ", " padded ", "Indented XML", "Rich text"],
+      # An empty t element that closes itself reads no text, nor the text after it
+      [nil, "ab", true, nil, nil]
+    ], rows
   end
 end

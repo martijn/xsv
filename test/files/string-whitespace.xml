@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"
   xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
-  <dimension ref="A1:E1"/>
+  <dimension ref="A1:E2"/>
   <sheetData>
     <row r="1">
       <c r="A1" t="inlineStr"><is><t xml:space="preserve">  Leading</t></is></c>
@@ -13,6 +13,17 @@
         </is>
       </c>
       <c r="E1" t="inlineStr"><is><r><t xml:space="preserve">Rich </t></r><r><rPr><b/></rPr><t>text</t></r></is></c>
+    </row>
+    <row r="2">
+      <c r="A2" t="inlineStr">
+        <is>
+          <t xml:space="preserve"/>
+        </is>
+      </c>
+      <c r="B2" t="str"><f>"a"&amp;"b"</f><v>ab</v></c>
+      <c r="C2" t="b">
+        <v>1</v>
+      </c>
     </row>
   </sheetData>
 </worksheet>
