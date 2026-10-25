@@ -367,7 +367,8 @@ module Xsv
         value.strip!
         -value
       when :e # N/A
-        nil
+        # The error that the cell shows, such as #N/A or #DIV/0!
+        -value
       when nil, :n
         if style
           format_number(value, style)
