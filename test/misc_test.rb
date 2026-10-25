@@ -13,7 +13,8 @@ class MiscTest < Minitest::Test
     assert_equal 0.1, row[3]
   end
 
-  # openpyxl writes a float as Python formats it, with a lowercase exponent and no decimal point
+  # openpyxl writes a float as Python formats it, which writes one below 1e-4 or from 1e16 up with a lowercase
+  # exponent, and without a decimal point when it has one significant digit
   def test_lowercase_exponent
     @file = Xsv.open("test/files/lowercase-exponent.xlsx")
 
