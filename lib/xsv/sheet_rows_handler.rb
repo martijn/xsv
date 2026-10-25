@@ -365,7 +365,7 @@ module Xsv
         @workbook.shared_strings[value.to_i]
       when :str, :inlineStr
         value.strip!
-        -value
+        -unescape_characters(value)
       when :e # N/A
         nil
       when nil, :n

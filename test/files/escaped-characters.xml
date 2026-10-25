@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"
+  xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+  <dimension ref="A1:C1"/>
+  <sheetData>
+    <row r="1">
+      <c r="A1" t="inlineStr"><is><t xml:space="preserve">Line 1_x000D_
+Line 2</t></is></c>
+      <c r="B1" t="str"><f>"Bell"&amp;CHAR(7)</f><v>Bell_x0007_</v></c>
+      <c r="C1" t="inlineStr"><is><t>Smile _xD83D__xDE00_ and _x005F_x000D_</t></is></c>
+    </row>
+  </sheetData>
+</worksheet>

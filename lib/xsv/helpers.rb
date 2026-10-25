@@ -56,6 +56,21 @@ module Xsv
       end
     end
 
+    # Returns the text of a string with its escaped characters unescaped. A character that cannot be written in XML,
+    # such as a carriage return, is escaped as _xHHHH_, its UTF-16 code unit in hexadecimal, such as _x000D_. An
+    # underscore that would start such an escape is itself escaped as _x005F_.
+    # See ECMA-376 Part 1, 22.9.2.19 ST_Xstring (Escaped String).
+    def unescape_characters(string)
+      return string unless string.include?("_x")
+
+      string.gsub(/(?:_x\h{4}_)+/) do |escapes|
+        escapes.scan(/\h{4}/).map(&:hex).pack("n*").force_encoding(Encoding::UTF_16BE).encode(Encoding::UTF_8)
+      rescue EncodingError
+        # A surrogate without the other half of its pair
+        escapes
+      end
+    end
+
     # Return a Date for the given Excel date value
     def parse_date(number)
       EPOCH + number

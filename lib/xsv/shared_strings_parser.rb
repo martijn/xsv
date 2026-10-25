@@ -4,6 +4,8 @@ module Xsv
   # Interpret the sharedStrings.xml file from the workbook
   # This is used internally when opening a sheet.
   class SharedStringsParser < SaxParser
+    include Xsv::Helpers
+
     def self.parse(io)
       strings = []
       new { |s| strings << -s }.parse(io)
@@ -37,7 +39,7 @@ module Xsv
     def end_element(name)
       case name
       when "si"
-        @block.call(@current_string)
+        @block.call(unescape_characters(@current_string))
       when "rPh"
         @skip = false
       when "t"
