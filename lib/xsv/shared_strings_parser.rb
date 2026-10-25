@@ -4,6 +4,8 @@ module Xsv
   # Interpret the sharedStrings.xml file from the workbook
   # This is used internally when opening a sheet.
   class SharedStringsParser < SaxParser
+    include Xsv::Helpers
+
     def self.parse(io)
       strings = []
       new { |s| strings << -s }.parse(io)
@@ -19,18 +21,19 @@ module Xsv
     def start_element(name, _attrs)
       case name
       when "si"
-        @current_string = ""
+        @current_string = +""
         @skip = false
       when "rPh"
         @skip = true
       when "t"
         @state = name
+        @current_text = +""
       end
     end
 
     def characters(value)
       if @state == "t" && !@skip
-        @current_string += value
+        @current_text << value
       end
     end
 
@@ -42,6 +45,8 @@ module Xsv
         @skip = false
       when "t"
         @state = nil
+        # The text of each t element is escaped on its own
+        @current_string << unescape_characters(@current_text) unless @skip
       end
     end
   end

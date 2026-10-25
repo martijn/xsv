@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="4" uniqueCount="4"><si><t xml:space="preserve">Line 1_x000D_
+Line 2</t></si><si><t>Bell_x0007_</t></si><si><t>_x005F_x000D_ is a carriage return</t></si><si><r><t xml:space="preserve">Rich_x000D_
+</t></r><r><rPr><b/><sz val="11"/><color theme="1"/><rFont val="Calibri"/><family val="2"/><scheme val="minor"/></rPr><t>text</t></r></si><si><r><t>_x00</t></r><r><t>0D_ in two runs</t></r></si></sst>

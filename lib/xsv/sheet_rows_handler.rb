@@ -183,6 +183,8 @@ module Xsv
           if store_characters
             chars = buf.byteslice(pos, lt - pos)
             chars = CGI.unescapeHTML(chars) if chars.include?("&")
+            # The text of each t element of a string is escaped on its own
+            chars = unescape_characters(chars) if cell_type == :str || cell_type == :inlineStr
             value = value ? value + chars : chars
           end
         end
