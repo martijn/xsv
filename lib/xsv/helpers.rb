@@ -41,8 +41,10 @@ module Xsv
     MINUTE = 60
     HOUR = 3600
     A_CODEPOINT = "A".ord.freeze
-    # The epoch for all dates in OOXML Spreadsheet documents
+    # The epoch for dates in OOXML Spreadsheet documents that use the 1900 date system, which is the default
     EPOCH = Date.new(1899, 12, 30).freeze
+    # The epoch for dates in OOXML Spreadsheet documents that use the 1904 date system, see {Workbook#epoch}
+    EPOCH_1904 = Date.new(1904, 1, 1).freeze
 
     # Return the index number for the given Excel column name (i.e. "A1" => 0)
     # @param col [String] Column name in A1 notation
@@ -57,8 +59,8 @@ module Xsv
     end
 
     # Return a Date for the given Excel date value
-    def parse_date(number)
-      EPOCH + number
+    def parse_date(number, epoch = EPOCH)
+      epoch + number
     end
 
     # Return a time as a string for the given Excel time value
@@ -81,9 +83,9 @@ module Xsv
     end
 
     # Returns a time including a date as a {Time} object
-    def parse_datetime(number)
+    def parse_datetime(number, epoch = EPOCH)
       date_base = number.truncate
-      time = parse_date(date_base).to_time
+      time = parse_date(date_base, epoch).to_time
 
       time_base = (number - date_base) * 24
 

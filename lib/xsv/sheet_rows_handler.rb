@@ -38,6 +38,7 @@ module Xsv
       @headers = headers
       @empty_row = empty_row
       @workbook = workbook
+      @epoch = workbook.epoch
       @row_skip = row_skip
       @last_row = last_row - @row_skip
       @block = block
@@ -389,11 +390,11 @@ module Xsv
 
       case @number_formats.fetch(style) { @number_formats[style] = number_format_kind(@workbook.get_num_fmt(style)) }
       when :date
-        parse_date(number)
+        parse_date(number, @epoch)
       when :time
         parse_time(number)
       when :datetime
-        parse_datetime(number)
+        parse_datetime(number, @epoch)
       else
         number
       end

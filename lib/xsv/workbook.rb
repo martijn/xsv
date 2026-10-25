@@ -14,6 +14,11 @@ module Xsv
 
     attr_reader :shared_strings, :xfs, :num_fmts, :trim_empty_rows
 
+    # The date that the dates in the workbook count from, which depends on the date system that it uses:
+    # {Helpers::EPOCH} for the 1900 date system, or {Helpers::EPOCH_1904} for the 1904 date system
+    # @return [Date]
+    attr_reader :epoch
+
     # @deprecated Use {Xsv.open} instead
     def self.open(data, **kws, &block)
       Xsv.open(data, **kws, &block)
@@ -33,6 +38,7 @@ module Xsv
 
       @sheets = []
       @xfs, @num_fmts = fetch_styles
+      @epoch = fetch_epoch
       @sheet_ids = fetch_sheet_ids
       @relationships = fetch_relationships
       @shared_strings = fetch_shared_strings
@@ -127,6 +133,16 @@ module Xsv
     def fetch_sheet_ids
       stream = @zip.glob("xl/workbook.xml").first.get_input_stream
       SheetsIdsHandler.get_sheets_ids(stream)
+    ensure
+      stream.close
+    end
+
+    def fetch_epoch
+      stream = @zip.glob("xl/workbook.xml").first.get_input_stream
+      date1904 = WorkbookPropertiesHandler.get_properties(stream)[:date1904]
+
+      # date1904 is a boolean, which can be written as "1" or "true"
+      (date1904 == "1" || date1904 == "true") ? Helpers::EPOCH_1904 : Helpers::EPOCH
     ensure
       stream.close
     end
