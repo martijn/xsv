@@ -5,9 +5,9 @@ class InlinePhoneticTest < Minitest::Test
   def test_inline_phonetic
     workbook = Xsv.open("test/files/excel2016.xlsx")
     rows = []
-    Xsv::SheetRowsHandler.new(:array, nil, [nil] * 3, workbook, 0, 99) { |row| rows << row }
+    Xsv::SheetRowsHandler.new(:array, nil, [nil] * 5, workbook, 0, 99) { |row| rows << row }
       .parse(File.read("test/files/inlineStr-phonetic.xml"))
 
-    assert_equal [["東京", "漢字", "After"]], rows
+    assert_equal [["東京", "漢字", "After", "東京", "東京都"]], rows
   end
 end

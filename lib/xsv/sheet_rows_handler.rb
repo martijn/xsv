@@ -4,7 +4,7 @@ module Xsv
   # This is the core worksheet parser, used internally to enumerate rows.
   #
   # Because it is the hot path when reading a sheet, it does not use the callbacks of {SaxParser}.
-  # It scans the worksheet XML itself and recognizes the few elements it needs (row, c, v and t)
+  # It scans the worksheet XML itself and recognizes the few elements it needs (row, c, v, t and rPh)
   # by their bytes, so it doesn't allocate strings for element names, attributes or text it
   # doesn't use.
   class SheetRowsHandler < SaxParser
