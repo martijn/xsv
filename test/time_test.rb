@@ -39,5 +39,14 @@ class TimeTest < Minitest::Test
     assert_equal :elapsed_time, number_format_kind("[h]:mm:ss")
     assert_equal :elapsed_time, number_format_kind("[mm]:ss")
     assert_equal :time, number_format_kind("h:mm:ss")
+    assert_equal :time, number_format_kind("[$-409]h:mm:ss AM/PM")
+  end
+
+  # An elapsed time is read in hours, with a "-" when it is negative, as Excel shows it in the 1904 date system
+  def test_parse_elapsed_time
+    assert_equal "01:30", parse_elapsed_time(0.0625)
+    assert_equal "24:00", parse_elapsed_time(1.0)
+    assert_equal "-01:30", parse_elapsed_time(-0.0625)
+    assert_equal "-36:00", parse_elapsed_time(-1.5)
   end
 end

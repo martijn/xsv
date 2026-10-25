@@ -78,7 +78,8 @@ module Xsv
     end
 
     # Return an elapsed time as a string for the given Excel time value, as {#parse_time} does, but with the hours
-    # of any whole days, such as "36:30" for a day and a half
+    # of any whole days, such as "36:30" for a day and a half. It is always read in hours, also for a format that
+    # shows it in minutes or seconds, such as [mm]:ss, which shows 90 minutes as 90:00 rather than "01:30".
     def parse_elapsed_time(number)
       format_time((number * MILLISECONDS_PER_DAY).round)
     end
