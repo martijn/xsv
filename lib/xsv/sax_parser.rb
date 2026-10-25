@@ -36,6 +36,7 @@ module Xsv
       space = -1
       equals = -1 # '="'
       colon = -1
+      amp = -1 # "&", which starts an entity
 
       # Searches for a character always start at a delimiter, never right after one: byteindex
       # requires its offset to be at a character boundary, and that might not be the case
@@ -57,7 +58,7 @@ module Xsv
           buf = buf.byteslice(pos, buf.bytesize - pos) if pos > 0
           pos = 0
           gt = 0
-          space = equals = colon = -1
+          space = equals = colon = amp = -1
 
           if (chunk = read_chunk(io))
             buf << chunk
@@ -119,7 +120,9 @@ module Xsv
             key.lstrip!
           end
 
-          attributes[key.to_sym] = buf.byteslice(equals + 2, quote - equals - 2)
+          value = buf.byteslice(equals + 2, quote - equals - 2)
+          amp = buf.byteindex("&", equals) || buf.bytesize if amp < equals
+          attributes[key.to_sym] = (amp < quote) ? CGI.unescapeHTML(value) : value
           attr_start = quote
         end
 
