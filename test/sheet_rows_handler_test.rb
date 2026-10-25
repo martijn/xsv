@@ -204,7 +204,7 @@ class SheetRowsHandlerTest < Minitest::Test
       [nil, nil, nil],
       [nil, 4.5, "Some strings"],
       [nil, nil, nil],
-      [7, "é", nil]
+      [7, " é ", nil]
     ]
 
     rows = []

@@ -4,16 +4,17 @@ module Xsv
   # This is the core worksheet parser, used internally to enumerate rows.
   #
   # Because it is the hot path when reading a sheet, it does not use the callbacks of {SaxParser}.
-  # It scans the worksheet XML itself and recognizes the few elements it needs (row, c, v, is
-  # and t) by their bytes, so it doesn't allocate strings for element names, attributes or text
-  # it doesn't use.
+  # It scans the worksheet XML itself and recognizes the few elements it needs (row, c, v, t and rPh)
+  # by their bytes, so it doesn't allocate strings for element names, attributes or text it
+  # doesn't use.
   class SheetRowsHandler < SaxParser
     include Xsv::Helpers
 
     # Byte values used to recognize element and attribute names
     SLASH = 47 # /
+    UPPER_P = 80 # P
     LOWER_C = 99 # c
-    LOWER_I = 105 # i
+    LOWER_H = 104 # h
     LOWER_O = 111 # o
     LOWER_R = 114 # r
     LOWER_S = 115 # s
@@ -163,6 +164,7 @@ module Xsv
       col_index = @col_index
 
       store_characters = false
+      phonetic = false # in an rPh element, the phonetic reading of an inline string
       value = nil # value of the current cell, nil if it has no text
       cell_column = nil
       cell_type = nil
@@ -218,8 +220,6 @@ module Xsv
             elsif first == LOWER_V || first == LOWER_T
               store_characters = false
             end
-          elsif name_length == 2
-            store_characters = false if first == LOWER_I && buf.getbyte(name_start + 1) == LOWER_S
           elsif name_length == 3 && first == LOWER_R && buf.getbyte(name_start + 1) == LOWER_O && buf.getbyte(name_start + 2) == LOWER_W
             @current_row_number = number
             @current_row = row
@@ -227,6 +227,8 @@ module Xsv
             end_row
 
             return gt + 1
+          elsif name_length == 3 && first == LOWER_R && buf.getbyte(name_start + 1) == UPPER_P && buf.getbyte(name_start + 2) == LOWER_H
+            phonetic = false
           end
 
           next
@@ -254,7 +256,6 @@ module Xsv
           name_start = (colon < attr_start) ? colon + 1 : lt + 1
           name_length = attr_start - name_start
           first = buf.getbyte(name_start)
-          second = buf.getbyte(name_start + 1)
         end
 
         if name_length == 1
@@ -308,11 +309,14 @@ module Xsv
 
               attr_start = quote + 1
             end
-          elsif first == LOWER_V || first == LOWER_T
-            store_characters = true
+          elsif first == LOWER_V || (first == LOWER_T && !phonetic)
+            # The text of an inline string is that of its t elements, not the whitespace around them, nor the
+            # phonetic reading in its rPh elements. An element that closes itself has no text, and no end tag to
+            # stop storing it.
+            store_characters = buf.getbyte(gt - 1) != SLASH
           end
-        elsif name_length == 2
-          store_characters = true if first == LOWER_I && second == LOWER_S
+        elsif name_length == 3 && first == LOWER_R && buf.getbyte(name_start + 1) == UPPER_P && buf.getbyte(name_start + 2) == LOWER_H
+          phonetic = buf.getbyte(gt - 1) != SLASH
         end
       end
     end
@@ -364,7 +368,6 @@ module Xsv
       when :s
         @workbook.shared_strings[value.to_i]
       when :str, :inlineStr
-        value.strip!
         -value
       when :e # N/A
         nil
