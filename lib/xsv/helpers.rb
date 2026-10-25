@@ -40,6 +40,9 @@ module Xsv
 
     MINUTE = 60
     HOUR = 3600
+    MILLISECONDS_PER_DAY = 86_400_000
+    MILLISECONDS_PER_HOUR = 3_600_000
+    MILLISECONDS_PER_MINUTE = 60_000
     A_CODEPOINT = "A".ord.freeze
     # The epoch for all dates in OOXML Spreadsheet documents
     EPOCH = Date.new(1899, 12, 30).freeze
@@ -82,15 +85,22 @@ module Xsv
 
     # Returns a time including a date as a {Time} object
     def parse_datetime(number)
-      date_base = number.truncate
-      time = parse_date(date_base).to_time
+      date_base = number.floor
+      date = parse_date(date_base)
 
-      time_base = (number - date_base) * 24
+      # Round to the millisecond, the precision of Excel, and add whole seconds as an Integer, which is faster
+      milliseconds = ((number - date_base) * MILLISECONDS_PER_DAY).round
+      time = date.to_time + ((milliseconds % 1000).zero? ? milliseconds / 1000 : Rational(milliseconds, 1000))
 
-      hours = time_base.truncate
-      minutes = (time_base - hours) * 60
+      # The time of day added to midnight is an hour off after the clock changes for daylight saving time that
+      # day. Then build the time from its date and time of day, so that it has the wall clock time of the cell. In
+      # the hour that repeats when the clock goes back, adding to midnight returns the first of its two times.
+      hours = milliseconds / MILLISECONDS_PER_HOUR
+      minutes = milliseconds / MILLISECONDS_PER_MINUTE % 60
+      return time if time.hour == hours && time.min == minutes
 
-      time + hours * HOUR + minutes.round * MINUTE
+      milliseconds %= MILLISECONDS_PER_MINUTE
+      Time.new(date.year, date.month, date.day, hours, minutes, Rational(milliseconds, 1000))
     end
 
     # Returns a number as either Integer or Float
