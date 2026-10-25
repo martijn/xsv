@@ -40,6 +40,7 @@ module Xsv
 
     MINUTE = 60
     HOUR = 3600
+    MILLISECONDS_PER_DAY = 86_400_000
     A_CODEPOINT = "A".ord.freeze
     # The epoch for all dates in OOXML Spreadsheet documents
     EPOCH = Date.new(1899, 12, 30).freeze
@@ -61,23 +62,24 @@ module Xsv
       EPOCH + number
     end
 
-    # Return a time as a string for the given Excel time value
+    # Return a time as a string for the given Excel time value, rounded to the millisecond, the precision of Excel:
+    # "HH:MM", or "HH:MM:SS" when it has seconds, or "HH:MM:SS.sss" when it has milliseconds
     def parse_time(number)
       # Disregard date part
       number -= number.truncate if number.positive?
 
-      base = number * 24
+      milliseconds = (number * MILLISECONDS_PER_DAY).round
+      hours, milliseconds = milliseconds.divmod(3_600_000)
+      minutes, milliseconds = milliseconds.divmod(60_000)
+      seconds, milliseconds = milliseconds.divmod(1000)
 
-      hours = base.truncate
-      minutes = ((base - hours) * 60).round
-
-      # Compensate for rounding errors
-      if minutes >= 60
-        hours += (minutes / 60)
-        minutes %= 60
+      if milliseconds.positive?
+        format("%02d:%02d:%02d.%03d", hours, minutes, seconds, milliseconds)
+      elsif seconds.positive?
+        format("%02d:%02d:%02d", hours, minutes, seconds)
+      else
+        format("%02d:%02d", hours, minutes)
       end
-
-      format("%02d:%02d", hours, minutes)
     end
 
     # Returns a time including a date as a {Time} object
