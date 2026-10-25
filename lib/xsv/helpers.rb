@@ -77,6 +77,12 @@ module Xsv
       format_time(milliseconds)
     end
 
+    # Return an elapsed time as a string for the given Excel time value, as {#parse_time} does, but with the hours
+    # of any whole days, such as "36:30" for a day and a half
+    def parse_elapsed_time(number)
+      format_time((number * MILLISECONDS_PER_DAY).round)
+    end
+
     # Returns a number of milliseconds as a time: "HH:MM", or "HH:MM:SS" when it has seconds, or "HH:MM:SS.sss" when it
     # has milliseconds, starting with "-" when it is negative
     def format_time(milliseconds)
@@ -131,12 +137,14 @@ module Xsv
         parse_date(number)
       when :time
         parse_time(number)
+      when :elapsed_time
+        parse_elapsed_time(number)
       else
         number
       end
     end
 
-    # Returns :date, :time or :datetime for number formats that represent these, or nil
+    # Returns :date, :time, :elapsed_time or :datetime for number formats that represent these, or nil
     def number_format_kind(format)
       return nil if format.nil?
 
@@ -148,7 +156,8 @@ module Xsv
       elsif is_date_format
         :date
       elsif is_time_format
-        :time
+        # An elapsed time, such as [h]:mm, shows the hours, minutes or seconds in brackets without a limit
+        format.match?(/\[(?:h+|m+|s+)\]/) ? :elapsed_time : :time
       end
     end
   end

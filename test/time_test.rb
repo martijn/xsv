@@ -27,4 +27,17 @@ class TimeTest < Minitest::Test
     assert_equal "-01:30", parse_time(-0.0625)
     assert_equal "-06:00:15", parse_time(-(6 * 3600 + 15) / 86_400.0)
   end
+
+  # elapsed-time.xlsx was written by openpyxl, with the durations 36:30, 26:03:04 and 0:45 in the format [hh]:mm:ss
+  def test_elapsed_time
+    row = Xsv.open("test/files/elapsed-time.xlsx").sheets[0][0]
+
+    assert_equal ["36:30", "26:03:04", "00:45"], row
+  end
+
+  def test_number_format_kind_elapsed_time
+    assert_equal :elapsed_time, number_format_kind("[h]:mm:ss")
+    assert_equal :elapsed_time, number_format_kind("[mm]:ss")
+    assert_equal :time, number_format_kind("h:mm:ss")
+  end
 end
