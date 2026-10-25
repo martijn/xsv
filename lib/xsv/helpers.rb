@@ -85,12 +85,18 @@ module Xsv
 
     # Returns a time including a date as a {Time} object
     def parse_datetime(number)
-      date_base = number.truncate
-      time = parse_date(date_base).to_time
+      date_base = number.floor
+      date = parse_date(date_base)
 
-      # Round to the millisecond, the precision of Excel, and add whole seconds as an Integer, which is faster
+      # Round to the millisecond, the precision of Excel, and pass whole seconds as an Integer, which is faster
       milliseconds = ((number - date_base) * MILLISECONDS_PER_DAY).round
-      time + ((milliseconds % 1000).zero? ? milliseconds / 1000 : Rational(milliseconds, 1000))
+      hours, milliseconds = milliseconds.divmod(3_600_000)
+      minutes, milliseconds = milliseconds.divmod(60_000)
+      seconds = (milliseconds % 1000).zero? ? milliseconds / 1000 : Rational(milliseconds, 1000)
+
+      # Build the time from its date and time of day, rather than adding the time of day to midnight, so that it has
+      # the wall clock time of the cell also on a day when daylight saving time starts or ends
+      Time.new(date.year, date.month, date.day, hours, minutes, seconds)
     end
 
     # Returns a number as either Integer or Float
