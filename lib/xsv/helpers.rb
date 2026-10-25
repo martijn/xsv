@@ -88,15 +88,19 @@ module Xsv
       date_base = number.floor
       date = parse_date(date_base)
 
-      # Round to the millisecond, the precision of Excel, and pass whole seconds as an Integer, which is faster
+      # Round to the millisecond, the precision of Excel, and add whole seconds as an Integer, which is faster
       milliseconds = ((number - date_base) * MILLISECONDS_PER_DAY).round
-      hours, milliseconds = milliseconds.divmod(3_600_000)
-      minutes, milliseconds = milliseconds.divmod(60_000)
-      seconds = (milliseconds % 1000).zero? ? milliseconds / 1000 : Rational(milliseconds, 1000)
+      time = date.to_time + ((milliseconds % 1000).zero? ? milliseconds / 1000 : Rational(milliseconds, 1000))
 
-      # Build the time from its date and time of day, rather than adding the time of day to midnight, so that it has
-      # the wall clock time of the cell also on a day when daylight saving time starts or ends
-      Time.new(date.year, date.month, date.day, hours, minutes, seconds)
+      # The time of day added to midnight is an hour off after the clock changes for daylight saving time that
+      # day. Then build the time from its date and time of day, so that it has the wall clock time of the cell. In
+      # the hour that repeats when the clock goes back, adding to midnight returns the first of its two times.
+      hours = milliseconds / MILLISECONDS_PER_HOUR
+      minutes = milliseconds / MILLISECONDS_PER_MINUTE % 60
+      return time if time.hour == hours && time.min == minutes
+
+      milliseconds %= MILLISECONDS_PER_MINUTE
+      Time.new(date.year, date.month, date.day, hours, minutes, Rational(milliseconds, 1000))
     end
 
     # Returns a number as either Integer or Float

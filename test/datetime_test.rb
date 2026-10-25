@@ -33,12 +33,49 @@ class DatetimeTest < Minitest::Test
     end
   end
 
+  # A wall clock time in the hour that the clock skips does not exist, and is read as the time an hour later
+  def test_daylight_saving_time_gap
+    with_time_zone("America/New_York") do
+      time = parse_datetime(serial(2026, 3, 8, 2.5))
+
+      assert_equal [3, 30, -4 * 3600], [time.hour, time.min, time.utc_offset]
+    end
+  end
+
+  # A wall clock time in the hour that repeats is read as the first of its two times, in daylight saving time
+  def test_daylight_saving_time_repeated_hour
+    with_time_zone("America/New_York") do
+      time = parse_datetime(serial(2026, 11, 1, 1.5))
+
+      assert_equal [1, 30, -4 * 3600], [time.hour, time.min, time.utc_offset]
+    end
+
+    with_time_zone("Australia/Sydney") do
+      time = parse_datetime(serial(2026, 4, 5, 2.5))
+
+      assert_equal [2, 30, 11 * 3600], [time.hour, time.min, time.utc_offset]
+      assert_equal Time.new(2026, 10, 4, 9, 30), parse_datetime(serial(2026, 10, 4, 9.5))
+    end
+
+    # Lord Howe Island moves its clock by half an hour
+    with_time_zone("Australia/Lord_Howe") do
+      time = parse_datetime(serial(2026, 4, 5, 1.75))
+
+      assert_equal [1, 45, 11 * 3600], [time.hour, time.min, time.utc_offset]
+    end
+  end
+
   private
+
+  # Returns the Excel serial number of the given date and hours
+  def serial(year, month, day, hours)
+    (Date.new(year, month, day) - Xsv::Helpers::EPOCH).to_i + hours / 24.0
+  end
 
   def with_time_zone(zone)
     previous = ENV["TZ"]
     ENV["TZ"] = zone
-    skip "Time zone #{zone} is not available" if Time.new(2026, 3, 8).utc_offset == Time.new(2026, 3, 9).utc_offset
+    skip "Time zone #{zone} is not available" if Time.new(2026, 1, 1).utc_offset == Time.new(2026, 7, 1).utc_offset
 
     yield
   ensure
