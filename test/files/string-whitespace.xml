@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"
+  xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+  <dimension ref="A1:E1"/>
+  <sheetData>
+    <row r="1">
+      <c r="A1" t="inlineStr"><is><t xml:space="preserve">  Leading</t></is></c>
+      <c r="B1" t="inlineStr"><is><t xml:space="preserve">Trailing  </t></is></c>
+      <c r="C1" t="str"><f>" padded "</f><v xml:space="preserve"> padded </v></c>
+      <c r="D1" t="inlineStr">
+        <is>
+          <t>Indented XML</t>
+        </is>
+      </c>
+      <c r="E1" t="inlineStr"><is><r><t xml:space="preserve">Rich </t></r><r><rPr><b/></rPr><t>text</t></r></is></c>
+    </row>
+  </sheetData>
+</worksheet>
