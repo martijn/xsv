@@ -41,6 +41,8 @@ module Xsv
     MINUTE = 60
     HOUR = 3600
     MILLISECONDS_PER_DAY = 86_400_000
+    MILLISECONDS_PER_HOUR = 3_600_000
+    MILLISECONDS_PER_MINUTE = 60_000
     A_CODEPOINT = "A".ord.freeze
     # The epoch for all dates in OOXML Spreadsheet documents
     EPOCH = Date.new(1899, 12, 30).freeze
