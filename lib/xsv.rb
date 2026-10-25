@@ -13,7 +13,6 @@ require "xsv/sheets_ids_handler"
 require "xsv/styles_handler"
 require "xsv/version"
 require "xsv/workbook"
-require "xsv/workbook_properties_handler"
 
 # XSV is a fast, lightweight parser for Office Open XML spreadsheet files
 # (commonly known as Excel or .xlsx files). It strives to be minimal in the

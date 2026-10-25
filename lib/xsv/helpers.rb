@@ -59,6 +59,7 @@ module Xsv
     end
 
     # Return a Date for the given Excel date value
+    # @param epoch [Date] The epoch of the date system of the workbook, see {Workbook#epoch}
     def parse_date(number, epoch = EPOCH)
       epoch + number
     end
@@ -83,6 +84,7 @@ module Xsv
     end
 
     # Returns a time including a date as a {Time} object
+    # @param epoch [Date] The epoch of the date system of the workbook, see {Workbook#epoch}
     def parse_datetime(number, epoch = EPOCH)
       date_base = number.truncate
       time = parse_date(date_base, epoch).to_time
@@ -107,14 +109,15 @@ module Xsv
     end
 
     # Apply date or time number formats, if applicable
-    def parse_number_format(number, format)
+    # @param epoch [Date] The epoch of the date system of the workbook, see {Workbook#epoch}
+    def parse_number_format(number, format, epoch = EPOCH)
       number = parse_number(number) # number is always a string since it comes out of the Sax Parser
 
       case number_format_kind(format)
       when :datetime
-        parse_datetime(number)
+        parse_datetime(number, epoch)
       when :date
-        parse_date(number)
+        parse_date(number, epoch)
       when :time
         parse_time(number)
       else

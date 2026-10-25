@@ -38,8 +38,7 @@ module Xsv
 
       @sheets = []
       @xfs, @num_fmts = fetch_styles
-      @epoch = fetch_epoch
-      @sheet_ids = fetch_sheet_ids
+      @sheet_ids, @epoch = fetch_workbook
       @relationships = fetch_relationships
       @shared_strings = fetch_shared_strings
       @sheets = fetch_sheets(parse_headers ? :hash : :array)
@@ -130,19 +129,14 @@ module Xsv
       end
     end
 
-    def fetch_sheet_ids
+    # Returns the sheets ids and the epoch of the workbook
+    def fetch_workbook
       stream = @zip.glob("xl/workbook.xml").first.get_input_stream
-      SheetsIdsHandler.get_sheets_ids(stream)
-    ensure
-      stream.close
-    end
+      sheet_ids, properties = SheetsIdsHandler.get_workbook(stream)
 
-    def fetch_epoch
-      stream = @zip.glob("xl/workbook.xml").first.get_input_stream
-      date1904 = WorkbookPropertiesHandler.get_properties(stream)[:date1904]
-
-      # date1904 is a boolean, which can be written as "1" or "true"
-      (date1904 == "1" || date1904 == "true") ? Helpers::EPOCH_1904 : Helpers::EPOCH
+      # date1904 is an XML boolean: "1" or "true", with any whitespace around it
+      date1904 = properties[:date1904]&.strip
+      [sheet_ids, (date1904 == "1" || date1904 == "true") ? Helpers::EPOCH_1904 : Helpers::EPOCH]
     ensure
       stream.close
     end
