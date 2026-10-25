@@ -12,7 +12,9 @@ module Xsv
 
     # Byte values used to recognize element and attribute names
     SLASH = 47 # /
+    UPPER_P = 80 # P
     LOWER_C = 99 # c
+    LOWER_H = 104 # h
     LOWER_O = 111 # o
     LOWER_R = 114 # r
     LOWER_S = 115 # s
@@ -162,6 +164,7 @@ module Xsv
       col_index = @col_index
 
       store_characters = false
+      phonetic = false # in an rPh element, the phonetic reading of an inline string
       value = nil # value of the current cell, nil if it has no text
       cell_column = nil
       cell_type = nil
@@ -224,6 +227,8 @@ module Xsv
             end_row
 
             return gt + 1
+          elsif name_length == 3 && first == LOWER_R && buf.getbyte(name_start + 1) == UPPER_P && buf.getbyte(name_start + 2) == LOWER_H
+            phonetic = false
           end
 
           next
@@ -304,11 +309,14 @@ module Xsv
 
               attr_start = quote + 1
             end
-          elsif first == LOWER_V || first == LOWER_T
-            # The text of an inline string is that of its t elements, not the whitespace around them. An element
-            # that closes itself has no text, and no end tag to stop storing it.
+          elsif first == LOWER_V || (first == LOWER_T && !phonetic)
+            # The text of an inline string is that of its t elements, not the whitespace around them, nor the
+            # phonetic reading in its rPh elements. An element that closes itself has no text, and no end tag to
+            # stop storing it.
             store_characters = buf.getbyte(gt - 1) != SLASH
           end
+        elsif name_length == 3 && first == LOWER_R && buf.getbyte(name_start + 1) == UPPER_P && buf.getbyte(name_start + 2) == LOWER_H
+          phonetic = buf.getbyte(gt - 1) != SLASH
         end
       end
     end
