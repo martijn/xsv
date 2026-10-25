@@ -23,7 +23,19 @@ class NumberFormatTest < Minitest::Test
     assert_equal :datetime, number_format_kind('yyyy-mm-dd "at" h:mm')
   end
 
-  # The elapsed time codes in brackets, such as [mm], are codes rather than literal text
+  # Each of these was taken for a different kind of format before
+  def test_number_format_kind_changes
+    assert_nil number_format_kind('0.0\ \h\r\s')
+    assert_nil number_format_kind('0\ \d\a\y\s')
+    assert_nil number_format_kind('@" sheets"')
+    assert_equal :date, number_format_kind('[$-x-sysdate]dddd\,\ mmmm\ dd\,\ yyyy')
+    assert_equal :time, number_format_kind("[Red][<=100]h:mm;[Blue]0")
+    assert_equal :time, number_format_kind("h:mm am/pm")
+    assert_equal :time, number_format_kind("h:mm:ss a/p")
+  end
+
+  # The elapsed time codes in brackets, such as [mm], are codes rather than literal text. Not asserted as :time,
+  # since a PR that reads elapsed times returns :elapsed_time for them.
   def test_number_format_kind_elapsed_time
     refute_nil number_format_kind("[mm]:ss")
   end
