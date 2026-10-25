@@ -119,7 +119,8 @@ module Xsv
             key.lstrip!
           end
 
-          attributes[key.to_sym] = buf.byteslice(equals + 2, quote - equals - 2)
+          value = buf.byteslice(equals + 2, quote - equals - 2)
+          attributes[key.to_sym] = value.include?("&") ? CGI.unescapeHTML(value) : value
           attr_start = quote
         end
 

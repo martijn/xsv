@@ -136,6 +136,15 @@ class WorkbookTest < Minitest::Test
     assert_equal "Blad2", sheet.name
   end
 
+  # sheet-name-entities.xlsx was written by openpyxl, with the sheets R&D and Q1 "Plan" <draft>
+  def test_index_open_by_name_with_entities
+    @workbook = Xsv.open("test/files/sheet-name-entities.xlsx")
+
+    assert_equal ["R&D", 'Q1 "Plan" <draft>'], @workbook.map(&:name)
+    assert_equal ["first"], @workbook["R&D"][0]
+    assert_equal ["second"], @workbook['Q1 "Plan" <draft>'][0]
+  end
+
   def test_index_open_by_nonexistent_name
     @workbook = Xsv.open(File.read("test/files/office365-xl7.xlsx"))
 
