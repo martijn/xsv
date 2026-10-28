@@ -188,7 +188,7 @@ class SheetRowsHandlerTest < Minitest::Test
     end
   end
 
-  SCANNER_XML = <<~XML
+  WORKSHEET_XML = <<~XML
     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
     <x:worksheet xmlns:x="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><x:sheetData>
     <x:row r="1"><x:c r="A1" t="inlineStr"><x:is><x:t>Zürich &amp; 😀</x:t></x:is></x:c><x:c r="C1" t="b"><x:v>1</x:v></x:c></x:row>
@@ -198,7 +198,7 @@ class SheetRowsHandlerTest < Minitest::Test
     </x:sheetData></x:worksheet>
   XML
 
-  def test_scanner
+  def test_parser_with_namespaces_and_sparse_rows
     expected = [
       ["Zürich & 😀", nil, true],
       [nil, nil, nil],
@@ -208,22 +208,22 @@ class SheetRowsHandlerTest < Minitest::Test
     ]
 
     rows = []
-    Xsv::SheetRowsHandler.new(:array, nil, [nil] * 3, @workbook, 0, 99) { |row| rows << row }.parse(SCANNER_XML)
+    Xsv::SheetRowsHandler.new(:array, nil, [nil] * 3, @workbook, 0, 99) { |row| rows << row }.parse(WORKSHEET_XML)
 
     assert_equal expected, rows
 
-    # Rows split across chunks of any size are parsed again after reading more data
+    # Tags and UTF-8 characters split across chunks are reassembled by SaxParser
     (1..8).each do |size|
       rows = []
-      Xsv::SheetRowsHandler.new(:array, nil, [nil] * 3, @workbook, 0, 99) { |row| rows << row }.parse(ChunkedIO.new(SCANNER_XML, size))
+      Xsv::SheetRowsHandler.new(:array, nil, [nil] * 3, @workbook, 0, 99) { |row| rows << row }.parse(ChunkedIO.new(WORKSHEET_XML, size))
 
       assert_equal expected, rows, "chunk size #{size}"
     end
   end
 
-  def test_scanner_truncated_document
+  def test_parser_truncated_document
     assert_raises Xsv::Error do
-      Xsv::SheetRowsHandler.new(:array, nil, [nil] * 3, @workbook, 0, 99) {}.parse(SCANNER_XML[0, 200])
+      Xsv::SheetRowsHandler.new(:array, nil, [nil] * 3, @workbook, 0, 99) {}.parse(WORKSHEET_XML[0, 200])
     end
   end
 end
