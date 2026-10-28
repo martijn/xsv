@@ -95,13 +95,8 @@ module Xsv
 
     # Returns a number as either Integer or Float
     def parse_number(string)
-      if string.include? "."
-        string.to_f
-      elsif string.include? "E"
-        Complex(string).to_f
-      else
-        string.to_i
-      end
+      # A number with a decimal point or an exponent, in either case, is a Float
+      string.match?(/[.Ee]/) ? string.to_f : string.to_i
     end
 
     # Apply date or time number formats, if applicable
