@@ -40,6 +40,9 @@ module Xsv
 
     MINUTE = 60
     HOUR = 3600
+    MILLISECONDS_PER_DAY = 86_400_000
+    MILLISECONDS_PER_HOUR = 3_600_000
+    MILLISECONDS_PER_MINUTE = 60_000
     A_CODEPOINT = "A".ord.freeze
     # The epoch for all dates in OOXML Spreadsheet documents
     EPOCH = Date.new(1899, 12, 30).freeze
@@ -85,12 +88,9 @@ module Xsv
       date_base = number.truncate
       time = parse_date(date_base).to_time
 
-      time_base = (number - date_base) * 24
-
-      hours = time_base.truncate
-      minutes = (time_base - hours) * 60
-
-      time + hours * HOUR + minutes.round * MINUTE
+      # Round to the millisecond, the precision of Excel, and add whole seconds as an Integer, which is faster
+      milliseconds = ((number - date_base) * MILLISECONDS_PER_DAY).round
+      time + ((milliseconds % 1000).zero? ? milliseconds / 1000 : Rational(milliseconds, 1000))
     end
 
     # Returns a number as either Integer or Float
