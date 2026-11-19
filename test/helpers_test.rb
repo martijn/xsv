@@ -14,4 +14,9 @@ class HelpersTest < Minitest::Test
   def test_parse_number_complex
     assert_equal 0.001, parse_number("1E-3")
   end
+
+  def test_parse_number_lowercase_exponent
+    assert_equal 0.00002, parse_number("2e-05")
+    assert_equal 1e20, parse_number("1e+20")
+  end
 end
