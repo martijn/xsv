@@ -124,6 +124,12 @@ module Xsv
     def number_format_kind(format)
       return nil if format.nil?
 
+      # Leave out the text of the format that is not a date or time code, which can have letters that are, such as
+      # 0.0 "hrs" or [Red]0.00: quoted text, escaped characters, the characters after _ and *, the colors, conditions
+      # and locales in brackets, but not the elapsed time codes in brackets, such as [h], and AM/PM or A/P, whose M
+      # would count as a month in lowercase
+      format = format.gsub(/"[^"]*"|\\.|[_*].|\[(?![hms]+\])[^\]]*\]|(?i:am\/pm|a\/p)/, " ")
+
       is_date_format = format.scan(/[dmy]+/).length > 1
       is_time_format = format.scan(/[hms]+/).length > 1
 
