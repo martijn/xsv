@@ -5,14 +5,14 @@ module Xsv
   # This is used internally when opening a sheet.
   class StylesHandler < SaxParser
     def self.get_styles(io)
+      styles = nil
       handler = new(Xsv::Helpers::BUILT_IN_NUMBER_FORMATS.dup) do |xfs, num_fmts|
-        @xfs = xfs
-        @num_fmts = num_fmts
+        styles = [xfs, num_fmts]
       end
 
       handler.parse(io)
 
-      [@xfs, @num_fmts]
+      styles || raise(Xsv::Error, "styles.xml has no closing </styleSheet>")
     end
 
     def initialize(num_fmts, &block)
@@ -41,5 +41,7 @@ module Xsv
         @state = nil
       end
     end
+
+    alias_method :end_empty_element, :end_element
   end
 end

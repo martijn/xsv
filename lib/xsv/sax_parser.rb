@@ -5,6 +5,7 @@ require "cgi"
 module Xsv
   # Minimal streaming XML parser, optimized for the XML found in xlsx files. Subclasses implement
   # `start_element(name, attrs)` and optionally `end_element(name)` and `characters(value)`.
+  # `end_empty_element(name)` can be implemented to receive closing events for self-closing tags.
   #
   # The document is read in chunks into a buffer. Instead of consuming the buffer from the front,
   # the parser moves a cursor through it using byte offsets and only compacts it when the next
@@ -17,6 +18,7 @@ module Xsv
     # standard:disable Style/InfiniteLoop
     def parse(io)
       responds_to_end_element = respond_to?(:end_element)
+      responds_to_end_empty_element = respond_to?(:end_empty_element)
       responds_to_characters = respond_to?(:characters)
 
       if io.is_a?(String)
@@ -91,6 +93,7 @@ module Xsv
 
         if space > gt
           start_element(tag_name, nil)
+          end_empty_element(tag_name.delete_suffix("/")) if responds_to_end_empty_element && buf.getbyte(gt - 1) == 47
           next
         end
 
@@ -124,6 +127,7 @@ module Xsv
         end
 
         start_element(tag_name, attributes)
+        end_empty_element(tag_name) if responds_to_end_empty_element && buf.getbyte(gt - 1) == 47
       end
     end
     # standard:enable Style/InfiniteLoop
