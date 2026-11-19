@@ -32,7 +32,8 @@ module Xsv
       when "c"
         @current_cell = attrs || {}
         @current_value.clear
-      when "v", "is", "t"
+      when "v", "t"
+        # The text of an inline string is that of its t elements, not the whitespace around them
         @store_characters = true
       when "row"
         @current_row = (@mode == :array) ? [] : @empty_row.dup
@@ -45,13 +46,18 @@ module Xsv
       end
     end
 
+    # A t or v element that closes itself has no text, and no end tag to stop storing it
+    def end_empty_element(name)
+      @store_characters = false if name == "t" || name == "v"
+    end
+
     def characters(value)
       @current_value << value if @store_characters
     end
 
     def end_element(name)
       case name
-      when "v", "is", "t"
+      when "v", "t"
         @store_characters = false
       when "c"
         col_index = @current_cell[:r] ? column_index(@current_cell[:r]) : @col_index
@@ -102,7 +108,7 @@ module Xsv
       when "s"
         @workbook.shared_strings[@current_value.to_i]
       when "str", "inlineStr"
-        -@current_value.strip
+        -@current_value
       when "e" # N/A
         nil
       when nil, "n"
