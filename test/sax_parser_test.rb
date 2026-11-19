@@ -120,6 +120,21 @@ class SaxParserTest < Minitest::Test
     end
   end
 
+  def test_attribute_entities
+    xml = %(<numFmt numFmtId="164" formatCode="0.0 &quot;hrs&quot;"/><sheet name="R&amp;D &lt;draft&gt; &#8364;"/>)
+
+    events = Recorder.new.tap { |r| r.parse(xml) }.events
+
+    assert_equal [
+      [:start, "numFmt", {numFmtId: "164", formatCode: '0.0 "hrs"'}],
+      [:start, "sheet", {name: "R&D <draft> €"}]
+    ], events
+
+    (1..8).each do |size|
+      assert_equal events, Recorder.new.tap { |r| r.parse(ChunkedIO.split(xml, size)) }.events, "chunk size #{size}"
+    end
+  end
+
   def test_invalid_utf8
     xml = "<a>\x80bad</a>\xFF<b x=\"\xBF\" y=\"1\"/>".b
 
